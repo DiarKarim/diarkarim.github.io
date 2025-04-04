@@ -1,374 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diar Abdlkarim | Research Fellow</title>
-    <style>
-        /* Global styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f8f8;
-        }
-
-        /* Header styles */
-        .header {
-            background-image: url('media/background.gif');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 80px 20px 120px;
-            position: relative;
-        }
-
-        /* Dark overlay for better text visibility */
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .header h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header h2 {
-            font-size: 1.5rem;
-            font-weight: normal;
-            margin-bottom: 30px;
-        }
-
-        .cv-button {
-            display: inline-block;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #333;
-            padding: 8px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .cv-button:hover {
-            background-color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Profile image */
-        .profile-container {
-            position: relative;
-            width: 100%;
-            height: 0;
-        }
-
-        .profile-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid white;
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Navigation */
-        .navigation {
-            background-color: #f5f5f5;
-            padding: 20px 0;
-            text-align: center;
-            margin-top: 60px; /* Space for profile image */
-        }
-
-        .navigation a {
-            display: inline-block;
-            margin: 0 20px;
-            color: #333;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            position: relative;
-        }
-
-        .navigation a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #333;
-            transition: width 0.3s ease;
-        }
-
-        .navigation a:hover::after {
-            width: 100%;
-        }
-
-        /* Content sections */
-        .content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
-        /* Research areas */
-        .research-section {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .research-section h2 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-        }
-
-        .research-section p {
-            color: #555;
-            line-height: 1.6;
-        }
-
-        /* About section */
-        .about-section {
-            padding: 20px 0 60px;
-        }
-
-        .about-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
-        .about-section p {
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin: 0 auto 20px;
-            line-height: 1.6;
-        }
-
-        /* Contact form */
-        .contact-section {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 40px;
-            max-width: 600px;
-            margin: 0 auto 60px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .contact-section h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #0366d6;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #0366d6;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .submit-btn:hover {
-            background-color: #0256b9;
-        }
-
-        /* Footer */
-        .footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
-            }
-
-            .header h2 {
-                font-size: 1.2rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .research-section {
-                grid-template-columns: 1fr;
-            }
-
-            .navigation a {
-                margin: 0 10px;
-                font-size: 1rem;
-            }
-
-            .contact-section {
-                padding: 30px 20px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diar Abdlkarim - Portfolio</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    text-align: center;
+    background-image: url('./media/background.gif');
+    background-size: cover;
+    color: white;
+    padding: 20px;
+  }
+  .nav {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    background: #f0f0f0;
+  }
+  .nav a {
+    text-decoration: none;
+    color: #333;
+    margin: 0 15px;
+    font-weight: bold;
+  }
+  .section {
+    padding: 40px;
+  }
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+  .footer {
+    clear: both;
+    text-align: center;
+    padding: 20px;
+    background: #333;
+    color: white;
+  }
+  @media screen and (max-width: 600px) {
+    .column {
+      width: 100%;
+    }
+  }
+</style>
 </head>
 <body>
-    <!-- Header with background image -->
-    <header class="header">
-        <div class="header-content">
-            <h1>Diar Abdlkarim</h1>
-            <h2>Research Fellow at UoB Virtual Reality Lab</h2>
-            <a href="#" class="cv-button">Download CV</a>
-        </div>
-    </header>
 
-    <!-- Profile image container -->
-    <div class="profile-container">
-        <img src="media/1699637259046.jpeg" alt="Diar Abdlkarim" class="profile-image">
-    </div>
+<div class="header">
+  <h1>Diar Abdlkarim</h1>
+  <p>Research Fellow at UoB Virtual Reality Lab</p>
+  <button>Download CV</button>
+</div>
 
-    <!-- Navigation -->
-    <nav class="navigation">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#publications">Publications</a>
-    </nav>
+<div class="nav">
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#publications">Publications</a>
+</div>
 
-    <!-- Main content -->
-    <main class="content">
-        <!-- Research areas section -->
-        <section class="research-section">
-            <!-- Research -->
-            <div>
-                <h2>Research</h2>
-                <p>My research lies at the intersection of virtual reality, human perception, and behaviour. I focus on scientific research and assessment of human sensory-motor action and perception.</p>
-            </div>
+<div class="section" id="intro">
+  <div class="column">
+    <h2>Research</h2>
+    <p>My research lies at the intersection of virtual reality, human perception, and behaviour</p>
+  </div>
+  <div class="column">
+    <h2>Hardware</h2>
+    <p>One of my strengths is in rapid prototyping cutting edge devices for research and deployment, such as the ATTS touch testing system amongst other</p>
+  </div>
+  <div class="column">
+    <h2>Software</h2>
+    <p>Most of my hardware projects run in Unity and Unreal game engines, including VR and mobile platforms</p>
+  </div>
+</div>
 
-            <!-- Hardware -->
-            <div>
-                <h2>Hardware</h2>
-                <p>One of my strengths is in rapid prototyping cutting edge devices for research and deployment, such as the ATTS touch testing system amongst other.</p>
-            </div>
+<div class="section" id="about">
+    <h2>About</h2>
+    <p>My research lies at the intersection of virtual reality, human perception, and behaviour</p>
 
-            <!-- Software -->
-            <div>
-                <h2>Software</h2>
-                <p>Most of my hardware projects run in Unity and Unreal game engines, including VR and mobile platforms.</p>
-            </div>
-        </section>
+</div>
 
-        <!-- About section with philosophy -->
-        <section id="about" class="about-section">
-            <h2>About</h2>
-            <p>As a research scientist and engineer, I believe we are in the midst of a fundamental shift in how we interact with technology. This transformation is largely driven by recent innovations in AI, which has rapidly become our primary interface with digital systems.</p>
-            
-            <p>This unifying development allows us all to more effectively benefit from the wonders of technology.</p>
-            
-            <p>My work exists at the intersection of scientific research in human-technology interaction (HTI), encompassing human-computer interaction (HCI), human-robot interaction (HRI), and immersive technologies (e.g., extended reality, XR).</p>
-            
-            <p>My contributions include:</p>
-            <p>1. Scientific research and assessment of human sensory-motor action and perception.</p>
-            
-            <p>2. Development of research-grade hardware for real-time hand and finger tracking, including health and fitness devices that support clinical assessment of human touch and the development of brain-computer interfaces (BCI), incorporating electroencephalography (EEG), electromyography (EMG), electrical muscle stimulation (EMS), pupillometry, and eye tracking.</p>
-            
-            <p>3. Development of various software research tools, such as phone applications (see Tactile on iOS App Store), XR applications (see SideQuest App Store), and various communication tools for real-time data streaming between robotic devices and game engines like Unity or Unreal Engine.</p>
-        </section>
+<div class="footer">
+  <p>© 2024 Diar Abdlkarim</p>
+</div>
 
-        <!-- Contact form section -->
-        <section id="contact" class="contact-section">
-            <h2>Contact</h2>
-            <form id="contact-form">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Send Message</button>
-            </form>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2024 Diar Abdlkarim</p>
-    </footer>
-
-    <script>
-        // Simple form handling
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! This is a demo form.');
-            this.reset();
-        });
-    </script>
 </body>
 </html>
