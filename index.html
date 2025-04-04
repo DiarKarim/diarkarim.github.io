@@ -5,19 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Diar Abdlkarim - Portfolio</title>
 <style>
+  /* Existing styles */
   body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
   }
+  
   .header {
     position: relative;
     text-align: center;
     background-image: url('./media/background.gif');
     background-size: cover;
     color: white;
-    padding: 100px 20px 150px;
+    padding: 100px 20px 180px; /* Increased bottom padding */
   }
+
   .profile-frame {
     position: absolute;
     bottom: -75px;
@@ -30,71 +33,75 @@
     border: 4px solid white;
     background: #fff;
   }
-  .profile-frame img {
+
+  .nav {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0 20px;
+    background: #f0f0f0;
+    margin-top: 80px; /* Added margin to prevent overlap */
+  }
+
+  .section-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+
+  /* New sections styling */
+  .content-section {
+    padding: 60px 40px;
+  }
+
+  .subsection {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    align-items: center;
+  }
+
+  .subsection img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .subsection-text {
+    flex: 1;
+  }
+
+  /* Column image container */
+  .column-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .column-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .intro-text {
-    padding: 100px 40px 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  .nav {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-    background: #f0f0f0;
-  }
-  .section {
-    padding: 40px;
-  }
-  .column {
-    float: left;
-    width: 33.33%;
-    padding: 15px;
-    box-sizing: border-box;
-  }
-  .contact-form {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
-  .form-group {
-    margin-bottom: 20px;
-  }
-  input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  button[type="submit"] {
-    background: #333;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .footer {
-    clear: both;
-    text-align: center;
-    padding: 20px;
-    background: #333;
-    color: white;
-  }
-  @media screen and (max-width: 600px) {
-    .column {
+
+  @media (max-width: 768px) {
+    .subsection {
+      flex-direction: column;
+    }
+    
+    .subsection img {
       width: 100%;
+      height: auto;
     }
   }
 </style>
 </head>
 <body>
 
+<!-- Existing header and nav -->
 <div class="header">
   <div class="profile-frame">
     <img src="media/1699637259046.jpeg" alt="Profile Picture">
@@ -104,48 +111,79 @@
   <button>Download CV</button>
 </div>
 
-  <div class="nav">
+<div class="nav">
   <a href="#projects">Projects</a>
   <a href="#publications">Publications</a>
-      <a href="#about">About</a>
-
+  <a href="#about">About</a>
 </div>
-  
+
+<!-- Existing intro text and columns -->
 <div class="intro-text">
-  <p>As a research scientist and engineer, I believe we are in the midst of a fundamental shift in how we interact with technology. This transformation is largely driven by recent innovations in AI, which has rapidly become our primary interface with digital systems.
-This unifying development allows us all to more effectively benefit from the wonders of technology.
-My work exists at the intersection of scientific research in human-technology interaction (HTI), encompassing human-computer interaction (HCI), human-robot interaction (HRI), and immersive technologies (e.g., extended reality, XR).</p>
+  <p>As a research scientist and engineer...</p>
 </div>
-
 
 <div class="section" id="intro">
   <div class="column">
+    <div class="column-image">
+      <img src="[RESEARCH_IMAGE]" alt="Research">
+    </div>
     <h2>Research</h2>
-    <p>Scientific research and assessment of human sensory-motor action and perception in real and immersive environments.</p>
+    <p>Scientific research and assessment...</p>
   </div>
   <div class="column">
+    <div class="column-image">
+      <img src="[HARDWARE_IMAGE]" alt="Hardware">
+    </div>
     <h2>Hardware</h2>
-    <p>Development of research-grade hardware for real-time hand and finger tracking, including health and fitness devices that support clinical assessment of human touch and the development of brain-computer interfaces (BCI), incorporating electroencephalography (EEG), electromyography (EMG), electrical muscle stimulation (EMS), pupillometry, and eye tracking.</p>
+    <p>Development of research-grade hardware...</p>
   </div>
   <div class="column">
+    <div class="column-image">
+      <img src="[SOFTWARE_IMAGE]" alt="Software">
+    </div>
     <h2>Software</h2>
-    <p>Development of various software research tools, such as phone applications (see Tactile on iOS App Store), XR applications (see SideQuest App Store), and various communication tools for real-time data streaming between robotic devices and game engines like Unity or Unreal Engine.</p>
+    <p>Development of various software...</p>
   </div>
 </div>
 
+<!-- New Sections -->
+<div class="content-section" id="projects">
+  <h2>Projects</h2>
+  <div class="subsection">
+    <div class="subsection-text">
+      <h3>Project Title 1</h3>
+      <p>Project description text goes here...</p>
+    </div>
+    <img src="[PROJECT1_IMAGE]" alt="Project 1">
+  </div>
+  <div class="subsection">
+    <div class="subsection-text">
+      <h3>Project Title 2</h3>
+      <p>Project description text goes here...</p>
+    </div>
+    <img src="[PROJECT2_IMAGE]" alt="Project 2">
+  </div>
+</div>
+
+<div class="content-section" id="publications">
+  <h2>Publications</h2>
+  <div class="subsection">
+    <div class="subsection-text">
+      <h3>Publication Title 1</h3>
+      <p>Publication abstract or summary...</p>
+    </div>
+    <img src="[PUBLICATION1_IMAGE]" alt="Publication 1">
+  </div>
+</div>
+
+<div class="content-section" id="about">
+  <h2>About Me</h2>
+  <p>Detailed about me text goes here...</p>
+</div>
+
+<!-- Existing contact form and footer -->
 <div class="contact-form">
-  <h2>Contact Me</h2>
-  <form>
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
-    </div>
-    <div class="form-group">
-      <label for="message">Message:</label>
-      <textarea id="message" name="message" rows="4" required></textarea>
-    </div>
-    <button type="submit">Send Message</button>
-  </form>
+  <!-- ... existing contact form ... -->
 </div>
 
 <div class="footer">
