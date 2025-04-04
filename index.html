@@ -18,7 +18,7 @@
     background-image: url('./media/background.gif');
     background-size: cover;
     color: white;
-    padding: 100px 20px 180px; /* Increased bottom padding */
+    padding: 100px 20px 180px;
   }
 
   .profile-frame {
@@ -39,20 +39,38 @@
     justify-content: center;
     padding: 40px 0 20px;
     background: #f0f0f0;
-    margin-top: 80px; /* Added margin to prevent overlap */
+    margin-top: 80px;
   }
 
-  .section-image {
+  .section {
+    padding: 40px;
+  }
+
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  .column-image {
     width: 100%;
     height: 200px;
-    object-fit: cover;
-    margin-bottom: 15px;
+    overflow: hidden;
+    margin: 15px 0;
     border-radius: 8px;
+  }
+
+  .column-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   /* New sections styling */
   .content-section {
     padding: 60px 40px;
+    clear: both;
   }
 
   .subsection {
@@ -73,21 +91,12 @@
     flex: 1;
   }
 
-  /* Column image container */
-  .column-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    border-radius: 8px;
-  }
-
-  .column-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
   @media (max-width: 768px) {
+    .column {
+      width: 100%;
+      float: none;
+    }
+    
     .subsection {
       flex-direction: column;
     }
@@ -101,7 +110,6 @@
 </head>
 <body>
 
-<!-- Existing header and nav -->
 <div class="header">
   <div class="profile-frame">
     <img src="media/1699637259046.jpeg" alt="Profile Picture">
@@ -117,32 +125,31 @@
   <a href="#about">About</a>
 </div>
 
-<!-- Existing intro text and columns -->
 <div class="intro-text">
   <p>As a research scientist and engineer...</p>
 </div>
 
 <div class="section" id="intro">
   <div class="column">
+    <h2>Research</h2>
+    <p>Scientific research and assessment...</p>
     <div class="column-image">
       <img src="[RESEARCH_IMAGE]" alt="Research">
     </div>
-    <h2>Research</h2>
-    <p>Scientific research and assessment...</p>
   </div>
   <div class="column">
+    <h2>Hardware</h2>
+    <p>Development of research-grade hardware...</p>
     <div class="column-image">
       <img src="[HARDWARE_IMAGE]" alt="Hardware">
     </div>
-    <h2>Hardware</h2>
-    <p>Development of research-grade hardware...</p>
   </div>
   <div class="column">
+    <h2>Software</h2>
+    <p>Development of various software...</p>
     <div class="column-image">
       <img src="[SOFTWARE_IMAGE]" alt="Software">
     </div>
-    <h2>Software</h2>
-    <p>Development of various software...</p>
   </div>
 </div>
 
@@ -181,7 +188,6 @@
   <p>Detailed about me text goes here...</p>
 </div>
 
-<!-- Existing contact form and footer -->
 <div class="contact-form">
   <!-- ... existing contact form ... -->
 </div>
