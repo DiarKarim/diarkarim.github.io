@@ -66,6 +66,14 @@
     width: 33.33%;
     padding: 15px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* MODIFIED: Using fixed heights for text areas to ensure images align */
+  .column-text {
+    height: 200px; /* Fixed height for text area */
+    overflow-y: auto; /* Allow scrolling if text is too long */
   }
 
   .column-image {
@@ -106,6 +114,56 @@
     flex: 1;
   }
 
+  /* MODIFIED: Centered contact form with better styling */
+  .contact-form {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .contact-form button {
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .contact-form button:hover {
+    background-color: #333;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px;
+    background: #f0f0f0;
+    margin-top: 40px;
+  }
+
   @media (max-width: 768px) {
     .column {
       width: 100%;
@@ -120,6 +178,10 @@
       width: 100%;
       height: auto;
     }
+
+    .column-text {
+      height: auto;
+    }
   }
 </style>
 </head>
@@ -127,7 +189,7 @@
 
 <div class="header">
   <div class="profile-frame">
-    <img src="./media/profilepic.jpg" alt="Profile Picture">
+    <img src="./media/profilepic.jpeg" alt="Profile Picture">
   </div>
   <h1>Diar Abdlkarim</h1>
   <p>Research Scientist</p>
@@ -149,23 +211,28 @@ My work exists at the intersection of scientific research in human-technology in
 
 <div class="section" id="intro">
   <div class="column">
-    <h2>Research</h2>
-    <p>Scientific research and assessment of human sensory-motor action and perception in physical and immersive virtual environments.</p>
+    <div class="column-text">
+      <h2>Research</h2>
+      <p>Scientific research and assessment of human sensory-motor action and perception in physical and immersive virtual environments.</p>
+    </div>
     <div class="column-image">
       <img src="./media/sub escape gif square.gif" alt="Research">
     </div>
   </div>
   <div class="column">
-    <h2>Hardware</h2>
-    <p>Development of research-grade hardware for real-time hand and finger tracking, including health and fitness devices that support clinical assessment of human touch and the development of brain-computer interfaces (BCI), incorporating electroencephalography (EEG), electromyography (EMG), electrical muscle stimulation (EMS), pupillometry, and eye tracking.
-</p>
+    <div class="column-text">
+      <h2>Hardware</h2>
+      <p>Development of research-grade hardware for real-time hand and finger tracking, including health and fitness devices that support clinical assessment of human touch and the development of brain-computer interfaces (BCI), incorporating electroencephalography (EEG), electromyography (EMG), electrical muscle stimulation (EMS), pupillometry, and eye tracking.</p>
+    </div>
     <div class="column-image">
       <img src="./media/obi_glove.jpg" alt="Hardware">
     </div>
   </div>
   <div class="column">
-    <h2>Software</h2>
-    <p>Development of various software research tools, such as phone applications (see Tactile on iOS App Store), XR applications (see SideQuest App Store), and various communication tools for real-time data streaming between robotic devices and game engines like Unity or Unreal Engine.</p>
+    <div class="column-text">
+      <h2>Software</h2>
+      <p>Development of various software research tools, such as phone applications (see Tactile on iOS App Store), XR applications (see SideQuest App Store), and various communication tools for real-time data streaming between robotic devices and game engines like Unity or Unreal Engine.</p>
+    </div>
     <div class="column-image">
       <img src="./media/ARi Hands object stacking.gif" alt="Software">
     </div>
