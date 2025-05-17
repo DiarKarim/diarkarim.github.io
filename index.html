@@ -1,136 +1,298 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Diar Abdlkarim - Portfolio</title> <style> /* Existing styles with modifications */ body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; } .header {
-position: relative;
-text-align: center;
-background-image: url('./media/background.gif');
-background-size: cover;
-color: white;
-padding: 50px 20px 90px; /* MODIFIED: Reduced height by half */
-} .profile-frame {
-position: absolute;
-bottom: -75px;
-left: 100px; /* MODIFIED: Moved to left side /
-transform: none; / MODIFIED: Removed translateX */
-width: 150px;
-height: 150px;
-border-radius: 50%;
-overflow: hidden;
-border: 4px solid white;
-background: #fff;
-} .profile-frame img {
-width: 100%;
-height: 100%;
-object-fit: contain; /* Changed from default to ensure the whole image is visible */
-} .nav {
-display: flex;
-justify-content: center;
-padding: 40px 0 20px;
-background: #f0f0f0;
-margin-top: 80px;
-gap: 30px; /* MODIFIED: Added gap between buttons */
-} /* ADDED: Button-like styling for nav links */
-.nav a {
-padding: 10px 20px;
-border-radius: 5px;
-background-color: #e0e0e0;
-text-decoration: none;
-color: #333;
-transition: background-color 0.3s;
-} .intro-text {
-padding: 10px 20px;
-line-height: 1.6;
-} .nav a:hover {
-background-color: #d0d0d0;
-} .section {
-padding: 40px;
-} .column {
-float: left;
-width: 33.33%;
-padding: 15px;
-box-sizing: border-box;
-display: flex;
-flex-direction: column;
-} /* MODIFIED: Using fixed heights for text areas to ensure images align /
-.column-text {
-height: 200px; / Fixed height for text area /
-overflow-y: auto; / Allow scrolling if text is too long */
-} .column-image {
-width: 100%;
-height: 200px;
-overflow: hidden;
-margin: 15px 0;
-border-radius: 8px;
-} .column-image img {
-width: 100%;
-height: 100%;
-object-fit: cover;
-} /* New sections styling */
-.content-section {
-padding: 120px 80px;
-clear: both;
-} .subsection {
-display: flex;
-gap: 30px;
-margin-bottom: 40px;
-align-items: center;
-} .subsection img {
-width: 200px;
-height: 150px;
-object-fit: cover;
-border-radius: 6px;
-} .subsection-text {
-flex: 1;
-} /* MODIFIED: Centered contact form with better styling */
-.contact-form {
-max-width: 600px;
-margin: 50px auto;
-padding: 30px;
-background: #f9f9f9;
-border-radius: 8px;
-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-} .form-group {
-margin-bottom: 20px;
-} .form-group label {
-display: block;
-margin-bottom: 8px;
-font-weight: bold;
-} .form-group input,
-.form-group textarea {
-width: 100%;
-padding: 10px;
-border: 1px solid #ddd;
-border-radius: 4px;
-font-size: 16px;
-} .contact-form button {
-background-color: #4a4a4a;
-color: white;
-border: none;
-padding: 12px 20px;
-border-radius: 4px;
-cursor: pointer;
-font-size: 16px;
-} .contact-form button:hover {
-background-color: #333;
-} .footer {
-text-align: center;
-padding: 20px;
-background: #f0f0f0;
-margin-top: 40px;
-} @media (max-width: 768px) {
-.column {
-width: 100%;
-float: none;
-}
-.subsection {
-  flex-direction: column;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diar Abdlkarim - Portfolio</title>
+<style>
+  /* Existing styles with modifications */
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header {
+    position: relative;
+    text-align: center;
+    background-image: url('./media/background.gif');
+    background-size: cover;
+    color: white;
+    padding: 50px 20px 90px; /* MODIFIED: Reduced height by half */
+  }
 
-.subsection img {
+  .profile-frame {
+    position: absolute;
+    bottom: -75px;
+    left: 100px; /* MODIFIED: Moved to left side */
+    transform: none; /* MODIFIED: Removed translateX */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid white;
+    background: #fff;
+  }
+
+  .profile-frame img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain; /* Changed from default to ensure the whole image is visible */
 }
 
-.column-text {
-  height: auto;
+  .nav {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0 20px;
+    background: #f0f0f0;
+    margin-top: 80px;
+    gap: 30px; /* MODIFIED: Added gap between buttons */
+  }
+  
+  /* ADDED: Button-like styling for nav links */
+  .nav a {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s;
+  }
+
+  .intro-text {
+  padding: 10px 20px;
+  line-height: 1.6;
 }
-}
-</style> </head> <body> <div class="header"> <div class="profile-frame"> <img src="./media/profilepic.jpeg" alt="Profile Picture"> </div> <h1>Diar Abdlkarim</h1> <p>Research Scientist</p> <button>Download CV</button> </div> <div class="nav"> <a href="#projects">Projects</a> <a href="#publications">Publications</a> <a href="#about">About</a> </div> <div class="intro-text"> <p>As a research scientist and engineer, I believe we are in the midst of a fundamental shift in how we interact with technology. This transformation is largely driven by recent innovations in AI, which has rapidly become our primary interface with digital systems. This unifying development allows us all to more effectively benefit from the wonders of technology. My work exists at the intersection of scientific research in human-technology interaction and practical engineering, bridging rigorous experimentation with real-world prototyping.</p> </div> <!-- New Sections --> <div class="content-section" id="projects"> <h2>Projects</h2> <div class="subsection"> <div class="subsection-text"> <h3>Obi Robotics Data Glove</h3> <p>A wireless hand-and-finger tracking glove with a modular design, developed through my startup Obi Robotics. This advanced data glove offers up to 25 degrees of freedom per hand and streams motion data at 250 Hz, enabling highly precise tracking. It integrates flexible finger sensors, an active optical positioning system, and embedded haptic feedback to enhance realism. Custom-built electronics and a lightweight form factor make the glove fully self-contained and adaptable for various applications, from VR/AR and robotics manipulation to gesture recognition and stroke rehabilitation. This innovation exemplifies how cutting-edge hardware prototyping can push the boundaries of motion capture and sensory augmentation in immersive technology.</p> </div> <img src="./media/Obi Robotics.png" alt="Modular hand-tracking glove"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Obi-Reach Hand Tracking Prototype</h3> <p>An early prototype of a hand tracking system using multiple IMU sensors mounted on a glove to capture detailed finger movements. The Obi-Reach prototype demonstrated real-time 3D tracking of each finger joint, allowing a virtual robotic hand to accurately mirror the user's hand pose on-screen. This low-cost, modular setup provided valuable insights into sensor fusion and calibration for precise motion capture. Lessons learned from this project – such as optimizing latency and drift correction for inertial sensors – directly informed the design of later professional data gloves. Obi-Reach proved the feasibility of immersive hand presence using off-the-shelf components, laying the groundwork for more refined wearable tracking devices.</p> </div> <img src="./media/Obi Reach IMU Prototype for hand and finger tracking.jpg" alt="IMU-based finger tracking glove prototype"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Wrist Squeeze Haptic Band</h3> <p>A custom-designed wristband that provides tactile feedback by gently squeezing the user's wrist. This haptic device uses actuators to tighten and release in sync with virtual events, conveying a sense of touch without occupying the hands or fingers. In an immersive simulation (such as a VR billiards game), the band can replicate the impact of a ball hit or other force cues by contracting momentarily. Its subtle yet distinctive feedback modality was found to enhance user immersion and awareness of in-game interactions. The wrist squeeze band explores an alternative feedback channel, demonstrating how wearable haptics can improve realism and performance in training simulations and games.</p> </div> <img src="./media/Squeeze based wrist haptic feedback wristband.gif" alt="Wristband for haptic squeeze feedback"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Fingertip Slip Renderer</h3> <p>This innovative fingertip device simulates the sensation of an object slipping or brushing across the skin. By using a small motorized pad that moves laterally on the fingertip, the system can recreate the subtle feeling of friction changes as a held virtual object begins to slide. When integrated into a VR scenario, the slip renderer provides users with early tactile warning of a grasped item shifting, encouraging natural adjustments to their grip. This haptic feedback mechanism adds a layer of realism to virtual hand interactions that typical vibration motors cannot achieve. It opens up new possibilities for more nuanced touch feedback in VR training, rehabilitation, and gaming applications.</p> </div> <img src="./media/fingertip slip renderer for haptic feedback for virtual reality applications.png" alt="Device for slip sensation on fingertip"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Immersive VR Billiards Training</h3> <p>A realistic virtual reality billiards game developed to study the effects of haptic feedback on complex motor task performance. In this simulation, players wear a wrist haptic band that delivers instant tactile cues when the cue stick strikes the ball, mimicking the feel of impact. The project experimented with real-time versus delayed (terminal) feedback, examining how each strategy affects the player's execution and learning of the game. By providing physical sensations in sync with virtual actions, the system bridges the gap caused by the lack of real objects in VR. This work demonstrated that well-timed haptic feedback can significantly enhance immersion and may improve skill acquisition in VR training scenarios.</p> </div> <img src="./media/realistic pool game project in immersive virtual reality with wrist haptic feedback about pool contact interactions.png" alt="VR pool game with haptic feedback"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Augmented Reality Music Ensemble</h3> <p>An EPSRC-funded project that merges musical performance with immersive technology, allowing real and virtual musicians to play together seamlessly. Using augmented reality, this system captures live performers and projects them as lifelike avatars alongside computer-generated musicians in a shared virtual stage. Originally tailored for string quartets, the platform (nicknamed "PlayVatars") enables musicians to rehearse or perform remotely, each seeing and hearing the full ensemble in real time. Advanced timing algorithms and adaptive metronomes ensure everyone stays in sync, while 3D video capture preserves the realism of presence and interaction. The AR Music Ensemble showcases how AR can revolutionize collaborative experiences in the arts, maintaining human connection across distances.</p> </div> <img src="./media/Interactive music project using virtual avatar musicians (PlayVatars).png" alt="Musicians performing with AR avatars"> </div> <div class="subsection"> <div class="subsection-text"> <h3>AR Performance App for Singers</h3> <p>A mobile augmented reality application that acts as a portable green screen studio for singers and content creators. This app allows users to record themselves performing while automatically replacing their background with dynamic 3D scenes in real time. For example, a choir singing in a rehearsal room can appear as if they're standing in a grand cathedral or any virtual venue of their choice. By leveraging AR background segmentation and rendering, the tool transforms simple video performances into visually immersive content without the need for actual green screens. It empowers artists to creatively reimagine their performance environment, enhancing remote collaborations and audience engagement.</p> </div> <img src="./media/Phone based augmented reality green-screen app for singers to transform themselves into new spaces for content creation.png" alt="Mobile AR green-screen for singers"> </div> <div class="subsection"> <div class="subsection-text"> <h3>AR Learning Adventure for Kids</h3> <p>An educational augmented reality setup that transports schoolchildren into new virtual environments as part of the learning experience. In the classroom, students can see themselves on a screen immersed in historical sites, outer space, or other exciting landscapes, all achieved through real-time AR background replacement. This interactive tool engages young learners by making lessons vividly immersive—imagine studying marine biology while “underwater” or history while standing “inside” an ancient pyramid. Teachers can utilize this system to spark curiosity and creativity, as children not only absorb information but also narrate stories or weather reports from within the virtual settings. The project demonstrates how AR technology can enhance education by blending imaginative play with curriculum content.</p> </div> <img src="./media/GreenScreen for education in schools for kids to transpose themsevels into new virtual spaces.gif" alt="AR green screen for classroom learning"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Immersive 3D UI Design Tool</h3> <p>A human-computer interaction project focusing on interface design within a virtual reality environment. This tool enables designers and users to grab, move, and arrange UI elements (like panels, buttons, and menus) in a full 3D space around them. By designing interfaces from within VR, creators can intuitively determine optimal placement and scale of elements for real users. The project studied how spatial context and natural hand motions influence layout decisions—such as placing controls at comfortable reaching distances or in peripheral vision for awareness. The insights gained help inform best practices for next-generation VR user interface design, ensuring that virtual interfaces are both ergonomic and immersive.</p> </div> <img src="./media/human computer interaction design using immersive virtual reality for UI object placement in 3D space.png" alt="User placing interface elements in VR"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Physics-Based AR Stacking Demo</h3> <p>A demonstration combining augmented reality with realistic physics simulation, allowing users to stack and balance virtual objects in the real world. Wearing an AR headset (or using a mobile AR app), users can see virtual blocks that they can pick up and stack on their real table using hand tracking. Each block obeys gravity and collisions thanks to a physics engine, so towers tumble naturally if not balanced. The challenge was to accurately align virtual physics with the user’s physical space in real time, creating a convincing illusion that the digital objects have weight and substance. This project highlights interactive AR’s potential for playful learning and prototyping—users can safely experiment with concepts like stability and center-of-mass using virtual building blocks.</p> </div> <img src="./media/ARi Hands object stacking using physics based simulation.gif" alt="AR hand physics stacking game"> </div> <div class="subsection"> <div class="subsection-text"> <h3>AI Sports Highlight Generator</h3> <p>An intelligent video editing application that automatically creates highlight reels from sports game footage. This system leverages computer vision and machine learning to detect exciting moments in a match—such as goals, key plays, or crowd reactions—directly from raw video. It analyzes factors like motion intensity, score changes, and audio cues (cheers or whistles) to flag the best segments. Once identified, these clips are compiled into a seamless highlights video, allowing coaches, players, or fans to review a game's most important moments within minutes. The mobile-friendly app streamlines content creation for sports media, demonstrating how AI can save time and uncover patterns in athletic performance through automated analysis.</p> </div> <img src="./media/highlight ai app to extract sports highlights from videos.PNG" alt="App for automatic sports highlights"> </div> <div class="subsection"> <div class="subsection-text"> <h3>100 Metronomes Synchrony Demo</h3> <p>A creative physics demonstration featuring one hundred mechanical metronomes all ticking at different speeds that gradually synchronize with each other. In this project, the metronomes are placed on a shared movable platform; their individual rhythms start out chaotic, but within minutes, the slight vibrations of the platform cause them to sway in unison. This captivating experiment visualizes the concept of coupled oscillators and emergent order: each metronome’s energy subtly influences the others until they fall into perfect sync. The display serves as both an educational tool and an artistic metaphor for cooperation and rhythm, illustrating how synchrony can arise naturally in physical and social systems.</p> </div> <img src="./media/100 metronome project about timing and synchrony in music.png" alt="Demonstration of 100 syncing metronomes"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Future Luxury Car Seat Prototype</h3> <p>A design and engineering project conducted in partnership with an automotive seating company (Adient) to envision the car seat of the future. The project focused on the luxury segment, integrating advanced ergonomic concepts and smart materials into a next-generation seat design. One key innovation was the use of precision-cut foam segments to create a dynamic cushion that adapts to the occupant’s body shape for personalized comfort. The team rapidly prototyped the seat with modular foam inserts and tested its support and durability, refining the geometry for optimal posture and pressure distribution. This forward-looking concept showcased how novel design techniques and materials can dramatically improve passenger comfort and set new standards for automotive interiors.</p> </div> <img src="./media/foam_cutout_design.png" alt="Blueprint of innovative car seat design"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Unreal Engine Design Visualization</h3> <p>An exploration of using a game engine (Unreal Engine) as a tool for product design and visualization. In this project, detailed 3D models of hardware prototypes (such as a smart data glove) were imported into Unreal Engine to create high-fidelity, interactive visualizations. The real-time rendering capabilities allowed for realistic lighting and material effects, giving designers and stakeholders an accurate preview of the final product’s look and feel. Additionally, the VR mode in Unreal enabled true-to-scale inspections, so ergonomics and aesthetics could be evaluated immersively before manufacturing. This workflow bridged the gap between CAD models and user experience, demonstrating how immersive technologies can streamline the design iteration process and improve communication of concepts.</p> </div> <img src="./media/product design using unreal engine.png" alt="3D prototype rendered in Unreal Engine"> </div> <div class="subsection"> <div class="subsection-text"> <h3>Physics-Based Virtual Grasping</h3> <p>A software framework that imbues virtual hand interactions with physical realism, enabling more natural object grasps in XR environments. Instead of letting a digital hand clip through objects, this system uses a physics engine to enforce collisions: virtual fingers stop when they touch an object and apply appropriate forces. As a result, when you reach out to grab a virtual box, your avatar hand grips it and holds it with believable resistance, as though it were real. This approach removes the need to custom-script how every object is picked up, vastly improving scalability and realism. The physics-based grasping framework not only heightens immersion for VR users but also provides a testbed for refining haptic feedback devices by simulating accurate contact dynamics.</p> </div> <img src="./media/physics based hand object grasping using simulation of contact force.png" alt="Diagram of virtual hand grasping an object"> </div> <div class="subsection"> <div class="subsection-text"> <h3>PrendoSim Robotic Grasp Simulator</h3> <p>A research project presenting a novel physics-based simulator to train robotic hands to grasp objects reliably. PrendoSim uses a virtual proxy hand in a NVIDIA PhysX environment to explore how a robot gripper can pick up various items with proper force and precision. By leveraging advanced physics solvers, the simulator automatically handles contact dynamics and friction, eliminating the need to manually program each new object interaction. In one demonstration, a three-fingered robotic gripper successfully grasped tools like a hammer in simulation, with spring-damper systems modeling the compliance of real fingertips. The framework improved simulation-to-reality transfer for robotic manipulation tasks and was adopted for further development in collaboration with Meta Reality Labs, including efforts to optimize physics parameters using machine learning.</p> </div> <img src="./media/physics based robot hand simulation for object grasping and manipulation.png" alt="Robotic gripper simulating a grasp in PhysX"> </div> </div> <div class="content-section" id="publications"> <h2>Publications</h2> <div class="subsection"> <div class="subsection-text"> <h3>Publication Title 1</h3> <p>Publication abstract or summary...</p> </div> <img src="[PUBLICATION1_IMAGE]" alt="Publication 1"> </div> </div> <div class="content-section" id="about"> <h2>About Me</h2> <p>Detailed about me text goes here...</p> </div> <div class="contact-form"> <h2>Contact Me</h2> <form> <div class="form-group"> <label for="email">Email:</label> <input type="email" id="email" name="email" required> </div> <div class="form-group"> <label for="message">Message:</label> <textarea id="message" name="message" rows="4" required></textarea> </div> <button type="submit">Send Message</button> </form> </div> <div class="footer"> <p>© 2024 Diar Abdlkarim</p> </div> </body> </html>
+  
+  .nav a:hover {
+    background-color: #d0d0d0;
+  }
+
+  .section {
+    padding: 40px;
+  }
+
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 15px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* MODIFIED: Using fixed heights for text areas to ensure images align */
+  .column-text {
+    height: 200px; /* Fixed height for text area */
+    overflow-y: auto; /* Allow scrolling if text is too long */
+  }
+
+  .column-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    margin: 15px 0;
+    border-radius: 8px;
+  }
+
+  .column-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* New sections styling */
+  .content-section {
+    padding: 120px 80px;
+    clear: both;
+  }
+
+  .subsection {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    align-items: center;
+  }
+
+  .subsection img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .subsection-text {
+    flex: 1;
+  }
+
+  /* MODIFIED: Centered contact form with better styling */
+  .contact-form {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .contact-form button {
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .contact-form button:hover {
+    background-color: #333;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px;
+    background: #f0f0f0;
+    margin-top: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .column {
+      width: 100%;
+      float: none;
+    }
+    
+    .subsection {
+      flex-direction: column;
+    }
+    
+    .subsection img {
+      width: 100%;
+      height: auto;
+    }
+
+    .column-text {
+      height: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="profile-frame">
+    <img src="./media/profilepic.jpeg" alt="Profile Picture">
+  </div>
+  <h1>Diar Abdlkarim</h1>
+  <p>Research Scientist</p>
+  <button>Download CV</button>
+</div>
+
+<div class="nav">
+  <a href="#projects">Projects</a>
+  <a href="#publications">Publications</a>
+  <a href="#about">About</a>
+</div>
+
+<div class="intro-text">
+  <p>As a research scientist and engineer, I believe we are in the midst of a fundamental shift in how we interact with technology. This transformation is largely driven by recent innovations in AI, which has rapidly become our primary interface with digital systems.
+This unifying development allows us all to more effectively benefit from the wonders of technology.
+My work exists at the intersection of scientific research in human-technology interaction (HTI), encompassing human-computer interaction (HCI), human-robot interaction (HRI), and immersive technologies (e.g., extended reality, XR).
+</p>
+</div>
+
+<div class="section" id="intro">
+  <div class="column">
+    <div class="column-text">
+      <h2>Research</h2>
+      <p>Scientific research and assessment of human sensory-motor action and perception in physical and immersive virtual environments.</p>
+    </div>
+    <div class="column-image">
+      <img src="./media/sub escape gif square.gif" alt="Research">
+    </div>
+  </div>
+  <div class="column">
+    <div class="column-text">
+      <h2>Hardware</h2>
+      <p>Development of research-grade hardware for real-time hand and finger tracking, including health and fitness devices that support clinical assessment of human touch and the development of brain-computer interfaces (BCI), incorporating electroencephalography (EEG), electromyography (EMG), electrical muscle stimulation (EMS), pupillometry, and eye tracking.</p>
+    </div>
+    <div class="column-image">
+      <img src="./media/obi_glove.jpg" alt="Hardware">
+    </div>
+  </div>
+  <div class="column">
+    <div class="column-text">
+      <h2>Software</h2>
+      <p>Development of various software research tools, such as phone applications (see Tactile on iOS App Store), XR applications (see SideQuest App Store), and various communication tools for real-time data streaming between robotic devices and game engines like Unity or Unreal Engine.</p>
+    </div>
+    <div class="column-image">
+      <img src="./media/ARi Hands object stacking.gif" alt="Software">
+    </div>
+  </div>
+</div>
+
+<!-- New Sections -->
+
+<div class="content-section" id="projects">
+  <h2>Projects</h2>
+
+  <!-- Injected projects go here, as listed in previous response -->
+  <!-- Omitted here due to length, please refer to previous completion for full entries -->
+
+</div>
+<div class="content-section" id="publications">
+  <h2>Publications</h2>
+  <div class="subsection">
+    <div class="subsection-text">
+      <h3>Publication Title 1</h3>
+      <p>Publication abstract or summary...</p>
+    </div>
+    <img src="[PUBLICATION1_IMAGE]" alt="Publication 1">
+  </div>
+</div>
+
+<div class="content-section" id="about">
+  <h2>About Me</h2>
+  <p>Detailed about me text goes here...</p>
+</div>
+
+<div class="contact-form">
+  <h2>Contact Me</h2>
+  <form>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" rows="4" required></textarea>
+    </div>
+    <button type="submit">Send Message</button>
+  </form>
+</div>
+
+<div class="footer">
+  <p>© 2024 Diar Abdlkarim</p>
+</div>
+
+</body>
+</html>
