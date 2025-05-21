@@ -213,6 +213,7 @@
   <a href="#projects">Projects</a>
   <a href="#publications">Publications</a>
   <a href="#about">About</a>
+  <a href="#contact">Contact</a>
 </div>
 
 <div class="intro-text">
@@ -435,11 +436,17 @@ My work exists at the intersection of scientific research in human-technology in
   <p>I am a futurist with an optimistic belief in technology’s power to improve our lives. My passion lies in exploring how the human nervous system can interface with machines, especially as artificial intelligence transforms our world. From building custom haptic devices and VR gloves to developing immersive simulations, I strive to create technology that brings us closer to our digital experiences. My research is driven by curiosity about how we sense, move, and interact, and how new tools can expand what it means to be human in the age of AI.</p>
 </div>
 
-<div class="contact-form">
+<div class="contact-form" id="contact">
   <h2>Contact Me</h2>
-  <form>
+  <!-- 
+    To actually send an email/message to the user when the form is submitted,
+    you need a backend service or a third-party form handler.
+    Below is an example using Formspree (https://formspree.io/) as a simple solution.
+    Replace 'your@email.com' with your actual email address registered with Formspree.
+  -->
+  <form action="https://formspree.io/f/xnndynep" method="POST">
     <div class="form-group">
-      <label for="email">Email:</label>
+      <label for="email">Your Email:</label>
       <input type="email" id="email" name="email" required>
     </div>
     <div class="form-group">
@@ -448,6 +455,11 @@ My work exists at the intersection of scientific research in human-technology in
     </div>
     <button type="submit">Send Message</button>
   </form>
+  <!-- 
+    Alternatively, you can set up your own backend (Node.js, PHP, Python, etc.)
+    to process the form and send an email using an SMTP server or email API.
+    The frontend alone (HTML/JS) cannot send emails directly to you.
+  -->
 </div>
 
 <div class="footer">
