@@ -15,6 +15,27 @@
   --gutter: 24px;
 }
 
+/* Contact form legibility (dark navy text on light background) */
+.contact-form,
+.contact-form label,
+.contact-form input,
+.contact-form textarea {
+  color: var(--bg-2); /* dark navy from the site palette */
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  /* fallback color that’s slightly lighter than --bg-2 for placeholders */
+  color: #3a536f;
+  opacity: 1; /* ensure consistent placeholder contrast across browsers */
+}
+
+.contact-form .form-group input,
+.contact-form .form-group textarea {
+  background: #fff;                 /* crisp against navy text */
+  border-color: #c9d3e3;            /* subtle, higher-contrast border */
+}
+
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body{
