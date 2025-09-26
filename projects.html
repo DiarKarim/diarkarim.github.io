@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Diar Abdlkarim</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Diar Abdlkarim</h1>
+      <p>Research Scientist</p>
+    </div>
+    <nav class="side-nav">
+      <a href="index.html#top">🏠 Home</a>
+      <a href="index.html#intro">🧭 Intro</a>
+      <a href="index.html#courses">🎓 Courses & Activities</a>
+      <a href="projects.html">🧪 Projects</a>
+      <a href="publications.html">📚 Publications</a>
+      <a href="funding.html">💠 Funding</a>
+      <a href="index.html#contact">✉️ Contact</a>
+    </nav>
+    <div class="small">© 2025</div>
+  </aside>
+
+  <main class="main">
+    <button id="menuToggle" class="menu-toggle" aria-label="Open menu" style="display:none;">☰ Menu</button>
+
+    <div class="content-section container">
+      <h2>Projects</h2>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>Obi Robotics Advanced Hand‑Tracking Glove</h3>
+          <p>A modular glove that tracks each finger at high rate with haptics for precise XR and robotics control.</p>
+        </div>
+        <img src="./media/obi_glove.jpg" alt="Obi glove" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>Fingertip Indentation Feedback Device</h3>
+          <p>A compact fingertip device renders physical button‑press sensations with controllable indentation.</p>
+        </div>
+        <img src="./media/Slide1.png" alt="Indentation device" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>Fingertip Vibrotactile Feedback Device</h3>
+          <p>A fingertip unit delivers low‑ and high‑frequency vibration to simulate texture and touch in XR.</p>
+        </div>
+        <img src="./media/Slide2.png" alt="Vibrotactile device" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>Desktop Clinical Vibrotactile Assessment Device</h3>
+          <p>A grounded lab system provides precise vibrotactile stimuli while measuring fingertip force.</p>
+        </div>
+        <img src="./media/Slide3.png" alt="Desktop assessment device" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>Immersive VR Pool with Haptics</h3>
+          <p>A VR pool simulation coupled to a wrist squeeze band for impact‑synchronized tactile feedback.</p>
+        </div>
+        <img src="./media/billiard_experiment.png" alt="VR pool" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>Squeeze‑Based Wrist Haptic Band</h3>
+          <p>A wearable band delivers brief squeezes to convey impacts and events in virtual environments.</p>
+        </div>
+        <img src="./media/wrist_squeeze.gif" alt="Wrist band" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+
+      <div class="subsection" style="display:flex; gap:16px; align-items:center; padding:12px 0;">
+        <div class="subsection-text" style="flex:1;">
+          <h3>VR Physics Object Stacking Sandbox</h3>
+          <p>A no‑code physics sandbox enabling natural hand‑object interactions, grasping, and manipulation.</p>
+        </div>
+        <img src="./media/ari_hands.gif" alt="VR physics hands" style="object-fit:cover; width:220px; height:150px; border-radius:8px; border:1px solid var(--card-bd);">
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const mq = window.matchMedia('(max-width: 980px)');
+  const toggle = document.getElementById('menuToggle');
+  function setToggle(){ toggle && (toggle.style.display = mq.matches ? 'block' : 'none'); }
+  setToggle(); mq.addEventListener('change', setToggle);
+</script>
+<script src="scripts.js"></script>
+</body>
+</html>
