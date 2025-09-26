@@ -1,601 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diar Abdlkarim - Portfolio</title>
-<style>
-  /* Existing styles with modifications */
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .header {
-    position: relative;
-    text-align: center;
-    background-image: url('./media/background.gif');
-    background-size: cover;
-    color: white;
-    padding: 50px 20px 90px; /* MODIFIED: Reduced height by half */
-  }
-
-  .profile-frame {
-    position: absolute;
-    bottom: -75px;
-    left: 100px; /* MODIFIED: Moved to left side */
-    transform: none; /* MODIFIED: Removed translateX */
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid white;
-    background: #fff;
-  }
-
-  .profile-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Changed from default to ensure the whole image is visible */
-}
-
-  .nav {
-    display: flex;
-    justify-content: center;
-    padding: 16px 0 8px; /* REDUCED: 40px 0 20px -> 16px 0 8px (60% reduction) */
-    background: #f0f0f0;
-    margin-top: 32px; /* REDUCED: 80px -> 32px (60% reduction) */
-    gap: 30px; /* MODIFIED: Added gap between buttons */
-  }
-  
-  /* ADDED: Button-like styling for nav links */
-  .nav a {
-    padding: 10px 20px;
-    border-radius: 5px;
-    background-color: #e0e0e0;
-    text-decoration: none;
-    color: #333;
-    transition: background-color 0.3s;
-  }
-
-  .intro-text {
-  padding: 10px 20px;
-  line-height: 1.6;
-  margin-bottom: 16px; /* ADDED: Reduce gap after intro */
-}
-  
-  .nav a:hover {
-    background-color: #d0d0d0;
-  }
-
-  .section {
-    padding: 16px; /* REDUCED: 40px -> 16px (60% reduction) */
-  }
-
-  .column {
-    float: left;
-    width: 33.33%;
-    padding: 15px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* MODIFIED: Using fixed heights for text areas to ensure images align */
-  .column-text {
-    height: 200px; /* Fixed height for text area */
-    overflow-y: auto; /* Allow scrolling if text is too long */
-  }
-
-  .column-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    margin: 15px 0;
-    border-radius: 8px;
-  }
-
-  .column-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* New sections styling */
-  .content-section {
-    padding: 48px 32px; /* REDUCED: 120px 80px -> 48px 32px (60% reduction) */
-    clear: both;
-  }
-
-  .subsection {
-    display: flex;
-    gap: 12px; /* REDUCED: 30px -> 12px (60% reduction) */
-    margin-bottom: 16px; /* REDUCED: 40px -> 16px (60% reduction) */
-    align-items: center;
-  }
-
-  .subsection img {
-    width: 200px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-
-  .subsection-text {
-    flex: 1;
-  }
-
-  /* MODIFIED: Centered contact form with better styling */
-  .contact-form {
-    max-width: 600px;
-    margin: 20px auto; /* REDUCED: 50px -> 20px (60% reduction) */
-    padding: 12px; /* REDUCED: 30px -> 12px (60% reduction) */
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-
-  .form-group {
-    margin-bottom: 8px; /* REDUCED: 20px -> 8px (60% reduction) */
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 4px; /* REDUCED: 8px -> 4px (60% reduction) */
-    font-weight: bold;
-  }
-
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-
-  .contact-form button {
-    background-color: #4a4a4a;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-
-  .contact-form button:hover {
-    background-color: #333;
-  }
-
-  .footer {
-    text-align: center;
-    padding: 8px; /* REDUCED: 20px -> 8px (60% reduction) */
-    background: #f0f0f0;
-    margin-top: 16px; /* REDUCED: 40px -> 16px (60% reduction) */
-  }
-
-  @media (max-width: 768px) {
-    .column {
-      width: 100%;
-      float: none;
-    }
-    
-    .subsection {
-      flex-direction: column;
-    }
-    
-    .subsection img {
-      width: 100%;
-      height: auto;
-    }
-
-    .column-text {
-      height: auto;
-    }
-    .content-section {
-      padding: 24px 8px; /* Also reduce on mobile */
-    }
-  }
-</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Diar Abdlkarim — Personal Website</title>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<div class="header">
-  <div class="profile-frame">
-    <img src="./media/profilepic.jpeg" alt="Profile Picture">
-  </div>
-  <h1>Diar Abdlkarim</h1>
-  <p>Research Scientist</p>
-  <a href="./media/CV Diar Abdlkarim.pdf" download>
-    <button>Download CV</button>
-  </a>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Diar Abdlkarim</h1>
+      <p>Research Scientist</p>
+    </div>
+    <nav class="side-nav">
+      <a href="index.html#top">🏠 Home</a>
+      <a href="index.html#intro">🧭 Intro</a>
+      <a href="index.html#courses">🎓 Courses & Activities</a>
+      <a href="projects.html">🧪 Projects</a>
+      <a href="publications.html">📚 Publications</a>
+      <a href="funding.html">💠 Funding</a>
+      <a href="index.html#contact">✉️ Contact</a>
+    </nav>
+    <div class="small">© 2025</div>
+  </aside>
+
+  <!-- Main -->
+  <main id="top" class="main">
+    <button id="menuToggle" class="menu-toggle" aria-label="Open menu" style="display:none;">☰ Menu</button>
+
+    <!-- Hero header (kept; only visual restyle) -->
+    <header class="header">
+      <div class="profile-frame">
+        <img src="./media/profilepic.jpeg" alt="Profile Picture">
+      </div>
+      <h1>Diar Abdlkarim</h1>
+      <p>Research Scientist</p>
+      <a href="./media/CV Diar Abdlkarim.pdf" download>
+        <button>Download CV</button>
+      </a>
+    </header>
+
+    <!-- Merged intro-text (only multi-sentence block allowed) -->
+    <div class="intro-wrap">
+      <div class="intro-text">
+        <p>
+          Technology is undergoing a profound shift, with AI becoming our natural interface to the digital world.
+          I study human–technology interaction across HCI, HRI, and immersive XR, focusing on how the nervous system connects with machines.
+          My work blends science and engineering to understand action and perception and to design human‑centered systems.
+          I build hand‑ and finger‑tracking hardware, haptic devices, and XR software tools.
+          The goal is credible touch and interaction that improve how we sense, move, and collaborate.
+        </p>
+      </div>
+    </div>
+
+    <!-- Intro section (structure unchanged; text shortened to one sentence) -->
+    <div class="section" id="intro">
+      <div class="column">
+        <div class="column-text">
+          <h2>Research</h2>
+          <p>I study human action and perception to design better human–technology interaction.</p>
+        </div>
+        <div class="column-image">
+          <img src="./media/sub escape gif square.gif" alt="Research">
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-text">
+          <h2>Hardware</h2>
+          <p>I build research‑grade hand and finger tracking hardware and haptic devices.</p>
+        </div>
+        <div class="column-image">
+          <img src="./media/Obi Reach IMU Prototype for hand and finger tracking.jpg" alt="Hardware">
+        </div>
+      </div>
+      <div class="column">
+        <div class="column-text">
+          <h2>Software</h2>
+          <p>I develop XR and data tools that connect robots and game engines in real time.</p>
+        </div>
+        <div class="column-image">
+          <img src="./media/prendo_sim.png" alt="Software">
+        </div>
+      </div>
+    </div>
+
+    <!-- Courses + Activities as a single auto-sliding carousel -->
+    <section class="content-section" id="courses">
+      <div class="section-title container">
+        <h2>Courses & Activities</h2>
+      </div>
+
+      <div class="carousel" aria-label="Courses and activities carousel" role="region">
+        <div class="carousel-track">
+          <!-- Slide 1 -->
+          <article class="slide">
+            <figure>
+              <img src="./media/unitycrashcourse.png" alt="VR with Unity Game Engine for Scientists">
+            </figure>
+            <div class="caption">
+              <h3>VR with Unity Game Engine for Scientists</h3>
+              <p>An intensive five‑day bootcamp to build and test VR experiments in Unity.</p>
+            </div>
+          </article>
+
+          <!-- Slide 2 -->
+          <article class="slide">
+            <figure>
+              <img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture Crash Course">
+            </figure>
+            <div class="caption">
+              <h3>Motion Capture Crash Course</h3>
+              <p>A three‑day, hands‑on introduction to setting up, capturing, and analyzing motion‑capture data.</p>
+            </div>
+          </article>
+
+          <!-- Slide 3 -->
+          <article class="slide">
+            <figure>
+              <img src="./media/3dprintingcourse.png" alt="3D Modelling and 3D Printing Crash Course for Scientists">
+            </figure>
+            <div class="caption">
+              <h3>3D Modelling & 3D Printing</h3>
+              <p>A one‑day crash course in practical CAD and rapid prototyping for research.</p>
+            </div>
+          </article>
+
+          <!-- Slide 4 (Activities merged) -->
+          <article class="slide">
+            <figure>
+              <img src="./media/kenilworthdemo.gif" alt="Community outreach and AR heritage activities">
+            </figure>
+            <div class="caption">
+              <h3>Community & Outreach</h3>
+              <p>Hands‑on demos that bring XR/AI into classrooms and local heritage experiences.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact (UNMODIFIED) -->
+    <div class="contact-form" id="contact">
+      <h2>Contact Me</h2>
+      <form action="https://formspree.io/f/xnndynep" method="POST">
+        <div class="form-group">
+          <label for="email">Your Email:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <div class="footer">
+      <p>© 2024 Diar Abdlkarim</p>
+    </div>
+  </main>
 </div>
 
-<div class="nav">
-  <a href="#projects">Projects</a>
-  <a href="#publications">Publications</a>
-  <a href="#about">About</a>
-  <a href="#contact">Contact</a>
-</div>
-
-<div class="intro-text">
-  <p>As a research scientist and engineer, I believe we are in the midst of a fundamental shift in how we interact with technology. This transformation is largely driven by recent innovations in AI, which has rapidly become our primary interface with digital systems.
-This unifying development allows us all to more effectively benefit from the wonders of technology.
-My work exists at the intersection of scientific research in human-technology interaction (HTI), encompassing human-computer interaction (HCI), human-robot interaction (HRI), and immersive technologies (e.g., extended reality, XR).
-</p>
-</div>
-
-<div class="section" id="intro">
-  <div class="column">
-    <div class="column-text">
-      <h2>Research</h2>
-      <p>I conduct scientific research on human sensory-motor action and perception, developing advanced hand and finger tracking hardware, haptic feedback devices, and immersive XR software tools to study and enhance human-technology interaction in both physical and virtual environments.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/sub escape gif square.gif" alt="Research">
-    </div>
-  </div>
-  <div class="column">
-    <div class="column-text">
-      <h2>Hardware</h2>
-      <p>Development of research-grade hardware for real-time hand and finger tracking, including health and fitness devices that support clinical assessment of human touch and the development of brain-computer interfaces (BCI), incorporating electroencephalography (EEG), electromyography (EMG), electrical muscle stimulation (EMS), pupillometry, and eye tracking.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/Obi Reach IMU Prototype for hand and finger tracking.jpg" alt="Hardware">
-    </div>
-  </div>
-  <div class="column">
-    <div class="column-text">
-      <h2>Software</h2>
-      <p>Development of various software research tools, such as phone applications (see Tactile on iOS App Store), XR applications (see SideQuest App Store), and various communication tools for real-time data streaming between robotic devices and game engines like Unity or Unreal Engine.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/prendo_sim.png" alt="Software">
-    </div>
-  </div>
-</div>
-
-<div class="section" id="courses">
-  <div class="column">
-    <div class="column-text">
-      <h2>VR with Unity Game Engine for Scientists</h2>
-      <p>I designed and created this intensive 5-day course specifically to help new Master's and PhD students, as well as faculty members, who want to engage with virtual reality and learn how to develop VR-based scientific experiments. This is a hands-on course where I guide participants through the fundamentals of VR development in Unity, 3D environment design, interactive simulations, and data collection methods for research. By the end of the course, attendees become proficient in developing VR experiments for science and leave with the confidence to build their own research applications.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/unitycrashcourse.png" alt="VR Unity Course">
-    </div>
-  </div>
-  <div class="column">
-    <div class="column-text">
-      <h2>Motion Capture Crash Course</h2>
-      <p>I created this 3-day intensive crash course to help scientists and students quickly gain hands-on experience with motion capture technologies. The course focuses on marker-based optical motion capture, while also introducing nearly all other types of motion capture systems. By the end of the course, participants are able to set up a mocap system, calibrate it, collect, process, and analyze motion data for their own research applications.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture Course">
-    </div>
-  </div>
-  <div class="column">
-    <div class="column-text">
-      <h2>3D Modelling and 3D Printing Crash Course for Scientists</h2>
-      <p>I created this 1-day intensive crash course for anyone who wants to quickly become proficient in 3D modeling for 3D printing. The course is especially geared towards scientists who regularly need to design and fabricate cases, contraptions, and experimental stimuli using 3D printing. I guide participants through the essentials of CAD software and additive manufacturing, focusing on practical skills for creating custom research equipment and prototypes.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/3dprintingcourse.png" alt="3D Printing Course">
-    </div>
-  </div>
-</div>
-
-<div class="content-section" id="funding-achievements">
-  <h2>Funding and Achievements</h2>
-  
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>EPSRC Funded PhD on Sensory Motor Perception and Rehabilitation</h3>
-      <p>
-        I was awarded an EPSRC-funded PhD focused on upper-limb rehabilitation using augmented, immersive biofeedback in virtual reality. This research explored how sensory-motor perception can be harnessed to improve rehabilitation outcomes. I developed VR-based tasks to train arm movement and perception in patients with motor impairment, integrating real-time tactile and visual feedback. The work demonstrated that adaptive multi-sensory cues in VR can significantly enhance motor recovery and functional performance, laying a foundation for novel rehabilitation protocols.
-      </p>
-    </div>
-    <img src="./media/epsrc_logo.png" alt="EPSRC PhD" style="object-fit: cover; width: 150px; height: 100px;">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>EPSRC Postdoctoral Project on Collaborative Music Practice in Immersive Environments</h3>
-      <p>
-        As a named postdoctoral researcher on a £1.5M EPSRC-funded project (<a href="https://arme-project.co.uk/" target="_blank">the Augmented Reality Music Ensemble</a>), I took responsibility for system integration, user evaluation, and technology development. Working in a multidisciplinary team, I led the design of interactive virtual musicians and synchronized ensemble experiences. I developed software prototypes and conducted experimental studies on collaborative music practice in immersive AR/VR. This role contributed to the project’s goal of enhancing musical collaboration and rehearsal through cutting-edge immersive technology and data-driven evaluation.
-      </p>
-    </div>
-    <img src="./media/arme_logo.png" alt="ARME Project" style="object-fit: cover; width: 125px; height: 80px;">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Touch Testing Device for Chemotherapy-Induced Neuropathy</h3>
-      <p>
-        I secured a small proof-of-concept award (approximately £5K) to develop a touch-testing device for assessing peripheral neuropathy in chemotherapy patients. In collaboration with clinical partners, I designed an adaptive tactile test system to quantify sensory deficits caused by cancer treatment. This involved creating a portable device that delivers controlled touch stimuli and records patient responses, enabling objective measurement of neuropathy severity. The pilot implementation demonstrated feasibility of the approach and laid the groundwork for larger studies on neurotoxicity assessment in cancer care. <a href="https://adaptivetouchtesting.netlify.app/" target="_blank">Learn more</a>
-      </p>
-    </div>
-    <img src="./media/bbsrc_logo.jpg" alt="Touch Testing Device" style="object-fit: cover; width: 150px; height: 100px;">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Google Research Gift for Ten-Finger Typing in XR</h3>
-      <p>
-        I was awarded a £15K Google Research gift (through the TextInputVault funding project) to explore innovative human–computer interaction paradigms for ten-finger typing in immersive VR/AR. In this work, I investigated how users can achieve touch-typing speeds using freehand gestures and novel controllers in virtual environments. I led experiments and prototype development to optimize typing performance, collaborating closely with industry researchers. The project aimed to expand understanding of efficient text entry in XR and identify techniques for enabling natural multi-finger typing in head-mounted displays.
-      </p>
-    </div>
-    <img src="./media/google_research_logo.jpg" alt="Google XR Typing" style="object-fit: cover; width: 150px; height: 100px;">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>ACM Best Paper Award 2025</h3>
-      <p>
-        I co-authored a comprehensive review of text input methods in virtual and augmented reality (the XR TEXT Trove) which was honored with the ACM Best Paper Award at CHI 2025. This work cataloged over 170 XR text-entry techniques and analyzed their design features. The TEXT Trove project was featured in a <a href="https://www.roadtovr.com/xr-text-trove-vr-ar-text-input-typing-technique-catalog-max-di-luca/" target="_blank">RoadToVR article</a> describing our research initiative. Receiving the Best Paper Award highlights the impact of this review and our contribution to improving VR/AR text input usability through systematic analysis.
-      </p>
-    </div>
-    <img src="./media/acm_logo.png" alt="ACM Best Paper Award" style="object-fit: cover; width: 150px; height: 100px;">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>iCURe Explore Program for Commercialising AR Musician System</h3>
-      <p>
-        I was selected for the Innovate UK ICURe Explore programme, receiving £30K for a three-month full-time market exploration. During this period I refined the business model and market strategy for our augmented reality musician system (ARME project) and engaged with industry stakeholders. This programme provided structured support to assess the commercial potential of the AR ensemble technology. The ICURe funding accelerated our path toward translating research into practice by validating real-world applications for our AR musician platform.
-      </p>
-    </div>
-    <img src="./media/icure_explore_logo.png" alt="iCURe Explore" style="object-fit: cover; width: 150px; height: 100px;">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>iCURe Exploit Program Advancement</h3>
-      <p>
-        Following the Explore phase, we have successfully progressed to the ICURe Exploit program, positioning us to form a startup around the AR musician technology. This next stage carries potential funding up to ~£300K for intensive company formation and growth support. Building on the market insights from Explore, we are now developing a business plan and seeking investment to commercialize the AR musician ensemble system. Advancing through ICURe underscores confidence in the technology’s market viability and advances our goal of a spin-out company in VR/AR music tech.
-      </p>
-    </div>
-    <img src="./media/icure_exploit_logo.png" alt="iCURe Exploit" style="object-fit: cover; width: 150px; height: 100px;">
-  </div>
-</div>
-
-
-
-<!-- New Sections -->
-<div class="content-section" id="projects">
-  <h2>Projects</h2>
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Obi Robotics Advanced Hand-Tracking Glove</h3>
-      <p>Modular Hand-Tracking Glove ("Obi" Project). I built a custom glove that captures every subtle movement of my hand and fingers. It began as a tangle of wires and tiny IMU sensors taped to a glove – a rough prototype that let a digital hand on my screen mimic my own. That early experiment evolved into a refined, modular glove system I call "Obi Reach." Each finger’s motion is tracked with up to 3 degrees of freedom, sampling at 240 Hz for smooth, real-time response. The glove even incorporates an optical tracking module for precise position in space, and I’ve embedded small haptic actuators to provide tactile feedback to the wearer. Designing this from scratch – including custom electronics – was challenging, but incredibly rewarding. Now I can use this glove for everything from immersive VR interactions to controlling robotic hands, and it’s easily customizable for new experiments.</p>
-    </div>
-    <img src="./media/obi_glove.jpg" alt="Project 1">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Fingertip Indentation Feedback Device</h3>
-      <p>
-        This fingertip-mounted haptic device enables users to feel the sensation of pressing virtual buttons and encountering bumps in digital environments, creating a tangible sensory link to virtual worlds. The device features a compact housing and an indentor mechanism that converts rotary motion from a small geared motor into precise linear indentation of the fingertip. Real-time force feedback allows for immersive, engaging experiences by rendering tactile cues directly to the user. Beyond enhancing VR immersion, this tool is valuable for human-computer interaction research and assessing sensory-motor performance, such as evaluating patients with peripheral neuropathy and related conditions.
-      </p>
-    </div>
-    <img src="./media/Slide1.png" alt="Project 1">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Fingertip Vibrotactile Feedback Device</h3>
-      <p>
-        This fingertip-mounted haptic device delivers both low and high frequency vibrotactile signals to the user's fingertips, simulating the sensation of texture during exploratory touch and virtual object interaction. By providing nuanced vibration patterns, the device enhances the perception of surface qualities and material properties in digital environments. These tactile cues complement visual and auditory feedback, enriching multi-sensory experiences during active engagement. Clinically, the device is valuable for sensory assessment, enabling the evaluation of tactile function in patients with conditions such as Carpal Tunnel Syndrome (CTS), vibration-induced neuropathies, and other disorders affecting hand and finger sensation.
-      </p>
-    </div>
-    <img src="./media/Slide2.png" alt="Project 1">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Desktop Clinical Vibrotactile Assessment Device</h3>
-      <p>
-        This desktop, grounded device is designed specifically for clinical research and assessment of sensory-motor performance. Unlike fingertip-mounted haptic devices, this system provides precise vibrotactile stimuli to the user's fingertip while simultaneously measuring the force applied by the user. This dual capability enables comprehensive evaluation of tactile sensitivity and motor control, which is essential for diagnosing and monitoring conditions such as Carpal Tunnel Syndrome (CTS), vibration-induced neuropathies, and other disorders affecting hand function. The device is not intended for virtual or augmented reality applications, but rather for use in clinical and research settings. It is accompanied by a dedicated phone application that wirelessly interfaces with the device, allowing clinicians and researchers to run a variety of preset assessments and collect data either on-site or remotely, streamlining the process of sensory-motor evaluation.
-      </p>
-    </div>
-    <img src="./media/Slide3.png" alt="Desktop Clinical Vibrotactile Assessment Device">
-  </div>
-  
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Immersive VR Pool Game with Haptics</h3>
-      <p>As a fun experiment in combining simulation and tactile feedback, I created a virtual reality pool game in my home setup. I can step into a VR pool hall, grab a virtual cue, and line up shots just like real life. The special part is the custom haptic twist I added: I connected my wrist squeeze-band to the game. When the cue strikes a ball or the ball sinks into a pocket, the band gives my wrist a quick squeeze or pulse. The first time I felt that thud “for real,”. This project blends my love of games with my obsession for realism in VR, and it taught me a lot about syncing physical feedback with virtual physics.</p>
-    </div>
-    <img src="./media/billiard_experiment.png" alt="Project 2">
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Squeeze-Based Wrist Haptic Band</h3>
-      <p>To bring a sense of touch into my virtual experiences, I developed a haptic wristband that provides squeeze to my wrist. Essentially, it’s a band that can squeeze my wrist in sync with events in a simulation. I built this to explore whether pressure cues could make virtual actions feel more real – like the jolt of a virtual ball hitting a pool cue or the weight of a digital object. The design went through many iterations to get the squeeze just right: firm enough to be felt, but comfortable and safe. When something happens in VR, a small motor tightens the band for a split second, translating visual impact into a tactile one. It’s a quirky gadget, but strapping it on genuinely adds immersion – my brain starts interpreting those squeezes as if I’m touching the virtual world.</p>
-    </div>
-    <img src="./media/wrist_squeeze.gif" alt="Project 2">
-  </div>
-
-    <div class="subsection">
-    <div class="subsection-text">
-      <h3>VR Physics Object Stacking Sandbox</h3>
-      <p>This project is about creating realistic hand-object interactions without coding, but rather through the use of the physics engine provided by the game engine (Unity in this case). Users hands can naturally interact with the virtual world, hold objects, press buttons and manipulate the enviornment in a physically realistic and plausible manner.</p>
-    </div>
-    <img src="./media/ari_hands.gif" alt="Project 2">
-  </div>
-
-<div class="section" id="activities">
-  <div class="column">
-    <div class="column-text">
-      <h2>Warwickshire School District Immersive Tech Initiative</h2>
-      <p>I am actively engaged with the Warwickshire School District to introduce immersive and AI technologies to primary school students. This initiative aims to stimulate early interest and learning about cutting-edge technologies by bringing VR headsets, AI demonstrations, and interactive experiences directly into classrooms. Through hands-on workshops and guided demonstrations, students get to experience virtual reality environments, interact with AI systems, and learn about the future of technology in an accessible, age-appropriate manner. This early exposure helps cultivate curiosity and understanding of emerging technologies, potentially inspiring the next generation of scientists, engineers, and innovators.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/school_project.JPG" alt="Warwickshire School District Initiative">
-    </div>
-  </div>
-  <div class="column">
-    <div class="column-text">
-      <h2>Kenilworth Heritage Project - AR Mobile App Development</h2>
-      <p>I am collaborating with the Kenilworth Town Council to create immersive digital representations of the town's rich heritage through a new mobile phone application with augmented reality capabilities. This project involves developing an AR app that allows visitors and locals to explore historical sites, buildings, and landmarks through their smartphones. Users can point their cameras at specific locations to see historical overlays, interactive information panels, and virtual reconstructions of how the town looked in different time periods. This innovative approach to heritage preservation and tourism combines modern technology with historical storytelling, making the town's fascinating history more accessible and engaging for everyone.</p>
-    </div>
-    <div class="column-image">
-      <img src="./media/kenilworthdemo.gif" alt="Kenilworth Heritage Project">
-    </div>
-  </div>
-</div>
-
-<div class="content-section" id="publications">
-  <h2>Publications</h2>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Development and validation of the Interoceptive States Vocalisations (ISV) and Interoceptive States Point Light Displays (ISPLD) databases</h3>
-      <p>
-        <strong>Biotti, F.</strong>, Sidnick, L., Hatton, A. L., <strong>Abdlkarim, D.</strong>, Wing, A., Treasure, J., Happé, F., Brewer, R. (2025).<br>
-        <em>Behavior Research Methods, 57(5), 133.</em> Springer US New York.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Text Entry for XR Trove (TEXT): Collecting and Analyzing Techniques for Text Input in XR</h3>
-      <p>
-        Bhatia, A., Mughrabi, M. H., <strong>Abdlkarim, D.</strong>, Di Luca, M., Gonzalez-Franco, M., Ahuja, K., Seifi, H. (2025).<br>
-        In <em>Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems</em> (pp. 1–18).
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Hovering Over the Key to Text Input in XR</h3>
-      <p>
-        Gonzalez-Franco, M., <strong>Abdlkarim, D.</strong>, Bhatia, A., Macgregor, S., Fotso-Puepi, J. A., Gonzalez, E. J., Seifi, H., Di Luca, M., Ahuja, K. (2024).<br>
-        In <em>2024 IEEE International Symposium on Emerging Metaverse (ISEMV)</em> (pp. 13–16). IEEE.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Viewing angle matters in British Sign Language processing</h3>
-      <p>
-        Watkins, F., <strong>Abdlkarim, D.</strong>, Winter, B., Thompson, R. L. (2024).<br>
-        <em>Scientific Reports, 14(1), 1043.</em> Nature Publishing Group UK London.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>A methodological framework to assess the accuracy of virtual reality hand-tracking systems: A case study with the Meta Quest 2</h3>
-      <p>
-        <strong>Abdlkarim, D.</strong>, Di Luca, M., Aves, P., Maaroufi, M., Yeo, S.-H., Miall, R. C., Holland, P., Galea, J. M. (2024).<br>
-        <em>Behavior Research Methods, 56(2), 1052–1063.</em> Springer US New York.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Tempo change and leadership in ensemble synchronisation: a case study</h3>
-      <p>
-        Li, M. S., Tomczak, M., Elliot, M., Bradbury, A., Goodman, T., Abdulkarim, D., Di Luca, M., Hockman, J., Wing, A. (2023).
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Annotation of soft onsets in string ensemble recordings</h3>
-      <p>
-        Tomczak, M., Li, M. S., Bradbury, A., Elliott, M., Stables, R., Witek, M., Goodman, T., <strong>Abdlkarim, D.</strong>, Di Luca, M., Wing, A., et al. (2022).<br>
-        <em>arXiv preprint arXiv:2211.08848</em>.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Robot, Pass me the tool: Handle visibility facilitates task-oriented handovers</h3>
-      <p>
-        Ortenzi, V., Filipovica, M., <strong>Abdlkarim, D.</strong>, Pardi, T., Takahashi, C., Wing, A. M., Di Luca, M., Kuchenbecker, K. J. (2022).<br>
-        In <em>2022 17th ACM/IEEE International Conference on Human-Robot Interaction (HRI)</em> (pp. 256–264). IEEE.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>PrendoSim: Proxy-Hand-Based Robot Grasp Generator</h3>
-      <p>
-        <strong>Abdlkarim, D.</strong>, Ortenzi, V., Pardi, T., Filipovica, M., Wing, A., Kuchenbecker, K. J., Di Luca, M. (2021).<br>
-        In <em>18th International Conference on Informatics in Control, Automation and Robotics</em>. SciTePress Digital Library.
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>Acting is not the same as feeling: Emotion expression in gait is different for posed and induced emotions</h3>
-      <p>
-        Schuster, B. A., Sowden, S. L., <strong>Abdulkarim, D.</strong>, Wing, A. M., Cook, J. L. (2019).<br>
-        <em>Frontiers in Human Neuroscience, 13.</em>
-      </p>
-    </div>
-  </div>
-
-  <div class="subsection">
-    <div class="subsection-text">
-      <h3>L1 and L2 sign recognition: the role of visual angle</h3>
-      <p>
-        Watkins, F., <strong>Abdlkarim, D.</strong>, Thompson, R. L. (2018).<br>
-        In <em>3rd International Conference on Sign Language Acquisition</em> (Istanbul: Koç Üniversitesi).
-      </p>
-    </div>
-  </div>
-</div>
-
-<div class="content-section" id="about">
-  <h2>About Me</h2>
-  <p>I am a futurist with an optimistic belief in technology’s power to improve our lives. My passion lies in exploring how the human nervous system can interface with machines, especially as artificial intelligence transforms our world. From building custom haptic devices and VR gloves to developing immersive simulations, I strive to create technology that brings us closer to our digital experiences. My research is driven by curiosity about how we sense, move, and interact, and how new tools can expand what it means to be human in the age of AI.</p>
-</div>
-
-<div class="contact-form" id="contact">
-  <h2>Contact Me</h2>
-  <!-- 
-    To actually send an email/message to the user when the form is submitted,
-    you need a backend service or a third-party form handler.
-    Below is an example using Formspree (https://formspree.io/) as a simple solution.
-    Replace 'your@email.com' with your actual email address registered with Formspree.
-  -->
-  <form action="https://formspree.io/f/xnndynep" method="POST">
-    <div class="form-group">
-      <label for="email">Your Email:</label>
-      <input type="email" id="email" name="email" required>
-    </div>
-    <div class="form-group">
-      <label for="message">Message:</label>
-      <textarea id="message" name="message" rows="4" required></textarea>
-    </div>
-    <button type="submit">Send Message</button>
-  </form>
-  <!-- 
-    Alternatively, you can set up your own backend (Node.js, PHP, Python, etc.)
-    to process the form and send an email using an SMTP server or email API.
-    The frontend alone (HTML/JS) cannot send emails directly to you.
-  -->
-</div>
-
-<div class="footer">
-  <p>© 2024 Diar Abdlkarim</p>
-</div>
-
+<script>
+  // Show mobile toggle button only when sidebar collapses (CSS breakpoint mimic)
+  const mq = window.matchMedia('(max-width: 980px)');
+  const toggle = document.getElementById('menuToggle');
+  function setToggle(){ toggle.style.display = mq.matches ? 'block' : 'none'; }
+  setToggle(); mq.addEventListener('change', setToggle);
+</script>
+<script src="scripts.js"></script>
 </body>
 </html>
