@@ -256,6 +256,23 @@ body{
   .column{ width: 100%; float: none; }
   .column-text{ height: auto; }
   .header{ padding-bottom: 140px; }
+
+    /* 👇 ADD this block anywhere before the closing } of @media */
+  .profile-frame{
+    position: static;       /* participate in normal flow */
+    left: auto;
+    bottom: auto;
+    width: 120px;
+    height: 120px;
+    margin: 10px auto 0;    /* center under the title */
+  }
+  .header{
+    padding-bottom: 48px;   /* less space since avatar is now inline */
+  }
+  .intro-wrap{
+    margin-top: 12px;       /* no overlap with avatar */
+  }
+  
 }
 
 /* Clearfix for columns container */
