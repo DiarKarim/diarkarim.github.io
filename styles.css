@@ -228,6 +228,8 @@ body{
     position: fixed; top: 14px; left: 14px; z-index: 1100;
     background: var(--card); border: 1px solid var(--card-bd);
     color: var(--text); border-radius: 10px; padding: 10px 12px; cursor: pointer;
+    transition: left .25s ease; /* smooth nudge with the drawer */
+
   }
   .intro-wrap{ margin-top: 20px; }
   .column{ width: 100%; float: none; }
