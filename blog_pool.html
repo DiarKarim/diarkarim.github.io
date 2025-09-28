@@ -5,293 +5,239 @@
   <title>Can a Wrist Squeeze Teach a Better Pool Shot? — Concurrent Haptics for Complex VR Skills</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="A one-page, skimmable teaser about our study on concurrent wrist-based haptic guidance for complex motor actions in VR (e.g., a billiards shot)."/>
-  <style>
-    :root{
-      --bg:#0f1223;
-      --panel:#141938;
-      --ink:#e9ecff;
-      --muted:#b6b9d8;
-      --accent:#84a6ff;
-      --accent-2:#9ef0ff;
-      --card:#0c102a;
-      --ok:#8af1c4;
-      --warn:#ffd580;
-      --radius:18px;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-    html,body{background:var(--bg); color:var(--ink); margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; line-height:1.55;}
-    .wrap{max-width:1040px; margin:0 auto; padding:24px;}
-    header.hero{
-      background: radial-gradient(1200px 600px at 15% -10%, rgba(132,166,255,.25), transparent 50%),
-                  radial-gradient(1000px 500px at 85% 10%, rgba(158,240,255,.18), transparent 50%);
-      padding:72px 24px 36px;
-      border-radius:0 0 var(--radius) var(--radius);
-    }
-    .kicker{letter-spacing:.12em; text-transform:uppercase; color:var(--accent-2); font-weight:600; font-size:.82rem;}
-    h1{font-size:clamp(1.8rem, 2.6vw + 1rem, 3rem); margin:.25rem 0 0;}
-    .sub{color:var(--muted); max-width:68ch; margin-top:.5rem}
-    .cta-row{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap}
-    .btn{
-      display:inline-flex; align-items:center; gap:.6em;
-      background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      color:#06122a; border:none; padding:12px 16px; border-radius:12px; font-weight:700; text-decoration:none; box-shadow:var(--shadow);
-    }
-    .btn.secondary{background:#20264d; color:var(--ink)}
-    main{margin-top:36px}
-    section{background:var(--panel); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); margin-bottom:20px}
-    h2{font-size:1.35rem; margin:0 0 12px}
-    p{margin:0 0 12px}
-    ul{margin:0 0 8px 1.2rem}
-    .grid{display:grid; gap:18px}
-    @media (min-width:900px){ .grid.cols-2{grid-template-columns:1.1fr 1fr} }
-    .card{background:var(--card); border:1px solid #23284f; padding:18px; border-radius:14px}
-    .two-col{display:grid; gap:14px}
-    @media (min-width:800px){ .two-col{grid-template-columns:1fr 1fr} }
-    .muted{color:var(--muted)}
-    .callout{border-left:3px solid var(--accent); padding-left:12px}
-    .table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; border:1px solid #23284f}
-    .table th, .table td{padding:12px 14px; text-align:left; vertical-align:top}
-    .table thead th{background:#1a2150; color:#dfe6ff; font-size:.92rem}
-    .table tbody tr:nth-child(even){background:#121737}
-    figure{margin:0; background:#0a0e23; border:1px dashed #2f3570; border-radius:12px; display:grid; place-items:center; min-height:220px; position:relative}
-    figure img{max-width:100%; height:auto; display:block; border-radius:10px}
-    figcaption{position:absolute; inset:auto 12px 10px 12px; color:var(--muted); font-size:.88rem}
-    .placeholder{color:#7e86c9; padding:28px; text-align:center}
-    .svg-wrap{background:#0c102a; border:1px solid #23284f; border-radius:12px; padding:10px}
-    .foot{color:#9aa3d3; font-size:.85rem; text-align:center; margin:28px 0 12px}
-    .badge{display:inline-block; font-size:.74rem; padding:.2rem .5rem; color:#06122a; background:var(--ok); border-radius:999px; font-weight:700;}
-    .bullets li{margin-bottom:6px}
-    .byline{font-weight:600; color:#dbe0ff}
-    .meta{display:flex; gap:12px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:.9rem; margin-top:6px}
-    .pill{border:1px solid #2a2f5d; padding:.28rem .6rem; border-radius:999px}
-    .small{font-size:.9rem}
-    .disclaimer{font-size:.82rem; color:#9aa3d3}
-    /* code-style pre for the quick timeline legend */
-    pre{background:#0c102a; border:1px solid #23284f; padding:12px; border-radius:10px; overflow:auto}
-    a.inline{color:var(--accent-2); text-underline-offset:3px}
-  </style>
+  <link rel="stylesheet" href="blog.css" />
 </head>
 <body>
-  <header class="hero">
-    <div class="wrap">
-      <div class="kicker">Haptics &amp; HCI</div>
-      <h1>Can a Wrist Squeeze Teach a Better Pool Shot?</h1>
-      <p class="sub">We explore <em>concurrent</em> wrist-based haptic guidance during a complex, multi-joint action—an identical 45° billiards shot in immersive VR—and share a practical design approach for what to cue, and when.</p>
-      <div class="meta">
-        <span class="byline">Research teaser</span>
-        <span class="pill">Concurrent haptics</span>
-        <span class="pill">VR motor learning</span>
-      </div>
-      <div class="cta-row">
-        <!-- Replace href with your paper URL -->
-        <a class="btn" href="#" aria-label="Read the full paper">Read the full paper</a>
-        <a class="btn secondary" href="#figures">Jump to figures</a>
-      </div>
-    </div>
-  </header>
+  <div class="page">
+    <aside class="side-panel">
+      <a class="home-link" href="index.html" aria-label="Return to the homepage">← Back to home</a>
+      <div class="panel-title">On this page</div>
+      <nav class="side-nav">
+        <a href="#backstory">Backstory</a>
+        <a href="#why">Why concurrent haptics</a>
+        <a href="#study">Study at a glance</a>
+        <a href="#design">Design menu</a>
+        <a href="#figures">Figures</a>
+        <a href="#watch">What to watch for</a>
+        <a href="#how-to-read">How to read</a>
+        <a href="#audience">Who should care</a>
+      </nav>
+    </aside>
 
-  <main class="wrap">
-    <!-- Optional: insert your custom origin story paragraph -->
-    <section class="callout">
-      <h2>Backstory (from the authors)</h2>
-      <p><strong>Placeholder — replace with your paragraph:</strong> Concurrent haptic feedback is underexplored in haptics/HCI, especially for complex movements like a pool shot. We wanted to probe its impact on task performance and—equally important—offer a <em>designable</em> recipe for what kind of wrist feedback to provide during such tasks, grounded by a small exploratory study.</p>
-    </section>
+    <div class="main-column">
+      <header class="hero">
+        <div class="wrap">
+          <div class="kicker">Haptics &amp; HCI</div>
+          <h1>Can a Wrist Squeeze Teach a Better Pool Shot?</h1>
+          <p class="sub">We explore <em>concurrent</em> wrist-based haptic guidance during a complex, multi-joint action—an identical 45° billiards shot in immersive VR—and share a practical design approach for what to cue, and when.</p>
+          <div class="meta">
+            <span class="byline">Research teaser</span>
+            <span class="pill">Concurrent haptics</span>
+            <span class="pill">VR motor learning</span>
+          </div>
+          <div class="cta-row">
+            <a class="btn" href="#" aria-label="Read the full paper">Read the full paper</a>
+            <a class="btn secondary" href="#figures">Jump to figures</a>
+          </div>
+        </div>
+      </header>
 
-    <section class="grid cols-2">
-      <div class="card">
-        <h2>Why concurrent haptics?</h2>
-        <p>VR is famously <em>visual-first</em>. That’s great for presence, but it can drown out proprioceptive cues that drive fluent motor control—especially in bimanual, dynamically coupled actions. Gentle, <em>during-movement</em> wrist cues aim to re-balance attention toward intrinsic states as the motion unfolds. :contentReference[oaicite:0]{index=0}</p>
-        <ul class="bullets">
-          <li>Targets <strong>how</strong> you move (kinematics), not just <strong>what</strong> you achieve (task outcome).</li>
-          <li>Lightweight, wearable, and timing-precise for the “shot window”.</li>
-          <li>Complements (not replaces) visual guidance in VR training. </li>
-        </ul>
-      </div>
+      <main class="wrap">
+        <section class="callout" id="backstory">
+          <h2>Backstory (from the authors)</h2>
+          <p>Concurrent haptic feedback is underexplored in haptics/HCI, especially for complex movements like a pool shot. We wanted to probe its impact on task performance and—equally important—offer a <em>designable</em> recipe for what kind of wrist feedback to provide during such tasks, grounded by a small exploratory study.</p>
+        </section>
 
-      <div class="card">
-        <h2>What we built</h2>
-        <ul class="bullets">
-          <li><strong>Task:</strong> Immersive VR billiards, identical 45° shot, bimanual cue handling. :contentReference[oaicite:1]{index=1}</li>
-          <li><strong>Device:</strong> Tasbi-style wrist bands (squeeze + vibrotactile).</li>
-          <li><strong>Paradigm:</strong> Baseline → Adaptation (with haptics for one group) → Washout. </li>
-          <li><strong>Signals:</strong> Candidate mappings piloted; velocity-linked squeeze chosen for clarity. :contentReference[oaicite:2]{index=2}</li>
-        </ul>
-      </div>
-    </section>
+        <section class="grid cols-2" id="why">
+          <div class="card">
+            <h2>Why concurrent haptics?</h2>
+            <p>VR is famously <em>visual-first</em>. That’s great for presence, but it can drown out proprioceptive cues that drive fluent motor control—especially in bimanual, dynamically coupled actions. Gentle, <em>during-movement</em> wrist cues aim to re-balance attention toward intrinsic states as the motion unfolds.</p>
+            <ul class="bullets">
+              <li>Targets <strong>how</strong> you move (kinematics), not just <strong>what</strong> you achieve (task outcome).</li>
+              <li>Lightweight, wearable, and timing-precise for the “shot window”.</li>
+              <li>Complements (not replaces) visual guidance in VR training.</li>
+            </ul>
+          </div>
 
-    <section>
-      <h2>Study at a glance</h2>
-      <table class="table">
-        <thead>
-          <tr><th>Dimension</th><th>What we did</th><th>Why it matters</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Task</strong></td>
-            <td>Repeated 45° cut shot in VR with tracked hands &amp; cue</td>
-            <td>Complex, multi-joint action; repeatable &amp; analyzable</td>
-          </tr>
-          <tr>
-            <td><strong>Groups</strong></td>
-            <td>Haptics vs. visual-only control</td>
-            <td>Isolates the added value of wrist guidance</td>
-          </tr>
-          <tr>
-            <td><strong>Phases</strong></td>
-            <td>Baseline → Adaptation → Washout</td>
-            <td>Observe change with feedback, and what remains without it</td>
-          </tr>
-          <tr>
-            <td><strong>Signals</strong></td>
-            <td>Velocity-linked squeeze + two tactile “events” (slide/impact)</td>
-            <td>Maps to the spatiotemporal “feel” of the shot</td>
-          </tr>
-          <tr>
-            <td><strong>Metrics</strong></td>
-            <td>Shot-window hand kinematics + a simple outcome score</td>
-            <td>Separates <em>efficiency</em> from <em>task success</em></td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="disclaimer">No spoilers here—this post is a teaser. The paper reports what changed, when, and what persisted across phases. :contentReference[oaicite:3]{index=3}</p>
-    </section>
+          <div class="card">
+            <h2>What we built</h2>
+            <ul class="bullets">
+              <li><strong>Task:</strong> Immersive VR billiards with an identical 45° shot and tracked hands/cue.</li>
+              <li><strong>Device:</strong> Tasbi-style wrist bands (squeeze + vibrotactile) paired with head-mounted display tracking.</li>
+              <li><strong>Paradigm:</strong> Baseline → Adaptation (with haptics for one group) → Washout.</li>
+              <li><strong>Signals:</strong> Candidate mappings piloted; a velocity-linked squeeze offered the clearest timing cue.</li>
+            </ul>
+          </div>
+        </section>
 
-    <section>
-      <h2>Design menu we explored (pilot)</h2>
-      <div class="two-col">
-        <div class="card">
+        <section id="study">
+          <h2>Study at a glance</h2>
+          <table class="table">
+            <thead>
+              <tr><th>Dimension</th><th>What we did</th><th>Why it matters</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Task</strong></td>
+                <td>Repeated 45° cut shot in VR with tracked hands &amp; cue</td>
+                <td>Complex, multi-joint action; repeatable &amp; analyzable</td>
+              </tr>
+              <tr>
+                <td><strong>Groups</strong></td>
+                <td>Haptics vs. visual-only control</td>
+                <td>Isolates the added value of wrist guidance</td>
+              </tr>
+              <tr>
+                <td><strong>Phases</strong></td>
+                <td>Baseline → Adaptation → Washout</td>
+                <td>Observe change with feedback, and what remains without it</td>
+              </tr>
+              <tr>
+                <td><strong>Signals</strong></td>
+                <td>Velocity-linked squeeze + two tactile “events” (slide/impact)</td>
+                <td>Maps to the spatiotemporal “feel” of the shot</td>
+              </tr>
+              <tr>
+                <td><strong>Metrics</strong></td>
+                <td>Shot-window hand kinematics + a simple outcome score</td>
+                <td>Separates <em>efficiency</em> from <em>task success</em></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="disclaimer">This post is a teaser. The paper reports what changed, when, and what persisted across phases.</p>
+        </section>
+
+        <section id="design">
+          <h2>Design menu we explored (pilot)</h2>
+          <div class="two-col">
+            <div class="card">
+              <ul class="bullets">
+                <li><span class="badge">Chosen</span> <strong>Velocity-linked squeeze</strong></li>
+                <li><strong>Delayed bilateral squeeze</strong> (100&nbsp;ms offset)</li>
+                <li><strong>Hand-distance-linked squeeze</strong></li>
+                <li><strong>Aim-accuracy-linked squeeze</strong></li>
+              </ul>
+              <p class="muted small">Pilot participants preferred the velocity-linked mapping for conveying the shot’s timing and “feel.”</p>
+            </div>
+            <div class="card">
+              <h3 style="margin-top:0">One-minute timeline</h3>
+              <div class="svg-wrap" role="img" aria-label="Timeline diagram from Baseline to Adaptation to Washout">
+                <svg viewBox="0 0 880 180" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto">
+                      <path d="M0,0 L0,6 L6,3 z" fill="white"></path>
+                    </marker>
+                  </defs>
+                  <rect x="20" y="40" width="260" height="36" rx="8" fill="#1a2150"/>
+                  <rect x="300" y="40" width="260" height="36" rx="8" fill="#22306a"/>
+                  <rect x="580" y="40" width="260" height="36" rx="8" fill="#1a2150"/>
+                  <text x="150" y="64" text-anchor="middle" fill="#e9ecff" font-size="14">Baseline (no haptics)</text>
+                  <text x="430" y="64" text-anchor="middle" fill="#e9ecff" font-size="14">Adaptation (concurrent wrist cues)</text>
+                  <text x="710" y="64" text-anchor="middle" fill="#e9ecff" font-size="14">Washout (no haptics)</text>
+                  <line x1="280" y1="58" x2="300" y2="58" stroke="#e9ecff" stroke-width="2" marker-end="url(#arrow)"/>
+                  <line x1="560" y1="58" x2="580" y2="58" stroke="#e9ecff" stroke-width="2" marker-end="url(#arrow)"/>
+                  <text x="150" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">Establish baseline</text>
+                  <text x="430" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">Observe guided changes</text>
+                  <text x="710" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">See what sticks</text>
+                </svg>
+              </div>
+              <pre>Baseline ──▶ Adaptation (with concurrent cues) ──▶ Washout</pre>
+            </div>
+          </div>
+        </section>
+
+        <section id="figures">
+          <h2>Figures &amp; visual placeholders</h2>
+          <p class="muted small">Replace each placeholder with the corresponding figure from the paper. For convenience we reference the pages where these appear.</p>
+
+          <div class="two-col" style="margin-top:12px">
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE A — VR setup &amp; task</strong><br/>
+                <em>Insert paper Fig. 1 (see p. 6). Show HMD, trackers, Tasbi bands, and virtual table.</em>
+              </div>
+              <figcaption>Physical setup (A) and immersive billiards scene (B). Page 6.</figcaption>
+            </figure>
+
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE B — Hand path &amp; velocity</strong><br/>
+                <em>Insert paper Fig. 2 (see p. 7). Highlight the shot window and peak in the velocity profile.</em>
+              </div>
+              <figcaption>Top-down path and corresponding hand kinematics. Page 7.</figcaption>
+            </figure>
+          </div>
+
+          <div class="two-col" style="margin-top:12px">
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE C — Ball trajectories example</strong><br/>
+                <em>Insert paper Fig. 3 (see p. 8). Example paths for cue &amp; target balls.</em>
+              </div>
+              <figcaption>Trajectories after impact; example trial visualization. Page 8.</figcaption>
+            </figure>
+
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE D — Metric over trials</strong><br/>
+                <em>Insert paper Fig. 4 (see p. 9). Time-series view across all trials.</em>
+              </div>
+              <figcaption>Per-trial metric trend (no numerical spoilers). Page 9.</figcaption>
+            </figure>
+          </div>
+
+          <div class="two-col" style="margin-top:12px">
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE E — Metric by phase</strong><br/>
+                <em>Insert paper Fig. 5 (see p. 10). Phase-level summary visualization.</em>
+              </div>
+              <figcaption>Phase comparison for the kinematic metric. Page 10.</figcaption>
+            </figure>
+
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE F — Outcome trend</strong><br/>
+                <em>Insert paper Fig. 6 (see p. 11). Five-trial outcome averages as a visual cue (no values).</em>
+              </div>
+              <figcaption>Outcome metric trend over time (teaser). Page 11.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section id="watch">
+          <h2>What to watch for (no spoilers!)</h2>
           <ul class="bullets">
-            <li><span class="badge">Chosen</span> <strong>Velocity-linked squeeze</strong></li>
-            <li><strong>Delayed bilateral squeeze</strong> (100&nbsp;ms offset)</li>
-            <li><strong>Hand-distance-linked squeeze</strong></li>
-            <li><strong>Aim-accuracy-linked squeeze</strong></li>
+            <li><strong>Two kinds of “better”:</strong> one metric tracks <em>movement efficiency</em>, another tracks <em>task success</em>. They don’t always change in lockstep.</li>
+            <li><strong>Timing matters:</strong> some changes appear with the cues; others become clear after cues stop.</li>
+            <li><strong>Bimanual nuance:</strong> wrist cues on the shot-driving hand can influence the whole coordinated action.</li>
+            <li><strong>Design takeaway:</strong> mapping feedback to <em>movement state</em> (not just events) can feel informative rather than distracting.</li>
           </ul>
-          <p class="muted small">Pilot participants preferred the velocity-linked mapping for conveying the shot’s timing and “feel.” :contentReference[oaicite:4]{index=4}</p>
-        </div>
-        <div class="card">
-          <h3 style="margin-top:0">One-minute timeline</h3>
-          <div class="svg-wrap" role="img" aria-label="Timeline diagram from Baseline to Adaptation to Washout">
-            <!-- Simple, responsive SVG timeline -->
-            <svg viewBox="0 0 880 180" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <marker id="arrow" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto">
-                  <path d="M0,0 L0,6 L6,3 z" fill="white"></path>
-                </marker>
-              </defs>
-              <rect x="20" y="40" width="260" height="36" rx="8" fill="#1a2150"/>
-              <rect x="300" y="40" width="260" height="36" rx="8" fill="#22306a"/>
-              <rect x="580" y="40" width="260" height="36" rx="8" fill="#1a2150"/>
-              <text x="150" y="64" text-anchor="middle" fill="#e9ecff" font-size="14">Baseline (no haptics)</text>
-              <text x="430" y="64" text-anchor="middle" fill="#e9ecff" font-size="14">Adaptation (concurrent wrist cues)</text>
-              <text x="710" y="64" text-anchor="middle" fill="#e9ecff" font-size="14">Washout (no haptics)</text>
-              <line x1="280" y1="58" x2="300" y2="58" stroke="#e9ecff" stroke-width="2" marker-end="url(#arrow)"/>
-              <line x1="560" y1="58" x2="580" y2="58" stroke="#e9ecff" stroke-width="2" marker-end="url(#arrow)"/>
-              <text x="150" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">Establish baseline</text>
-              <text x="430" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">Observe guided changes</text>
-              <text x="710" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">See what sticks</text>
-            </svg>
+        </section>
+
+        <section class="grid cols-2">
+          <div class="card" id="how-to-read">
+            <h2>How to read the paper</h2>
+            <ol class="bullets">
+              <li>Skim <strong>Methods</strong> for the signal-mapping rationale and the clean task design.</li>
+              <li>Browse <strong>Results</strong> with an eye for <em>efficiency vs. accuracy</em> and <em>phase-wise patterns</em>.</li>
+              <li>Don’t miss the <strong>Discussion</strong> on attention, proprioception, and design heuristics for training &amp; rehab.</li>
+            </ol>
           </div>
-          <pre>Baseline ──▶ Adaptation (with concurrent cues) ──▶ Washout</pre>
-        </div>
-      </div>
-    </section>
-
-    <section id="figures">
-      <h2>Figures &amp; visual placeholders</h2>
-      <p class="muted small">Replace each placeholder with the corresponding figure from the paper. For convenience we reference the <em>pages</em> where these appear. :contentReference[oaicite:5]{index=5}</p>
-
-      <div class="two-col" style="margin-top:12px">
-        <!-- FIGURE A -->
-        <figure>
-          <div class="placeholder">
-            <strong>FIGURE A — VR setup &amp; task</strong><br/>
-            <em>Insert paper Fig. 1 (see p. 6). Show HMD, trackers, Tasbi bands, and virtual table.</em>
+          <div class="card" id="audience">
+            <h2>Who should care?</h2>
+            <ul class="bullets">
+              <li>VR training designers (sports, surgery, manufacturing)</li>
+              <li>Rehab engineers &amp; clinicians exploring wearable guidance</li>
+              <li>HCI researchers moving beyond “click buzzes” to continuous cues</li>
+            </ul>
+            <p style="margin-top:8px"><a class="inline" href="#">Read the full paper</a> for the details, figures, and stats.</p>
           </div>
-          <figcaption>Physical setup (A) and immersive billiards scene (B). Page 6.</figcaption>
-        </figure>
+        </section>
 
-        <!-- FIGURE B -->
-        <figure>
-          <div class="placeholder">
-            <strong>FIGURE B — Hand path &amp; velocity</strong><br/>
-            <em>Insert paper Fig. 2 (see p. 7). Highlight the shot window and peak in the velocity profile.</em>
-          </div>
-          <figcaption>Top-down path and corresponding hand kinematics. Page 7.</figcaption>
-        </figure>
-      </div>
-
-      <div class="two-col" style="margin-top:12px">
-        <!-- FIGURE C -->
-        <figure>
-          <div class="placeholder">
-            <strong>FIGURE C — Ball trajectories example</strong><br/>
-            <em>Insert paper Fig. 3 (see p. 8). Example paths for cue &amp; target balls.</em>
-          </div>
-          <figcaption>Trajectories after impact; example trial visualization. Page 8.</figcaption>
-        </figure>
-
-        <!-- FIGURE D -->
-        <figure>
-          <div class="placeholder">
-            <strong>FIGURE D — Metric over trials</strong><br/>
-            <em>Insert paper Fig. 4 (see p. 9). Time-series view across all trials.</em>
-          </div>
-          <figcaption>Per-trial metric trend (no numerical spoilers). Page 9.</figcaption>
-        </figure>
-      </div>
-
-      <div class="two-col" style="margin-top:12px">
-        <!-- FIGURE E -->
-        <figure>
-          <div class="placeholder">
-            <strong>FIGURE E — Metric by phase</strong><br/>
-            <em>Insert paper Fig. 5 (see p. 10). Phase-level summary visualization.</em>
-          </div>
-          <figcaption>Phase comparison for the kinematic metric. Page 10.</figcaption>
-        </figure>
-
-        <!-- FIGURE F -->
-        <figure>
-          <div class="placeholder">
-            <strong>FIGURE F — Outcome trend</strong><br/>
-            <em>Insert paper Fig. 6 (see p. 11). Five-trial outcome averages as a visual cue (no values).</em>
-          </div>
-          <figcaption>Outcome metric trend over time (teaser). Page 11.</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <section>
-      <h2>What to watch for (no spoilers!)</h2>
-      <ul class="bullets">
-        <li><strong>Two kinds of “better”:</strong> one metric tracks <em>movement efficiency</em>, another tracks <em>task success</em>. They don’t always change in lockstep.</li>
-        <li><strong>Timing matters:</strong> some changes appear with the cues; others become clear after cues stop.</li>
-        <li><strong>Bimanual nuance:</strong> wrist cues on the shot-driving hand can influence the whole coordinated action.</li>
-        <li><strong>Design takeaway:</strong> mapping feedback to <em>movement state</em> (not just events) can feel informative rather than distracting.</li>
-      </ul>
-    </section>
-
-    <section class="grid cols-2">
-      <div class="card">
-        <h2>How to read the paper</h2>
-        <ol class="bullets">
-          <li>Skim <strong>Methods</strong> for the signal-mapping rationale and the clean task design.</li>
-          <li>Browse <strong>Results</strong> with an eye for <em>efficiency vs. accuracy</em> and <em>phase-wise patterns</em>.</li>
-          <li>Don’t miss the <strong>Discussion</strong> on attention, proprioception, and design heuristics for training &amp; rehab.</li>
-        </ol>
-      </div>
-      <div class="card">
-        <h2>Who should care?</h2>
-        <ul class="bullets">
-          <li>VR training designers (sports, surgery, manufacturing)</li>
-          <li>Rehab engineers &amp; clinicians exploring wearable guidance</li>
-          <li>HCI researchers moving beyond “click buzzes” to continuous cues</li>
-        </ul>
-        <p style="margin-top:8px"><a class="inline" href="#">Read the full paper</a> for the details, figures, and stats. :contentReference[oaicite:6]{index=6}</p>
-      </div>
-    </section>
-
-    <p class="foot">© Your Lab — This post summarizes and teases findings from our paper on concurrent wrist-based haptics for complex motor actions in VR. Replace placeholders with your assets and links.</p>
-  </main>
+        <p class="foot">© Your Lab — This post summarizes and teases findings from our paper on concurrent wrist-based haptics for complex motor actions in VR. Replace placeholders with your assets and links.</p>
+      </main>
+    </div>
+  </div>
 </body>
 </html>
