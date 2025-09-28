@@ -194,7 +194,6 @@
     drawConnections(maxDist);
     drawNodes();
 
-    requestAnimationFrame(update);
   }
 
   function drawConnections(maxDist){
@@ -232,8 +231,4 @@
       ctx.fill();
     }
   }
-
-  resize();
-  window.addEventListener('resize', resize);
-  requestAnimationFrame(update);
 })();
