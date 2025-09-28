@@ -152,6 +152,8 @@
     }
   }
 
+  let rafId = null;
+
   function update(){
     const now = performance.now();
     if(pointer.active && now - pointer.last > 1200){
@@ -194,7 +196,7 @@
     drawConnections(maxDist);
     drawNodes();
 
-    requestAnimationFrame(update);
+    rafId = requestAnimationFrame(update);
   }
 
   function drawConnections(maxDist){
@@ -233,7 +235,19 @@
     }
   }
 
+  const handleVisibility = ()=>{
+    if(document.hidden){
+      if(rafId){
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }else if(!rafId){
+      rafId = requestAnimationFrame(update);
+    }
+  };
+
   resize();
   window.addEventListener('resize', resize);
-  requestAnimationFrame(update);
+  document.addEventListener('visibilitychange', handleVisibility);
+  handleVisibility();
 })();
