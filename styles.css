@@ -123,17 +123,32 @@ body{
 .header{
   position: relative;
   text-align: center;
-  background-image: url('./media/background.gif');
-  background-size: cover; background-position: center;
+  background:
+    radial-gradient(120% 140% at 80% 0%, rgba(34, 211, 238, 0.22), transparent 60%),
+    radial-gradient(140% 160% at 10% 10%, rgba(139, 92, 246, 0.2), transparent 55%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2));
   color: white;
-  padding: 60px 20px 120px;
+  padding: 80px 20px 140px;
   isolation: isolate;
+  overflow: hidden;
 }
 .header::after{
   content:""; position: absolute; inset: 0; z-index: 0;
   background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
 }
 .header > *{ position: relative; z-index: 1; }
+.hero-network{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-network canvas{
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: saturate(115%) contrast(105%);
+}
 .header h1{ margin: 0 0 6px 0; font-size: 42px; }
 .header p{ margin: 0 0 14px 0; font-size: 16px; color: #f0f3ff; opacity: 0.9; }
 
