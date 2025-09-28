@@ -143,9 +143,6 @@ body{
     radial-gradient(140% 160% at 10% 10%, rgba(139, 92, 246, 0.2), transparent 55%),
     linear-gradient(160deg, var(--bg-1), var(--bg-2));
   color: white;
-  padding: 88px 20px 190px;
-  isolation: isolate;
-  overflow: visible;
 }
 .header::after{
   content:""; position: absolute; inset: 0; z-index: 0;

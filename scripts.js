@@ -152,8 +152,6 @@
     }
   }
 
-  let rafId = null;
-
   function update(){
     const now = performance.now();
     if(pointer.active && now - pointer.last > 1200){
@@ -196,7 +194,6 @@
     drawConnections(maxDist);
     drawNodes();
 
-    rafId = requestAnimationFrame(update);
   }
 
   function drawConnections(maxDist){
@@ -234,20 +231,4 @@
       ctx.fill();
     }
   }
-
-  const handleVisibility = ()=>{
-    if(document.hidden){
-      if(rafId){
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-    }else if(!rafId){
-      rafId = requestAnimationFrame(update);
-    }
-  };
-
-  resize();
-  window.addEventListener('resize', resize);
-  document.addEventListener('visibilitychange', handleVisibility);
-  handleVisibility();
 })();
