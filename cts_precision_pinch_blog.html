@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A clinic-ready precision pinch test for tracking carpal tunnel recovery, with a reader-friendly overview of the PHUA task and study design." />
+  <link rel="stylesheet" href="blog.css" />
+  <div class="page">
+    <aside class="side-panel">
+      <a class="home-link" href="index.html" aria-label="Return to the homepage">← Back to home</a>
+      <div class="panel-title">On this page</div>
+      <nav class="side-nav">
+        <a href="#overview">Why this matters</a>
+        <a href="#questions">Key questions</a>
+        <a href="#clinic">Clinic comparisons</a>
+        <a href="#device">Device &amp; setup</a>
+        <a href="#phua">PHUA timeline</a>
+        <a href="#insights">Result teasers</a>
+        <a href="#read">How to explore</a>
+        <a href="#audience">Who should care</a>
+      </nav>
+    </aside>
+    <div class="main-column">
+      <header class="hero">
+        <div class="wrap">
+          <div class="kicker">Rehab &amp; Haptics</div>
+          <h1>Can a Fingertip ‘Pinch’ Predict Your Carpal Tunnel Recovery?</h1>
+          <p class="sub">Inside a new handheld test that captures the tiny force adjustments your thumb and index finger make while lifting everyday objects before and after carpal tunnel surgery.</p>
+          <div class="meta">
+            <span class="byline">Research teaser</span>
+            <span class="pill">Carpal tunnel syndrome</span>
+            <span class="pill">Precision pinch</span>
+          </div>
+          <div class="cta-row">
+            <a class="btn" href="#" aria-label="Read the full paper">Read the full paper</a>
+            <a class="btn secondary" href="#phua">Jump to PHUA timeline</a>
+          </div>
+        </div>
+      </header>
+      <main class="wrap">
+        <section class="callout" id="overview">
+          <h2>Why this matters</h2>
+          <p>Carpal tunnel syndrome can make everyday tasks—zipping a jacket, picking up coins, opening a cup—surprisingly tricky. Symptom scores and strength tests help, but they often miss the subtle force control that keeps objects from slipping.</p>
+          <p>Our team set out to build something better: a clinic-ready, handheld device that measures the <em>precision pinch</em> between your thumb and index finger in real time. By tracking grip and load forces during a lift, it offers an objective signal of sensorimotor control before and after surgery.</p>
+        </section>
+        <section class="grid cols-2" id="questions">
+          <div class="card">
+            <h2>What this study asked</h2>
+            <ul class="bullets">
+              <li>Do people with carpal tunnel syndrome (CTS) use <em>different fingertip forces</em> during a simple pick-up task?</li>
+              <li>Does object <strong>weight</strong> change those forces—especially at lighter loads?</li>
+              <li>How do fingers <strong>react to a sudden weight change</strong> (the “catch”)?</li>
+              <li>Do these signals <strong>shift after surgical decompression</strong> of the carpal tunnel?</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Why pinch, not just grip?</h2>
+            <ul class="bullets">
+              <li>Thumb–index pinch relies heavily on the <strong>median nerve</strong>—the nerve compressed in CTS.</li>
+              <li>Pinch tasks demand finely scaled force to prevent <em>slip</em> or <em>crush</em>.</li>
+              <li>The protocol is fast for clinicians to run yet produces rich, objective data for analysis.</li>
+            </ul>
+          </div>
+        </section>
+        <section id="clinic">
+          <h2>How this test compares with familiar clinic measures</h2>
+          <table class="table">
+            <thead>
+              <tr><th>Typical clinic measure</th><th>What it captures</th><th>What it may miss</th><th>What precision-pinch adds</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Max grip / pinch strength</td>
+                <td>Peak force output</td>
+                <td>Moment-to-moment control and adaptation</td>
+                <td>Continuous grip &amp; load forces across phases of a real task</td>
+              </tr>
+              <tr>
+                <td>Symptom questionnaires</td>
+                <td>Patient-reported pain &amp; function</td>
+                <td>Objective, sensorimotor details</td>
+                <td>Quantitative force, force-rate, and variability</td>
+              </tr>
+              <tr>
+                <td>Nerve conduction studies</td>
+                <td>Electrical conduction severity</td>
+                <td>Everyday task performance</td>
+                <td>Behavioural readout tied to object handling</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="disclaimer">The paper walks through instrumentation, filtering, and statistics for each metric.</p>
+        </section>
+        <section id="device">
+          <h2>Inside the precision-pinch prototype</h2>
+          <div class="two-col">
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE A — Sensorized pinch device</strong><br/>
+                <em>Insert the paper’s hardware figure showing the 3D-printed housing, force sensor, and electromagnet.</em>
+              </div>
+              <figcaption>Handheld device with interchangeable weights for lift and catch phases.</figcaption>
+            </figure>
+            <figure>
+              <div class="placeholder">
+                <strong>FIGURE B — Alternate layouts</strong><br/>
+                <em>Swap in comparative designs that inspired the final build (e.g., legacy pinch rigs).</em>
+              </div>
+              <figcaption>Prior pinch rigs that motivated our compact, clinic-friendly form factor.</figcaption>
+            </figure>
+          </div>
+          <p class="muted small" style="margin-top:12px">Replace these placeholders with your actual device photos or CAD renders.</p>
+        </section>
+        <section class="grid cols-2" id="phua">
+          <div class="card">
+            <h2>PHUA task at a glance</h2>
+            <div class="svg-wrap" role="img" aria-label="Pinch Holding-up Activity (PHUA) timeline">
+              <svg role="presentation" width="100%" viewBox="0 0 920 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <marker id="phua-arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#e9ecff" />
+                  </marker>
+                </defs>
+                <rect x="20" y="40" width="150" height="36" rx="8" ry="8" fill="#1a2150" />
+                <text x="95" y="62" text-anchor="middle" fill="#e9ecff" font-size="13">Lift to 5 cm</text>
+                <line x1="170" y1="58" x2="220" y2="58" stroke="#9ef0ff" stroke-width="2" marker-end="url(#phua-arrow)" />
+                <rect x="220" y="40" width="150" height="36" rx="8" ry="8" fill="#1a2150" />
+                <text x="295" y="62" text-anchor="middle" fill="#e9ecff" font-size="13">Hold (5 s)</text>
+                <line x1="370" y1="58" x2="420" y2="58" stroke="#9ef0ff" stroke-width="2" marker-end="url(#phua-arrow)" />
+                <rect x="420" y="40" width="150" height="36" rx="8" ry="8" fill="#1a2150" />
+                <text x="495" y="62" text-anchor="middle" fill="#e9ecff" font-size="13">Lift to 30 cm</text>
+                <line x1="570" y1="58" x2="620" y2="58" stroke="#9ef0ff" stroke-width="2" marker-end="url(#phua-arrow)" />
+                <rect x="620" y="40" width="150" height="36" rx="8" ry="8" fill="#1a2150" />
+                <text x="695" y="62" text-anchor="middle" fill="#e9ecff" font-size="13">Hold (5 s)</text>
+                <line x1="320" y1="120" x2="460" y2="120" stroke="#ffd580" stroke-width="2" marker-end="url(#phua-arrow)" />
+                <rect x="180" y="102" width="140" height="36" rx="8" ry="8" fill="#33223d" stroke="#ffd580" stroke-width="2" />
+                <text x="250" y="124" text-anchor="middle" fill="#ffd580" font-size="13">“Catch” (load change)</text>
+                <text x="690" y="120" text-anchor="middle" fill="#9aa3d3" font-size="12">Return &amp; replace</text>
+              </svg>
+            </div>
+            <p class="muted small">Pinch Holding-up Activity (PHUA): lift–hold–lift–hold with an optional brief “catch” perturbation to test rapid adjustment.</p>
+          </div>
+          <div class="card">
+            <h2>Signals we monitor</h2>
+            <ul class="bullets">
+              <li><strong>Grip force (FG)</strong> vs. <strong>load force (FL)</strong> as the object rises and stabilises.</li>
+              <li><strong>Force-rate</strong> changes when the catch event suddenly increases the load.</li>
+              <li><strong>Variability</strong> during steady holds that hints at sensorimotor confidence.</li>
+              <li><strong>Asymmetry across hands</strong> to see how the impaired limb compensates.</li>
+            </ul>
+            <p class="muted small">The manuscript dives into filtering, windowing, and linear-mixed models for each metric.</p>
+          </div>
+        </section>
+
+        <section id="insights">
+          <h2>What to watch in the results</h2>
+          <ul class="bullets">
+            <li><strong>Light loads tell a story:</strong> CTS participants often over-grip lighter weights—watch for corrections after surgery.</li>
+            <li><strong>Catch responses:</strong> The electromagnet “catch” reveals how quickly grip force ramps when an object suddenly gets heavier.</li>
+            <li><strong>Retention:</strong> Do improved force profiles persist once the cues and therapist oversight step back?</li>
+          </ul>
+        </section>
+        <section class="grid cols-2">
+          <div class="card" id="read">
+            <h2>How to explore the paper</h2>
+            <ol class="bullets">
+              <li>Start with <strong>Methods</strong> for the device instrumentation and calibration.</li>
+              <li>Skim <strong>Results</strong> to compare pre- vs. post-surgery force traces.</li>
+              <li>Focus on <strong>Discussion</strong> for rehab implications and integration with standard clinic tests.</li>
+            </ol>
+          </div>
+          <div class="card" id="audience">
+            <h2>Who should care?</h2>
+            <ul class="bullets">
+              <li>Hand surgeons tracking post-operative progress.</li>
+              <li>Occupational therapists designing grip retraining protocols.</li>
+              <li>Wearable technologists building sensor-rich clinic tools.</li>
+            </ul>
+            <p style="margin-top:8px"><a class="inline" href="#">Read the full paper</a> for participant demographics, stats, and device schematics.</p>
+          </div>
+        </section>
+        <section class="callout" id="cta">
+          <h2>Want the full data?</h2>
+          <p>Drop your own PDF link or preprint URL into the buttons above so readers can dive into participant tables, statistical models, and supplementary videos.</p>
+        </section>
+        <p class="foot">© Your Lab — Precision pinch, explained for patients and curious minds. Replace placeholders with your figures and working links.</p>
+      </main>
+    </div>
+  </div>

@@ -16,13 +16,22 @@
       <p>Research Scientist</p>
     </div>
     <nav class="side-nav">
-      <a href="index.html#top">🏠 Home</a>
-      <a href="index.html#intro">🧭 Intro</a>
-      <a href="index.html#courses">🎓 Courses & Activities</a>
-      <a href="projects.html">🧪 Projects</a>
-      <a href="publications.html">📚 Publications</a>
-      <a href="funding.html">💠 Funding</a>
-      <a href="index.html#contact">✉️ Contact</a>
+      <a href="index.html#top" data-icon="double-arc">Home</a>
+      <a href="index.html#intro" data-icon="corner">Intro</a>
+      <a href="index.html#courses" data-icon="s-curve">Courses &amp; Activities</a>
+      <a href="projects.html" data-icon="broadcast">Projects</a>
+      <a href="publications.html" data-icon="stack">Publications</a>
+      <a href="funding.html" data-icon="arc-base">Funding</a>
+      <a href="blog_pool.html" data-icon="menu">Haptics Pool</a>
+      <a href="cts_precision_pinch_blog" data-icon="arrow">Carpal Tunnel</a>
+      <a href="index.html#contact" data-icon="arrow">Contact</a>
+      <a
+        href="https://calendar.google.com/calendar/u/0/r/week"
+        class="meeting-cta"
+        data-icon="calendar"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Book a Meeting</a>
     </nav>
     <div class="small">© 2025</div>
   </aside>
@@ -33,6 +42,9 @@
 
     <!-- Hero header (kept; only visual restyle) -->
     <header class="header">
+      <div class="hero-network" aria-hidden="true">
+        <canvas id="heroNetworkCanvas"></canvas>
+      </div>
       <div class="profile-frame">
         <img src="./media/profilepic.jpeg" alt="Profile Picture">
       </div>
@@ -47,11 +59,7 @@
     <div class="intro-wrap">
       <div class="intro-text">
         <p>
-          Technology is undergoing a profound shift, with AI becoming our natural interface to the digital world.
-          I study human–technology interaction across HCI, HRI, and immersive XR, focusing on how the nervous system connects with machines.
-          My work blends science and engineering to understand action and perception and to design human‑centered systems.
-          I build hand‑ and finger‑tracking hardware, haptic devices, and XR software tools.
-          The goal is credible touch and interaction that improve how we sense, move, and collaborate.
+            As AI becomes the default interface to computing, the real question is how the brain adapts at the neural and behavioral levels. I study Human-Computer Interaction (HCI), Human-Robot Interaction (HRI), and extended reality (XR) to reveal how perception–action circuits encode, predict, and recalibrate during interaction with machines. To test these mechanisms, I build tracking hardware, haptic devices, and XR tools that capture fine-grained sensorimotor signals and close the loop in real time. The goal is brain-informed experiences that strengthen perception, movement, and collaboration.
         </p>
       </div>
     </div>
@@ -61,7 +69,7 @@
       <div class="column">
         <div class="column-text">
           <h2>Research</h2>
-          <p>I study human action and perception to design better human–technology interaction.</p>
+          <p> My work spans human–computer interaction, sensorimotor neuroscience, and rehabilitation. I study how people plan and adapt hand actions to reveal the mechanisms of neuroplasticity. These findings set measurement priorities, shaping study designs and clarifying clinical success criteria.</p>
         </div>
         <div class="column-image">
           <img src="./media/sub escape gif square.gif" alt="Research">
@@ -70,7 +78,7 @@
       <div class="column">
         <div class="column-text">
           <h2>Hardware</h2>
-          <p>I build research‑grade hand and finger tracking hardware and haptic devices.</p>
+          <p>Hardware translates those priorities into instruments. I build hand and finger‑tracking systems with haptics that capture motion and deliver tactile cues. They enable experiments linking touch, action, and learning with the precision studies demand.</p>
         </div>
         <div class="column-image">
           <img src="./media/Obi Reach IMU Prototype for hand and finger tracking.jpg" alt="Hardware">
@@ -79,7 +87,7 @@
       <div class="column">
         <div class="column-text">
           <h2>Software</h2>
-          <p>I develop XR and data tools that connect robots and game engines in real time.</p>
+          <p>Software turns instrument data into understanding. I develop XR pipelines that link robots and game engines in real time, synchronise devices, and analyze movement. Outputs become interpretable measures of brain–behaviour change and drive engaging rehabilitation experiences.</p>
         </div>
         <div class="column-image">
           <img src="./media/prendo_sim.png" alt="Software">
