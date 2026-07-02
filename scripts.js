@@ -1,280 +1,298 @@
 /* ============================================================
    Diar Abdlkarim — site interactions
-   1. Scroll-driven "opening brain" hero
+   1. 3D "opening brain" (Three.js) — mouse + scroll driven
    2. Nav scroll state + mobile menu
    3. Scroll-reveal
    ============================================================ */
 
 /* -----------------------------------------------------------
-   1. THE OPENING BRAIN
-   A brain, drawn from a field of fine particles, sits quietly
-   behind the page. Move the cursor and it breathes and parts
-   beneath your hand. Scroll, and it opens along the midline —
-   the hemispheres draw apart and the inner structures light up
-   in turn (prefrontal cortex, motor & somatosensory strip,
-   thalamus, hippocampus, amygdala, cerebellum). Each structure
-   flares as you reach it, then streams outward and dissolves
-   into the section it names — the anatomy becoming the page.
+   1. THE OPENING BRAIN (WebGL)
+   A real 3D brain, built as a luminous point cloud: two
+   wrinkled cortical hemispheres, cerebellum and brainstem.
+   Move the mouse and the whole brain turns to follow you.
+   Scroll, and the hemispheres draw apart along the midline —
+   opening the brain to reveal its deep structures (prefrontal
+   cortex, motor & somatosensory strip, thalamus, hippocampus,
+   amygdala, cerebellum), each flaring with its label before
+   dissolving into the section it names.
    ----------------------------------------------------------- */
-(function openingBrain() {
+(function brain3D() {
   const canvas = document.getElementById('brainCanvas');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  if (typeof THREE === 'undefined') { console.warn('[brain] three.js failed to load'); return; }
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+  } catch (e) { console.warn('[brain] WebGL unavailable', e); return; }
+
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  renderer.setClearColor(0x000000, 0);
 
-  /* --- brain silhouette (left-facing profile), in a 220 x 180 viewBox --- */
-  const VB_W = 220, VB_H = 180;
-  const BRAIN_PATH =
-    'M54 132 C34 130 22 112 30 96 C14 90 12 66 30 58 ' +
-    'C24 40 44 26 64 34 C68 18 92 14 104 28 ' +
-    'C118 14 146 18 150 40 C172 38 188 60 176 80 ' +
-    'C190 92 186 118 166 122 C168 140 146 152 128 144 ' +
-    'C120 160 92 160 84 146 C74 154 58 150 54 132 Z';
-  const path = new Path2D(BRAIN_PATH);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+  camera.position.set(0, 0.12, 4.3);
 
-  /* subtle gyri / fissure strokes drawn over the particle fill */
-  const GYRI = [
-    'M60 60 C82 70 78 96 60 104',
-    'M96 40 C104 66 96 96 104 128',
-    'M132 44 C120 74 138 96 126 122',
-    'M150 66 C168 78 160 100 150 108',
-    'M74 118 C96 112 120 120 140 112',
-  ].map((d) => new Path2D(d));
+  const root = new THREE.Group();
+  scene.add(root);
 
-  /* inner structures — anchor in viewBox space, tied to a section.
-     revealAt = scroll progress (0..1) at which the structure flares. */
-  const STRUCTURES = [
-    { key: 'prefrontal',    label: 'Prefrontal cortex', ax: 58,  ay: 74,  hue: 'gold',   revealAt: 0.16 },
-    { key: 'motor',         label: 'Motor cortex',      ax: 96,  ay: 40,  hue: 'ivory',  revealAt: 0.30 },
-    { key: 'somatosensory', label: 'Somatosensory',     ax: 120, ay: 46,  hue: 'violet', revealAt: 0.42 },
-    { key: 'thalamus',      label: 'Thalamus',          ax: 110, ay: 92,  hue: 'gold',   revealAt: 0.54 },
-    { key: 'hippocampus',   label: 'Hippocampus',       ax: 120, ay: 108, hue: 'teal',   revealAt: 0.66 },
-    { key: 'amygdala',      label: 'Amygdala',          ax: 96,  ay: 118, hue: 'violet', revealAt: 0.78 },
-    { key: 'cerebellum',    label: 'Cerebellum',        ax: 166, ay: 122, hue: 'ivory',  revealAt: 0.90 },
-  ];
-
-  const HUES = {
-    ivory:  [242, 240, 232],
-    gold:   [226, 192, 120],
-    violet: [168, 150, 225],
-    teal:   [140, 208, 198],
+  /* ---------- palette ---------- */
+  const C = {
+    ivory:  new THREE.Color(0.95, 0.94, 0.90),
+    gold:   new THREE.Color(0.89, 0.75, 0.47),
+    violet: new THREE.Color(0.66, 0.59, 0.88),
+    teal:   new THREE.Color(0.55, 0.82, 0.78),
   };
 
-  let W, H, DPR;
-  let particles = [];
-  const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, active: false };
-  let scrollP = 0;      // eased scroll progress 0..1
-  let scrollTarget = 0;
-  let t = 0;
-
-  /* map a viewBox point to the current screen transform */
-  let cx, cy, scale;
-  function computeTransform() {
-    const box = Math.min(W, H) * (W < 720 ? 0.82 : 0.66);
-    scale = box / VB_H;
-    cx = W * 0.5;
-    cy = H * 0.46;
+  /* ---------- helpers ---------- */
+  function sphereDir() {
+    const u = Math.random() * 2 - 1;
+    const t = Math.random() * Math.PI * 2;
+    const s = Math.sqrt(1 - u * u);
+    return new THREE.Vector3(s * Math.cos(t), u, s * Math.sin(t));
   }
-  function toScreenX(vx) { return cx + (vx - VB_W / 2) * scale; }
-  function toScreenY(vy) { return cy + (vy - VB_H / 2) * scale; }
-
-  function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = canvas.clientWidth = window.innerWidth;
-    H = canvas.clientHeight = window.innerHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    computeTransform();
-    seed();
+  /* layered trig field ≈ gyri & sulci wrinkling */
+  function wrinkle(x, y, z) {
+    return 0.05 * Math.sin(x * 9 + y * 4) * Math.sin(y * 7 + z * 3) * Math.sin(z * 8 + x * 5)
+         + 0.022 * Math.sin(x * 16 + 1.7) * Math.sin(y * 14 + 0.4) * Math.sin(z * 15 + 2.9);
+  }
+  function pickColor() {
+    const r = Math.random();
+    return r < 0.80 ? C.ivory : r < 0.93 ? C.gold : C.violet;
+  }
+  function makePoints(positions, colors, size, opacity) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    g.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const m = new THREE.PointsMaterial({
+      size, vertexColors: true, transparent: true, opacity,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    });
+    return new THREE.Points(g, m);
   }
 
-  /* rejection-sample particle homes inside the brain path (viewBox space) */
-  function seed() {
-    const target = Math.round(Math.min(1100, Math.max(420, (W * H) / 2400)));
-    particles = [];
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);        // test in raw viewBox coords
-    let guard = 0;
-    while (particles.length < target && guard < target * 60) {
-      guard++;
-      const vx = Math.random() * VB_W;
-      const vy = Math.random() * VB_H;
-      if (!ctx.isPointInPath(path, vx, vy)) continue;
-      const side = vx < 110 ? -1 : 1;          // hemisphere
-      particles.push({
-        vx, vy, side,
-        jx: (Math.random() - 0.5) * 3,         // organic jitter
-        jy: (Math.random() - 0.5) * 3,
-        tw: Math.random() * Math.PI * 2,        // twinkle phase
-        sp: 0.6 + Math.random() * 0.9,          // twinkle speed
-        depth: 0.5 + Math.random() * 0.5,       // parallax depth
-        hue: Math.random() < 0.78 ? 'ivory' : (Math.random() < 0.5 ? 'gold' : 'violet'),
-      });
+  /* ---------- cortex hemispheres ---------- */
+  const HEMI_N = 5200;
+  function buildHemisphere(side /* -1 left, +1 right */) {
+    const pos = [], col = [];
+    const RX = 0.50, RY = 0.60, RZ = 0.92;      // hemisphere radii
+    for (let i = 0; i < HEMI_N; i++) {
+      const d = sphereDir();
+      // keep points on this hemisphere's outer half; flatten the medial wall
+      d.x = Math.abs(d.x) * side;
+      let x = d.x * RX, y = d.y * RY, z = d.z * RZ;
+      if (Math.abs(d.x) < 0.22) {
+        // medial wall — pull to a flat inner face so the split looks anatomical
+        x = side * 0.05 * Math.random();
+      }
+      const w = 1 + wrinkle(x + side, y, z) * 2.0;
+      x *= w; y *= w; z *= w;
+      // taper the underside (temporal lobe hangs lower at the front-middle)
+      if (y < -0.25 && z < -0.45) y *= 0.72;
+      pos.push(x, y, z);
+      const c = pickColor();
+      const b = 0.45 + Math.random() * 0.55;
+      col.push(c.r * b, c.g * b, c.b * b);
     }
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctx.restore();
+    const pts = makePoints(pos, col, 0.021, 0.9);
+    const grp = new THREE.Group();
+    grp.add(pts);
+    grp.position.x = side * 0.30;
+    grp.userData = { side, pts };
+    return grp;
   }
+  const hemiL = buildHemisphere(-1);
+  const hemiR = buildHemisphere(1);
+  root.add(hemiL, hemiR);
+
+  /* ---------- cerebellum + brainstem ---------- */
+  const core = new THREE.Group();
+  {
+    const pos = [], col = [];
+    // cerebellum: finely striated ball at the back underside
+    for (let i = 0; i < 1500; i++) {
+      const d = sphereDir();
+      let x = d.x * 0.44, y = d.y * 0.30, z = d.z * 0.40;
+      const w = 1 + 0.05 * Math.sin(y * 42) + 0.02 * Math.sin(x * 20) * Math.sin(z * 18);
+      x *= w; y *= w; z *= w;
+      pos.push(x, y - 0.58, z - 0.66);
+      const c = pickColor(); const b = 0.4 + Math.random() * 0.5;
+      col.push(c.r * b, c.g * b, c.b * b);
+    }
+    // brainstem: a short tilted column
+    for (let i = 0; i < 380; i++) {
+      const t = Math.random();
+      const a = Math.random() * Math.PI * 2;
+      const r = 0.10 * Math.sqrt(Math.random());
+      pos.push(Math.cos(a) * r, -0.42 - t * 0.42, -0.28 - t * 0.16 + Math.sin(a) * r);
+      const b = 0.35 + Math.random() * 0.45;
+      col.push(C.ivory.r * b, C.ivory.g * b, C.ivory.b * b);
+    }
+    core.add(makePoints(pos, col, 0.019, 0.8));
+  }
+  root.add(core);
+
+  /* ---------- deep structures (revealed by the split) ---------- */
+  function makeLabel(text) {
+    const cv = document.createElement('canvas');
+    cv.width = 512; cv.height = 96;
+    const cx2 = cv.getContext('2d');
+    cx2.font = '600 40px Inter, system-ui, sans-serif';
+    cx2.fillStyle = 'rgba(243,241,234,0.96)';
+    cx2.textBaseline = 'middle';
+    cx2.fillText(text.toUpperCase(), 14, 50);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.minFilter = THREE.LinearFilter;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: tex, transparent: true, opacity: 0, depthWrite: false, depthTest: false,
+    }));
+    sp.center.set(0, 0.5);
+    sp.scale.set(0.98, 0.184, 1);
+    return sp;
+  }
+
+  function makeCluster(color, n, shape) {
+    const pos = [], col = [];
+    for (let i = 0; i < n; i++) {
+      const p = shape();
+      pos.push(p.x, p.y, p.z);
+      const b = 0.6 + Math.random() * 0.4;
+      col.push(color.r * b, color.g * b, color.b * b);
+    }
+    return makePoints(pos, col, 0.026, 0);
+  }
+  const ell = (rx, ry, rz) => () => {
+    const d = sphereDir(); const r = Math.cbrt(Math.random());
+    return new THREE.Vector3(d.x * rx * r, d.y * ry * r, d.z * rz * r);
+  };
+  // hippocampus: a curved little tube (its classic seahorse arc)
+  const hippoShape = () => {
+    const t = Math.random() * 2 - 1;
+    return new THREE.Vector3(
+      (Math.random() - 0.5) * 0.05,
+      Math.sin(t * 1.3) * 0.07 + (Math.random() - 0.5) * 0.04,
+      t * 0.17 + (Math.random() - 0.5) * 0.04
+    );
+  };
+
+  const STRUCTURES = [
+    { label: 'Prefrontal cortex', color: C.gold,   at: 0.18, anchor: [0,  0.16,  0.92], shape: ell(0.08, 0.13, 0.10) },
+    { label: 'Motor cortex',      color: C.ivory,  at: 0.30, anchor: [0,  0.60,  0.14], shape: ell(0.16, 0.06, 0.09) },
+    { label: 'Somatosensory',     color: C.violet, at: 0.42, anchor: [0,  0.57, -0.16], shape: ell(0.16, 0.06, 0.09) },
+    { label: 'Thalamus',          color: C.gold,   at: 0.54, anchor: [0,  0.02, -0.04], shape: ell(0.10, 0.08, 0.12) },
+    { label: 'Hippocampus',       color: C.teal,   at: 0.66, anchor: [0, -0.16, -0.16], shape: hippoShape },
+    { label: 'Amygdala',          color: C.violet, at: 0.78, anchor: [0, -0.20,  0.22], shape: ell(0.07, 0.06, 0.07) },
+    { label: 'Cerebellum',        color: C.ivory,  at: 0.90, anchor: [0, -0.58, -0.66], shape: ell(0.001, 0.001, 0.001) },
+  ];
+  const structures = STRUCTURES.map((s) => {
+    const grp = new THREE.Group();
+    const pts = makeCluster(s.color, s.label === 'Cerebellum' ? 1 : 150, s.shape);
+    const label = makeLabel(s.label);
+    label.position.set(0.24, 0.10, 0);
+    grp.add(pts, label);
+    grp.position.set(s.anchor[0], s.anchor[1], s.anchor[2]);
+    grp.userData = { ...s, pts, label, base: new THREE.Vector3(...s.anchor) };
+    root.add(grp);
+    return grp;
+  });
+
+  /* ---------- state ---------- */
+  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  let scrollP = 0, scrollTarget = 0, t = 0;
 
   function updateScroll() {
-    // brain opens across roughly the first 1.4 viewport heights
-    const range = H * 1.4;
+    const range = window.innerHeight * 1.5;   // brain fully open ~1.5 screens down
     scrollTarget = Math.max(0, Math.min(1, window.scrollY / range));
   }
+  function resize() {
+    const w = window.innerWidth, h = window.innerHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    // keep the brain fully in frame on narrow screens
+    camera.fov = w < 720 ? 48 : 38;
+    camera.updateProjectionMatrix();
+    if (reduced) renderFrame();
+  }
 
-  function draw() {
-    t += 0.016;
-    scrollP += (scrollTarget - scrollP) * 0.08;
-    // ease pointer
-    pointer.x += (pointer.tx - pointer.x) * 0.10;
-    pointer.y += (pointer.ty - pointer.y) * 0.10;
+  const smooth = (x) => x * x * (3 - 2 * x);
 
-    ctx.clearRect(0, 0, W, H);
+  function renderFrame() {
+    const open = smooth(scrollP);
 
-    const p = scrollP;
-    const globalFade = Math.max(0.10, 1 - p * 1.05);     // brain recedes as you scroll
-    const open = p;                                       // 0 closed → 1 open
-    const breathe = Math.sin(t * 0.7) * 0.6;             // gentle idle motion
-
-    // parallax offset from the cursor (whole-brain drift)
-    const par = pointer.active
-      ? { x: (pointer.x / W - 0.5) * 26, y: (pointer.y / H - 0.5) * 20 }
-      : { x: 0, y: 0 };
-
-    /* ---- faint silhouette + gyri, mapped to screen ---- */
-    ctx.save();
-    ctx.translate(toScreenX(0) + par.x, toScreenY(0) + par.y);
-    ctx.scale(scale, scale);
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = `rgba(226,192,120,${0.10 * globalFade})`;
-    ctx.lineWidth = 0.7;
-    ctx.stroke(path);
-    ctx.strokeStyle = `rgba(210,214,236,${0.07 * globalFade})`;
-    ctx.lineWidth = 0.6;
-    for (const g of GYRI) ctx.stroke(g);
-    // midline crack that widens as the brain opens
-    ctx.strokeStyle = `rgba(226,192,120,${0.16 * globalFade * (0.3 + open)})`;
-    ctx.lineWidth = 0.6 + open * 1.4;
-    ctx.beginPath();
-    ctx.moveTo(110, 26); ctx.lineTo(110, 150);
-    ctx.stroke();
-    ctx.restore();
-
-    /* ---- particles ---- */
-    for (const pt of particles) {
-      // hemispheres part along the midline as the brain opens
-      const spread = pt.side * open * 46 * pt.depth;
-      let sx = toScreenX(pt.vx + pt.jx * 0.4) + spread * scale * 0.4 + par.x * pt.depth;
-      let sy = toScreenY(pt.vy + pt.jy * 0.4) + par.y * pt.depth;
-
-      // idle breathing outward from centre
-      const bx = (pt.vx - VB_W / 2), by = (pt.vy - VB_H / 2);
-      sx += bx * breathe * 0.004 * scale;
-      sy += by * breathe * 0.004 * scale;
-
-      // local parting under the cursor
-      if (pointer.active) {
-        const dx = sx - pointer.x, dy = sy - pointer.y;
-        const d2 = dx * dx + dy * dy;
-        const R = 120;
-        if (d2 < R * R) {
-          const d = Math.sqrt(d2) || 1;
-          const push = (1 - d / R) * 16;
-          sx += (dx / d) * push;
-          sy += (dy / d) * push;
-        }
-      }
-
-      const tw = 0.55 + 0.45 * Math.sin(t * pt.sp + pt.tw);
-      const [r, g, b] = HUES[pt.hue];
-      const a = tw * globalFade * (0.9 - open * 0.35);
-      if (a <= 0.02) continue;
-      const rad = (pt.hue === 'ivory' ? 0.9 : 1.1) * (1 + tw * 0.5);
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-      ctx.arc(sx, sy, rad, 0, Math.PI * 2);
-      ctx.fill();
+    // hemispheres part along the midline and swing outward like doors
+    for (const hemi of [hemiL, hemiR]) {
+      const s = hemi.userData.side;
+      hemi.position.x = s * (0.30 + open * 0.62);
+      hemi.rotation.y = s * open * 0.45;
+      hemi.rotation.z = -s * open * 0.10;
+      hemi.userData.pts.material.opacity = 0.9 - open * 0.52;
     }
+    core.position.y = -open * 0.16;
+    core.children[0].material.opacity = 0.8 - open * 0.30;
 
-    /* ---- inner structures: flare as reached, then drift & dissolve ---- */
-    for (const s of STRUCTURES) {
-      // life: 0 before reveal, ramps to 1 at reveal, then fades as we pass
-      const d = p - s.revealAt;
+    // deep structures flare in sequence, then drift & dissolve
+    for (const grp of structures) {
+      const u = grp.userData;
+      const d = scrollP - u.at;
       let life;
-      if (d < -0.14) life = 0;
-      else if (d < 0) life = (d + 0.14) / 0.14;          // ramp in
-      else life = Math.max(0, 1 - d / 0.20);              // fade out
-      if (life <= 0.001) continue;
+      if (d < -0.13) life = 0;
+      else if (d < 0) life = (d + 0.13) / 0.13;
+      else life = Math.max(0, 1 - d / 0.22);
 
-      const [r, g, b] = HUES[s.hue];
-      // drift outward from brain centre as it dissolves
-      const dirx = (s.ax - VB_W / 2), diry = (s.ay - VB_H / 2);
-      const driftK = Math.max(0, d) * 2.4;
-      const sx = toScreenX(s.ax + dirx * driftK) + par.x;
-      const sy = toScreenY(s.ay + diry * driftK) + par.y;
-      const flare = Math.pow(life, 0.6);
-
-      // glow
-      const gr = ctx.createRadialGradient(sx, sy, 0, sx, sy, 46 * flare + 8);
-      gr.addColorStop(0, `rgba(${r},${g},${b},${0.5 * flare})`);
-      gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
-      ctx.fillStyle = gr;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 46 * flare + 8, 0, Math.PI * 2);
-      ctx.fill();
-      // core
-      ctx.fillStyle = `rgba(${r},${g},${b},${0.95 * flare})`;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 2.6 + flare * 1.6, 0, Math.PI * 2);
-      ctx.fill();
-      // label
-      ctx.font = '600 12px Inter, system-ui, sans-serif';
-      ctx.fillStyle = `rgba(238,241,255,${0.9 * life})`;
-      ctx.textBaseline = 'middle';
-      ctx.fillText(s.label.toUpperCase(), sx + 12, sy);
-      ctx.strokeStyle = `rgba(${r},${g},${b},${0.4 * life})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(sx + 5, sy); ctx.lineTo(sx + 9, sy); ctx.stroke();
+      const drift = Math.max(0, d) * 1.1;
+      grp.position.copy(u.base).addScaledVector(
+        u.base.clone().setX(0).normalize().add(new THREE.Vector3(0, 0.4, 0)), drift
+      );
+      const k = 1 + Math.max(0, d) * 1.6;
+      grp.scale.setScalar(k);
+      u.pts.material.opacity = life * 0.95;
+      u.label.material.opacity = life * 0.92;
     }
 
-    requestAnimationFrame(draw);
+    // whole-brain motion: idle sway + mouse steering + open tilt
+    root.rotation.y = Math.sin(t * 0.22) * 0.14 + mouse.x * 0.50;
+    root.rotation.x = mouse.y * 0.28 + open * 0.30;
+    const breathe = 1 + Math.sin(t * 0.9) * 0.007;
+    root.scale.setScalar(breathe);
+    root.position.y = 0.05 - open * 0.05;
+
+    camera.position.z = 4.3 - open * 0.55;
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
   }
 
-  /* static frame for reduced-motion / no-animation users */
-  function staticFrame() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.save();
-    ctx.translate(toScreenX(0), toScreenY(0));
-    ctx.scale(scale, scale);
-    ctx.strokeStyle = 'rgba(226,192,120,0.14)';
-    ctx.lineWidth = 0.8; ctx.stroke(path);
-    ctx.strokeStyle = 'rgba(210,214,236,0.08)';
-    for (const g of GYRI) ctx.stroke(g);
-    ctx.restore();
-    for (const pt of particles) {
-      const [r, g, b] = HUES[pt.hue];
-      ctx.fillStyle = `rgba(${r},${g},${b},0.55)`;
-      ctx.beginPath();
-      ctx.arc(toScreenX(pt.vx), toScreenY(pt.vy), 1, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  function loop() {
+    t += 0.016;
+    scrollP += (scrollTarget - scrollP) * 0.07;
+    mouse.x += (mouse.tx - mouse.x) * 0.06;
+    mouse.y += (mouse.ty - mouse.y) * 0.06;
+    renderFrame();
+    requestAnimationFrame(loop);
   }
 
-  window.addEventListener('resize', () => { resize(); if (reduced) staticFrame(); });
+  window.addEventListener('resize', resize);
   window.addEventListener('scroll', updateScroll, { passive: true });
   window.addEventListener('mousemove', (e) => {
-    pointer.tx = e.clientX; pointer.ty = e.clientY; pointer.active = true;
+    mouse.tx = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.ty = (e.clientY / window.innerHeight) * 2 - 1;
   });
-  window.addEventListener('mouseout', () => { pointer.active = false; pointer.tx = pointer.ty = -9999; });
   window.addEventListener('touchmove', (e) => {
-    if (e.touches[0]) { pointer.tx = e.touches[0].clientX; pointer.ty = e.touches[0].clientY; pointer.active = true; }
+    if (e.touches[0]) {
+      mouse.tx = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+      mouse.ty = (e.touches[0].clientY / window.innerHeight) * 2 - 1;
+    }
   }, { passive: true });
 
   resize();
   updateScroll();
-  if (reduced) staticFrame();
-  else requestAnimationFrame(draw);
+  if (reduced) {
+    scrollP = 0.3;             // a hint of the opening, as a still image
+    renderFrame();
+    window.addEventListener('scroll', () => { scrollP = scrollTarget; renderFrame(); }, { passive: true });
+  } else {
+    requestAnimationFrame(loop);
+  }
 })();
 
 /* -----------------------------------------------------------
