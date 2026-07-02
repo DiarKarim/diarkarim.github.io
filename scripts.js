@@ -1,234 +1,299 @@
-/* Sidebar toggle + drawer-handle behavior for the menu button */
-(function(){
-  const btn = document.getElementById('menuToggle');
-  const sidebar = document.querySelector('.sidebar');
-  if(!btn || !sidebar) return;
+/* ============================================================
+   Diar Abdlkarim — site interactions
+   1. Interactive neural / motor-control canvas
+   2. Nav scroll state + mobile menu
+   3. Scroll-reveal
+   ============================================================ */
 
-  const mq = window.matchMedia('(max-width: 980px)');
-
-  function isMobile(){ return mq.matches; }
-
-  function setBtnVisibility(){
-    btn.style.display = isMobile() ? 'block' : 'none';
-    if(!isMobile()){
-      btn.style.left = '14px';      // reset on desktop
-      sidebar.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-    }
-  }
-
-  function nudgeHandle(){
-    if(!isMobile()){ btn.style.left = '14px'; return; }
-    const open = sidebar.classList.contains('open');
-    const sbWidth = open ? sidebar.getBoundingClientRect().width : 0;
-    btn.style.left = (14 + sbWidth) + 'px'; // park to the right of the drawer when open
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-
-  btn.addEventListener('click', ()=>{
-    sidebar.classList.toggle('open');
-    nudgeHandle();
-  });
-
-  // Keep the handle aligned on viewport changes or orientation flips
-  mq.addEventListener('change', ()=>{ setBtnVisibility(); nudgeHandle(); });
-  window.addEventListener('resize', nudgeHandle);
-  document.addEventListener('visibilitychange', nudgeHandle);
-
-  setBtnVisibility();
-  nudgeHandle();
-})();
-
-/* Auto sliding carousel: 1 shift per 3 seconds (unchanged) */
-(function(){
-  const track = document.querySelector('.carousel-track');
-  if(!track) return;
-
-  let slides = Array.from(track.children);
-  if(slides.length === 0) return;
-
-  const firstClone = slides[0].cloneNode(true);
-  track.appendChild(firstClone);
-
-  let index = 0;
-  let timer = null;
-  const DURATION = 3000;
-  const TRANS_MS = 600;
-
-  const move = (i, animate=true)=>{
-    track.style.transition = animate ? `transform ${TRANS_MS}ms ease` : 'none';
-    track.style.transform = `translateX(-${i * 100}%)`;
-  };
-
-  const next = ()=>{
-    index++;
-    move(index, true);
-    if(index === slides.length){
-      setTimeout(()=>{
-        index = 0;
-        move(index, false);
-      }, TRANS_MS + 20);
-    }
-  };
-
-  const start = ()=>{
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if(!timer) timer = setInterval(next, DURATION);
-  };
-  const stop = ()=>{ if(timer){ clearInterval(timer); timer = null; } };
-
-  start();
-  track.addEventListener('mouseenter', stop);
-  track.addEventListener('mouseleave', start);
-  document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
-})();
-
-/* Hero network animation */
-(function(){
-  const canvas = document.getElementById('heroNetworkCanvas');
-  const header = document.querySelector('.header');
-  if(!canvas || !header) return;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
+/* -----------------------------------------------------------
+   1. NEURAL FIELD
+   A living network of neurons. Signals (action potentials)
+   travel along axons between firing cells. The cursor acts
+   as a "motor intention" — nearby neurons are recruited and
+   fire toward it, echoing the perception–action loop.
+   ----------------------------------------------------------- */
+(function neuralField() {
+  const canvas = document.getElementById('neuralCanvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let width = 0;
-  let height = 0;
-  let dpr = Math.min(window.devicePixelRatio || 1, 2);
-  let nodes = [];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const pointer = { x: 0, y: 0, active: false, last: 0 };
+  let W, H, DPR;
+  const pointer = { x: -9999, y: -9999, active: false };
 
-  function updatePointer(evt){
-    const rect = canvas.getBoundingClientRect();
-    pointer.x = (evt.clientX || (evt.touches && evt.touches[0]?.clientX) || 0) - rect.left;
-    pointer.y = (evt.clientY || (evt.touches && evt.touches[0]?.clientY) || 0) - rect.top;
-    pointer.active = true;
-    pointer.last = performance.now();
+  const COLORS = {
+    cyan:   [52, 229, 255],
+    violet: [139, 107, 255],
+    magenta:[255, 92, 200],
+    amber:  [255, 194, 75],
+  };
+  const palette = [COLORS.cyan, COLORS.violet, COLORS.magenta, COLORS.cyan, COLORS.amber];
+
+  let neurons = [];
+  let signals = [];
+  let links = [];   // adjacency: {a, b, d}
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth;
+    H = canvas.clientHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    build();
   }
 
-  function deactivatePointer(){
-    pointer.active = false;
+  function build() {
+    const density = Math.min(90, Math.max(34, Math.floor((W * H) / 20000)));
+    neurons = [];
+    for (let i = 0; i < density; i++) {
+      const c = palette[i % palette.length];
+      neurons.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.14,
+        vy: (Math.random() - 0.5) * 0.14,
+        r: 1.3 + Math.random() * 1.8,
+        c,
+        charge: Math.random(),        // 0..1 membrane potential
+        threshold: 0.82 + Math.random() * 0.12,
+        cooldown: 0,
+        pulse: 0,                     // visual flash 0..1
+      });
+    }
+    computeLinks();
   }
 
-  header.addEventListener('pointermove', updatePointer, { passive: true });
-  header.addEventListener('pointerdown', updatePointer, { passive: true });
-  header.addEventListener('pointerleave', deactivatePointer);
-  header.addEventListener('touchmove', updatePointer, { passive: true });
-  header.addEventListener('touchend', deactivatePointer);
-
-  function resize(){
-    width = canvas.clientWidth;
-    height = canvas.clientHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.floor(width * dpr));
-    canvas.height = Math.max(1, Math.floor(height * dpr));
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    buildNodes();
+  const LINK_DIST = 150;
+  function computeLinks() {
+    links = [];
+    for (let i = 0; i < neurons.length; i++) {
+      for (let j = i + 1; j < neurons.length; j++) {
+        const dx = neurons[i].x - neurons[j].x;
+        const dy = neurons[i].y - neurons[j].y;
+        const d = Math.hypot(dx, dy);
+        if (d < LINK_DIST) links.push({ a: i, b: j, d });
+      }
+    }
   }
 
-  function buildNodes(){
-    const area = width * height;
-    const density = 0.00012;
-    const targetCount = Math.max(60, Math.min(180, Math.floor(area * density)));
-    nodes = new Array(targetCount).fill(null).map(()=>{
-      const depth = 0.3 + Math.random() * 0.7;
-      return {
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.35 * depth,
-        vy: (Math.random() - 0.5) * 0.35 * depth,
-        depth,
-        radius: 1.2 + depth * 3.4,
-      };
+  function neighbours(idx) {
+    const out = [];
+    for (const l of links) {
+      if (l.a === idx) out.push(l.b);
+      else if (l.b === idx) out.push(l.a);
+    }
+    return out;
+  }
+
+  function fire(idx) {
+    const n = neurons[idx];
+    if (n.cooldown > 0) return;
+    n.charge = 0;
+    n.cooldown = 40 + Math.random() * 40;
+    n.pulse = 1;
+    const targets = neighbours(idx);
+    let sent = 0;
+    for (const t of targets) {
+      if (sent >= 3) break;
+      if (Math.random() < 0.7) { emitSignal(idx, t); sent++; }
+    }
+  }
+
+  function emitSignal(fromIdx, toIdx) {
+    signals.push({
+      from: fromIdx,
+      to: toIdx,
+      t: 0,
+      speed: 0.012 + Math.random() * 0.02,
+      c: neurons[fromIdx].c,
     });
   }
 
-  function limitVelocity(node, limit){
-    const mag = Math.hypot(node.vx, node.vy);
-    if(mag > limit){
-      const scale = limit / (mag || 1);
-      node.vx *= scale;
-      node.vy *= scale;
+  let linkTimer = 0;
+
+  function step() {
+    ctx.clearRect(0, 0, W, H);
+
+    linkTimer++;
+    if (linkTimer > 30) { computeLinks(); linkTimer = 0; }
+
+    // --- axons ---
+    for (const l of links) {
+      const a = neurons[l.a], b = neurons[l.b];
+      const alpha = (1 - l.d / LINK_DIST) * 0.5;
+      ctx.strokeStyle = `rgba(120,150,230,${alpha * 0.5})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
     }
-  }
 
-  function update(){
-    const now = performance.now();
-    if(pointer.active && now - pointer.last > 1200){
-      pointer.active = false;
-    }
+    // --- neurons ---
+    for (let i = 0; i < neurons.length; i++) {
+      const n = neurons[i];
 
-    ctx.clearRect(0, 0, width, height);
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      n.x = Math.max(0, Math.min(W, n.x));
+      n.y = Math.max(0, Math.min(H, n.y));
 
-    const maxDist = Math.min(width, height) * 0.35;
-    const influence = Math.min(width, height) * 0.45;
+      if (n.cooldown > 0) n.cooldown--;
+      n.charge += 0.0022 + Math.random() * 0.0016;
 
-    for(const node of nodes){
-      let ax = (Math.random() - 0.5) * 0.02;
-      let ay = (Math.random() - 0.5) * 0.02;
-
-      if(pointer.active){
-        const dx = pointer.x - node.x;
-        const dy = pointer.y - node.y;
-        const dist = Math.hypot(dx, dy) + 0.0001;
-        if(dist < influence){
-          const force = (1 - dist / influence) * 0.18 * node.depth;
-          ax += (dx / dist) * force;
-          ay += (dy / dist) * force;
+      if (pointer.active) {
+        const dx = pointer.x - n.x;
+        const dy = pointer.y - n.y;
+        const d = Math.hypot(dx, dy);
+        if (d < 190) {
+          const pull = (1 - d / 190);
+          n.vx += (dx / (d + 0.01)) * pull * 0.012;
+          n.vy += (dy / (d + 0.01)) * pull * 0.012;
+          n.charge += pull * 0.02;
         }
       }
+      n.vx *= 0.985; n.vy *= 0.985;
 
-      node.vx = (node.vx + ax) * 0.98;
-      node.vy = (node.vy + ay) * 0.98;
-      limitVelocity(node, 0.45 + node.depth * 0.9);
+      if (n.charge >= n.threshold) fire(i);
+      if (n.pulse > 0) n.pulse -= 0.045;
 
-      node.x += node.vx;
-      node.y += node.vy;
-
-      if(node.x < -60) node.x = width + 60;
-      if(node.x > width + 60) node.x = -60;
-      if(node.y < -60) node.y = height + 60;
-      if(node.y > height + 60) node.y = -60;
-    }
-
-    drawConnections(maxDist);
-    drawNodes();
-
-  }
-
-  function drawConnections(maxDist){
-    for(let i = 0; i < nodes.length; i++){
-      const a = nodes[i];
-      for(let j = i + 1; j < nodes.length; j++){
-        const b = nodes[j];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const dist = Math.hypot(dx, dy);
-        if(dist > maxDist) continue;
-        const depthMix = (a.depth + b.depth) * 0.5;
-        const opacity = Math.max(0, 0.35 * (1 - dist / maxDist) * depthMix);
-        if(opacity < 0.02) continue;
-        ctx.strokeStyle = `rgba(148, 197, 255, ${opacity})`;
-        ctx.lineWidth = 0.6 + depthMix * 0.6;
+      const [r, g, bb] = n.c;
+      if (n.pulse > 0) {
+        const gr = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 30 * n.pulse + 6);
+        gr.addColorStop(0, `rgba(${r},${g},${bb},${0.35 * n.pulse})`);
+        gr.addColorStop(1, `rgba(${r},${g},${bb},0)`);
+        ctx.fillStyle = gr;
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
+        ctx.arc(n.x, n.y, 30 * n.pulse + 6, 0, Math.PI * 2);
+        ctx.fill();
       }
-    }
-  }
 
-  function drawNodes(){
-    for(const node of nodes){
-      const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius * 1.6);
-      const highlight = Math.min(1, 0.4 + node.depth * 0.5);
-      gradient.addColorStop(0, `rgba(226, 242, 255, ${highlight})`);
-      gradient.addColorStop(0.4, `rgba(168, 216, 255, ${highlight * 0.7})`);
-      gradient.addColorStop(1, 'rgba(28, 78, 118, 0)');
-      ctx.fillStyle = gradient;
+      const chargeGlow = 0.4 + n.charge * 0.6;
+      ctx.fillStyle = `rgba(${r},${g},${bb},${chargeGlow})`;
       ctx.beginPath();
-      ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      ctx.arc(n.x, n.y, n.r + n.pulse * 1.5, 0, Math.PI * 2);
       ctx.fill();
     }
+
+    // --- signals (action potentials) ---
+    for (let s = signals.length - 1; s >= 0; s--) {
+      const sig = signals[s];
+      const a = neurons[sig.from], b = neurons[sig.to];
+      if (!a || !b) { signals.splice(s, 1); continue; }
+      sig.t += sig.speed;
+      if (sig.t >= 1) {
+        b.charge = Math.min(b.threshold + 0.05, b.charge + 0.5);
+        signals.splice(s, 1);
+        continue;
+      }
+      const x = a.x + (b.x - a.x) * sig.t;
+      const y = a.y + (b.y - a.y) * sig.t;
+      const [r, g, bb] = sig.c;
+
+      const tail = 0.12;
+      const tx = a.x + (b.x - a.x) * Math.max(0, sig.t - tail);
+      const ty = a.y + (b.y - a.y) * Math.max(0, sig.t - tail);
+      const grad = ctx.createLinearGradient(tx, ty, x, y);
+      grad.addColorStop(0, `rgba(${r},${g},${bb},0)`);
+      grad.addColorStop(1, `rgba(${r},${g},${bb},0.9)`);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+
+      ctx.fillStyle = `rgba(${r},${g},${bb},1)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (signals.length > 160) signals.splice(0, signals.length - 160);
+
+    requestAnimationFrame(step);
   }
+
+  function setPointer(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = clientX - rect.left;
+    pointer.y = clientY - rect.top;
+    pointer.active = true;
+  }
+  window.addEventListener('mousemove', (e) => setPointer(e.clientX, e.clientY));
+  window.addEventListener('mouseout', () => { pointer.active = false; pointer.x = pointer.y = -9999; });
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches[0]) setPointer(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  // click / tap = deliberate motor command: force-fire nearest neuron
+  window.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    if (e.clientY - rect.top > H) return; // only within hero region
+    const px = e.clientX - rect.left, py = e.clientY - rect.top;
+    let best = -1, bd = 1e9;
+    for (let i = 0; i < neurons.length; i++) {
+      const d = Math.hypot(neurons[i].x - px, neurons[i].y - py);
+      if (d < bd) { bd = d; best = i; }
+    }
+    if (best >= 0 && bd < 220) { neurons[best].cooldown = 0; neurons[best].charge = 1; fire(best); }
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  if (reduced) {
+    // static single frame for reduced-motion users
+    ctx.clearRect(0, 0, W, H);
+    for (const l of links) {
+      const a = neurons[l.a], b = neurons[l.b];
+      ctx.strokeStyle = `rgba(120,150,230,${(1 - l.d / LINK_DIST) * 0.25})`;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    for (const n of neurons) {
+      const [r, g, bb] = n.c;
+      ctx.fillStyle = `rgba(${r},${g},${bb},0.7)`;
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
+    }
+  } else {
+    requestAnimationFrame(step);
+  }
+})();
+
+/* -----------------------------------------------------------
+   2. NAV
+   ----------------------------------------------------------- */
+(function nav() {
+  const el = document.querySelector('.nav');
+  if (el) {
+    const onScroll = () => el.classList.toggle('scrolled', window.scrollY > 30);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+  if (toggle && links) {
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+    links.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => links.classList.remove('open')));
+  }
+})();
+
+/* -----------------------------------------------------------
+   3. SCROLL REVEAL
+   ----------------------------------------------------------- */
+(function reveal() {
+  const items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || !items.length) {
+    items.forEach((i) => i.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  items.forEach((i) => io.observe(i));
 })();

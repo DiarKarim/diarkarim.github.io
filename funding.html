@@ -1,101 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Funding — Diar Abdlkarim</title>
-<link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Funding &amp; Achievements — Diar Abdlkarim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<div class="layout">
-  <aside class="sidebar">
-    <div class="brand">
-      <h1>Diar Abdlkarim</h1>
-      <p>Research Scientist</p>
+
+<header class="nav">
+  <a class="logo" href="index.html#top"><span class="dot"></span> Diar Abdlkarim</a>
+  <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+  <nav class="nav-links">
+    <a href="index.html#about">About</a>
+    <a href="index.html#research">Research</a>
+    <a href="projects.html">Projects</a>
+    <a href="publications.html">Publications</a>
+    <a href="funding.html">Funding</a>
+    <a href="index.html#contact" class="cta">Get in touch</a>
+  </nav>
+</header>
+
+<section class="block" style="padding-top:150px">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">Grants &amp; awards</span>
+      <h2>Funding &amp; Achievements</h2>
+      <p>Research grants, awards and translation funding spanning academia and enterprise.</p>
     </div>
-    <nav class="side-nav">
-      <a href="index.html#top" data-icon="double-arc">Home</a>
-      <a href="index.html#intro" data-icon="corner">Intro</a>
-      <a href="index.html#courses" data-icon="s-curve">Courses &amp; Activities</a>
-      <a href="projects.html" data-icon="broadcast">Projects</a>
-      <a href="publications.html" data-icon="stack">Publications</a>
-      <a href="funding.html" data-icon="arc-base">Funding</a>
-      <a href="index.html#contact" data-icon="arrow">Contact</a>
-    </nav>
-    <div class="small">© 2025</div>
-  </aside>
 
-  <main class="main">
-    <button id="menuToggle" class="menu-toggle" aria-label="Open menu" style="display:none;">☰ Menu</button>
-
-    <div class="content-section container">
-      <h2>Funding & Achievements</h2>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>EPSRC PhD</h3>
-          <p>EPSRC‑funded PhD on immersive biofeedback for upper‑limb rehabilitation.</p>
-        </div>
-        <img src="./media/epsrc_logo.png" alt="EPSRC" style="object-fit:cover; width:140px; height:90px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>EPSRC ARME Postdoc</h3>
-          <p>Named postdoc on the £1.5M ARME project delivering system integration and user studies in XR music.</p>
-        </div>
-        <img src="./media/arme_logo.png" alt="ARME" style="object-fit:cover; width:125px; height:80px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>Touch Testing Device</h3>
-          <p>£5k proof‑of‑concept for a portable tactile neuropathy assessment device with clinical partners.</p>
-        </div>
-        <img src="./media/bbsrc_logo.jpg" alt="BBSRC" style="object-fit:cover; width:140px; height:90px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>Google Research Gift</h3>
-          <p>£15k award to explore ten‑finger text entry paradigms for VR/AR.</p>
-        </div>
-        <img src="./media/google_research_logo.jpg" alt="Google Research" style="object-fit:cover; width:140px; height:90px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>ACM Best Paper Award 2025</h3>
-          <p>CHI 2025 Best Paper for the XR Text Trove review of text input techniques in XR.</p>
-        </div>
-        <img src="./media/acm_logo.png" alt="ACM" style="object-fit:cover; width:140px; height:90px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; border-bottom:1px solid var(--card-bd); padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>ICURe Explore</h3>
-          <p>Innovate UK ICURe Explore (£30k) to validate market fit for the AR musician system.</p>
-        </div>
-        <img src="./media/icure_explore_logo.png" alt="ICURe Explore" style="object-fit:cover; width:140px; height:90px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
-
-      <div class="subsection" style="display:flex; gap:16px; align-items:center; padding:12px 0;">
-        <div class="subsection-text" style="flex:1;">
-          <h3>ICURe Exploit</h3>
-          <p>Advanced to ICURe Exploit toward company formation with potential ~£300k support.</p>
-        </div>
-        <img src="./media/icure_exploit_logo.png" alt="ICURe Exploit" style="object-fit:cover; width:140px; height:90px; border-radius:8px; border:1px solid var(--card-bd);">
-      </div>
+    <div class="fund-grid">
+      <div class="fund"><div class="amt">CHI'25</div><h3>ACM Best Paper Award</h3><p>CHI 2025 Best Paper for the XR Text Trove review of text input techniques in XR.</p></div>
+      <div class="fund"><div class="amt">£1.5M</div><h3>EPSRC ARME Postdoc</h3><p>Named postdoc delivering system integration and user studies in XR music.</p></div>
+      <div class="fund"><div class="amt">£15k</div><h3>Google Research Gift</h3><p>Award to explore ten-finger text entry paradigms for VR/AR.</p></div>
+      <div class="fund"><div class="amt">£30k</div><h3>ICURe Explore</h3><p>Innovate UK ICURe Explore to validate market fit for the AR musician system.</p></div>
+      <div class="fund"><div class="amt">~£300k</div><h3>ICURe Exploit</h3><p>Advanced to ICURe Exploit toward company formation and scale-up.</p></div>
+      <div class="fund"><div class="amt">£5k</div><h3>BBSRC Touch Test</h3><p>Proof-of-concept for a portable tactile neuropathy assessment device with clinical partners.</p></div>
+      <div class="fund"><div class="amt">EPSRC</div><h3>PhD Studentship</h3><p>EPSRC-funded PhD on immersive biofeedback for upper-limb rehabilitation.</p></div>
     </div>
-  </main>
-</div>
 
-<script>
-  const mq = window.matchMedia('(max-width: 980px)');
-  const toggle = document.getElementById('menuToggle');
-  function setToggle(){ toggle && (toggle.style.display = mq.matches ? 'block' : 'none'); }
-  setToggle(); mq.addEventListener('change', setToggle);
-</script>
+    <div class="center-cta"><a class="btn btn-ghost" href="index.html#top">← Back to home</a></div>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="container foot-inner">
+    <span>© 2026 Diar Abdlkarim</span>
+    <span><a href="index.html#top">Home</a> · <a href="projects.html">Projects</a> · <a href="publications.html">Publications</a></span>
+  </div>
+</footer>
+
 <script src="scripts.js"></script>
 </body>
 </html>
