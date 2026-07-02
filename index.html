@@ -7,10 +7,13 @@
 <meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, EEG, the science of touch, motion capture and immersive technologies." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+<!-- opening-brain canvas: sits behind the whole page -->
+<canvas id="brainCanvas" aria-hidden="true"></canvas>
 
 <!-- ============ NAV ============ -->
 <header class="nav">
@@ -29,30 +32,43 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <canvas id="neuralCanvas" aria-hidden="true"></canvas>
   <div class="hero-inner">
-    <span class="eyebrow"><span class="live"></span> Research Fellow · Founder · Educator</span>
+    <span class="eyebrow"><span class="live"></span> Research Fellow · Founder · Ex-Meta</span>
     <h1>Decoding how the brain<br><span class="grad">moves, feels &amp; adapts.</span></h1>
     <p class="sub">
       I'm <b>Diar Abdlkarim</b> — a sensorimotor neuroscientist and technologist studying the
       <b>neural control of natural action</b> through EEG, the science of touch, and motion capture,
-      then turning it into immersive tools people can use.
+      then turning it into immersive tools used by millions.
     </p>
 
     <div class="roles-strip">
       <div class="role-chip"><span class="ic">🎓</span><div><b>Research Fellow</b><span>University of Birmingham</span></div></div>
       <div class="role-chip"><span class="ic">🚀</span><div><b>Co-Founder &amp; Director</b><span>Motion Dynamics</span></div></div>
-      <div class="role-chip"><span class="ic">🧠</span><div><b>Educator &amp; Leader</b><span>Immersive tech · Neurotech</span></div></div>
+      <div class="role-chip"><span class="ic">🥽</span><div><b>Ex-Meta</b><span>Quest hand tracking</span></div></div>
     </div>
 
     <div class="hero-actions">
       <a class="btn btn-primary" href="#projects">Explore my work →</a>
       <a class="btn btn-ghost" href="./media/CV Diar Abdlkarim.pdf" download>⬇ Download CV</a>
     </div>
+
+    <!-- NEW VENTURE — placed high on the page, seeking funding -->
+    <div class="venture-banner reveal">
+      <span class="flag">New venture · Seeking funding</span>
+      <div class="vb-body">
+        <h3>Growing minds, away from screens</h3>
+        <p>
+          A new venture exploring how <b>fine-motor and cognitive development intertwine</b> in early
+          childhood — and how AI can be designed to <b>guide young children away from screens and back
+          toward rich, physical-world interaction</b> during these critical developmental stages.
+        </p>
+      </div>
+      <a class="vb-cta" href="#contact">Partner or fund this →</a>
+    </div>
   </div>
 
-  <div class="scroll-hint"><span>Scroll</span><span class="line"></span></div>
-  <div class="hint-interactive"><span class="k">move</span> to recruit neurons · <span class="k">click</span> to fire</div>
+  <div class="scroll-hint"><span>Scroll to open the brain</span><span class="line"></span></div>
+  <div class="hint-interactive"><span class="k">move</span> to part the cortex · <span class="k">scroll</span> to reveal its structures</div>
 </section>
 
 <!-- ============ ABOUT ============ -->
@@ -60,7 +76,7 @@
   <div class="container about-grid">
     <div class="portrait reveal">
       <span class="ring"></span>
-      <img src="./media/profilepic.jpeg" alt="Portrait of Diar Abdlkarim" />
+      <img src="./media/profilepic.jpg" alt="Portrait of Diar Abdlkarim" />
     </div>
     <div class="about-copy reveal">
       <span class="section-head kicker">About</span>
@@ -74,14 +90,39 @@
         measure action with millimetre precision — closing the perception–action loop in extended reality.
       </p>
       <p>
-        Beyond the lab, I build. As <b>Co-Founder &amp; Director of Motion Dynamics</b> I translate that science
-        into hand-tracking hardware, haptic devices, and XR software — and I teach the next generation of
-        scientists to do the same through hands-on courses in VR, motion capture and rapid prototyping.
+        Previously at <b>Meta</b>, I worked on the <b>markerless, scalable hand-tracking</b> that is now an
+        integral part of the <b>Quest</b> product line — putting camera-based hand input into the hands of
+        <b>millions of users worldwide</b>. Beyond the lab I build: as <b>Co-Founder &amp; Director of Motion
+        Dynamics</b> I translate that science into hand-tracking hardware, haptics and XR software, and I teach
+        the next generation of scientists to do the same.
       </p>
       <div class="stat-row">
-        <div class="stat"><b>11+</b><span>Peer-reviewed papers</span></div>
+        <div class="stat"><b>Millions</b><span>Quest users reached</span></div>
         <div class="stat"><b>£1.8M+</b><span>Research funding contributed</span></div>
         <div class="stat"><b>CHI'25</b><span>ACM Best Paper Award</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- META / QUEST hand-tracking highlight -->
+  <div class="container">
+    <div class="meta-highlight reveal">
+      <div class="mh-copy">
+        <div class="badge-row">
+          <span class="chip">Meta · Reality Labs</span>
+          <span class="chip">Quest</span>
+          <span class="chip">Markerless hand tracking</span>
+        </div>
+        <h3>Hand tracking, shipped to millions</h3>
+        <p>
+          At Meta I helped develop <b>markerless, scalable hand tracking</b> — camera-based input that needs
+          no gloves or controllers and holds up across real-world hands, lighting and motion. That technology
+          is now <b>integral to the Quest line</b>, letting <b>millions of people worldwide</b> reach out and
+          touch virtual worlds with nothing but their hands.
+        </p>
+      </div>
+      <div class="mh-media">
+        <img src="./media/quest_performance.png" alt="Markerless hand-tracking performance on Meta Quest" />
       </div>
     </div>
   </div>
@@ -94,6 +135,7 @@
       <span class="kicker">What I do</span>
       <h2>Three roles, one mission</h2>
       <p>Understanding the neural control of movement and touch — and putting that understanding to work.</p>
+      <span class="region">Motor cortex — where action begins</span>
     </div>
     <div class="role-cards">
       <article class="role-card reveal">
@@ -115,7 +157,7 @@
         <span class="badge">Education</span>
         <h3>Leader &amp; Educator</h3>
         <div class="org">Immersive &amp; Neurotech</div>
-        <p>Teaching researchers to build and test immersive experiments — VR in Unity, motion capture, 3D printing — and bringing XR and neuroscience into classrooms and community outreach.</p>
+        <p>Teaching researchers to build and test immersive experiments — VR in Unity, motion capture, 3D printing — and leading community work such as <b>Kenilworth Revealed</b>, bringing University of Birmingham innovation into local heritage and outreach.</p>
       </article>
     </div>
   </div>
@@ -128,6 +170,7 @@
       <span class="kicker">Research</span>
       <h2>The neural control of natural action</h2>
       <p>Four intertwined threads that run from the brain to the fingertip and back.</p>
+      <span class="region">Hippocampus — learning &amp; adaptation</span>
     </div>
     <div class="pillars">
       <article class="pillar reveal">
@@ -169,8 +212,25 @@
       <span class="kicker">Selected work</span>
       <h2>From neuron to prototype</h2>
       <p>Hardware, software and studies that turn sensorimotor science into things people can touch.</p>
+      <span class="region">Cerebellum — coordination &amp; craft</span>
     </div>
     <div class="proj-grid">
+      <article class="proj wide reveal">
+        <div class="media"><img src="./media/kenilworthdemo.gif" alt="Kenilworth Revealed augmented-reality heritage experience" /></div>
+        <div class="body">
+          <span class="tag">AR · Community &amp; Heritage</span>
+          <h3>Kenilworth Revealed</h3>
+          <p>I lead this collaboration bringing University of Birmingham innovation to the community — our AR technology lets visitors and tourists step into Kenilworth's fascinating history through an immersive story, driving local engagement, tourism and the local economy.</p>
+        </div>
+      </article>
+      <article class="proj reveal">
+        <div class="media"><img src="./media/quest_performance.png" alt="Meta Quest markerless hand tracking" /></div>
+        <div class="body">
+          <span class="tag">Meta · Quest</span>
+          <h3>Markerless Hand Tracking</h3>
+          <p>Scalable, camera-based hand tracking I helped build at Meta — now integral to the Quest line, used by millions worldwide.</p>
+        </div>
+      </article>
       <article class="proj wide reveal">
         <div class="media"><img src="./media/obi_glove.jpg" alt="Obi Robotics advanced hand-tracking glove" /></div>
         <div class="body">
@@ -225,6 +285,7 @@
       <span class="kicker">Publications</span>
       <h2>Selected research output</h2>
       <p>Peer-reviewed work across HCI, sensorimotor neuroscience and XR.</p>
+      <span class="region">Thalamus — relaying the signal</span>
     </div>
     <div class="pub-list">
       <div class="pub reveal">
@@ -281,6 +342,7 @@
       <span class="kicker">Funding &amp; awards</span>
       <h2>Backed to build</h2>
       <p>Grants, awards and translation funding across research and enterprise.</p>
+      <span class="region">Amygdala — the drive to build</span>
     </div>
     <div class="fund-grid">
       <div class="fund reveal"><div class="amt">CHI'25</div><h3>ACM Best Paper</h3><p>XR Text Trove review of text input techniques.</p></div>
