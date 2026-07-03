@@ -7,14 +7,12 @@
 
 /* -----------------------------------------------------------
    1. THE OPENING BRAIN (WebGL)
-   A real 3D brain, built as a luminous point cloud: two
-   wrinkled cortical hemispheres, cerebellum and brainstem.
-   Move the mouse and the whole brain turns to follow you.
-   Scroll, and the hemispheres draw apart along the midline —
-   opening the brain to reveal its deep structures (prefrontal
-   cortex, motor & somatosensory strip, thalamus, hippocampus,
-   amygdala, cerebellum), each flaring with its label before
-   dissolving into the section it names.
+   A real 3D brain rendered as a dense, luminous point cloud —
+   two volumetric, wrinkled cortical hemispheres plus cerebellum
+   and brainstem. Move the mouse and the whole brain turns to
+   follow you. Scroll, and the hemispheres draw apart along the
+   midline, opening the brain to reveal glowing deep structures.
+   No labels or text — purely the form itself.
    ----------------------------------------------------------- */
 (function brain3D() {
   const canvas = document.getElementById('brainCanvas');
@@ -51,10 +49,17 @@
     const s = Math.sqrt(1 - u * u);
     return new THREE.Vector3(s * Math.cos(t), u, s * Math.sin(t));
   }
+  /* volumetric radius: a dense cortical band near the surface, plus a
+     filled interior so the brain never reads as a hollow shell */
+  function radialSample() {
+    return Math.random() < 0.60
+      ? 0.85 + Math.random() * 0.15            // outer cortex band
+      : 0.18 + Math.cbrt(Math.random()) * 0.68; // interior white-matter fill
+  }
   /* layered trig field ≈ gyri & sulci wrinkling */
   function wrinkle(x, y, z) {
     return 0.05 * Math.sin(x * 9 + y * 4) * Math.sin(y * 7 + z * 3) * Math.sin(z * 8 + x * 5)
-         + 0.022 * Math.sin(x * 16 + 1.7) * Math.sin(y * 14 + 0.4) * Math.sin(z * 15 + 2.9);
+         + 0.024 * Math.sin(x * 16 + 1.7) * Math.sin(y * 14 + 0.4) * Math.sin(z * 15 + 2.9);
   }
   function pickColor() {
     const r = Math.random();
@@ -71,33 +76,39 @@
     return new THREE.Points(g, m);
   }
 
-  /* ---------- cortex hemispheres ---------- */
-  const HEMI_N = 5200;
+  /* ---------- cortex hemispheres (volumetric) ---------- */
+  const HEMI_N = 6600;
   function buildHemisphere(side /* -1 left, +1 right */) {
     const pos = [], col = [];
-    const RX = 0.50, RY = 0.60, RZ = 0.92;      // hemisphere radii
+    const RX = 0.54, RY = 0.46, RZ = 0.80;      // brain-like: wider than tall, longer than wide
     for (let i = 0; i < HEMI_N; i++) {
       const d = sphereDir();
-      // keep points on this hemisphere's outer half; flatten the medial wall
-      d.x = Math.abs(d.x) * side;
-      let x = d.x * RX, y = d.y * RY, z = d.z * RZ;
-      if (Math.abs(d.x) < 0.22) {
-        // medial wall — pull to a flat inner face so the split looks anatomical
-        x = side * 0.05 * Math.random();
+      const rad = radialSample();
+      d.x = Math.abs(d.x) * side;               // stay on this hemisphere's half
+      let x = d.x * RX * rad, y = d.y * RY * rad, z = d.z * RZ * rad;
+
+      // cortical gyrification — applied to the outer band only
+      if (rad > 0.80) {
+        const w = 1 + wrinkle(x + side, y, z) * 2.1;
+        x *= w; y *= w; z *= w;
       }
-      const w = 1 + wrinkle(x + side, y, z) * 2.0;
-      x *= w; y *= w; z *= w;
-      // taper the underside (temporal lobe hangs lower at the front-middle)
-      if (y < -0.25 && z < -0.45) y *= 0.72;
+
+      // anatomical sculpting
+      if (z > 0.34) x *= 0.90;                   // frontal pole narrows
+      if (y < -0.04 && z > -0.5 && z < 0.5) {    // temporal lobe bulges down & out
+        y -= 0.11 * (0.5 - Math.abs(z));
+      }
+      if (y < -0.30) y = -0.30 + (y + 0.30) * 0.55; // flatter underside
+
       pos.push(x, y, z);
       const c = pickColor();
-      const b = 0.45 + Math.random() * 0.55;
+      const b = 0.42 + Math.random() * 0.58;
       col.push(c.r * b, c.g * b, c.b * b);
     }
-    const pts = makePoints(pos, col, 0.021, 0.9);
+    const pts = makePoints(pos, col, 0.019, 0.92);
     const grp = new THREE.Group();
     grp.add(pts);
-    grp.position.x = side * 0.30;
+    grp.position.x = side * 0.05;
     grp.userData = { side, pts };
     return grp;
   }
@@ -109,13 +120,14 @@
   const core = new THREE.Group();
   {
     const pos = [], col = [];
-    // cerebellum: finely striated ball at the back underside
-    for (let i = 0; i < 1500; i++) {
+    // cerebellum: finely striated, filled ball at the back underside
+    for (let i = 0; i < 1900; i++) {
       const d = sphereDir();
-      let x = d.x * 0.44, y = d.y * 0.30, z = d.z * 0.40;
+      const rad = 0.45 + Math.cbrt(Math.random()) * 0.55;   // volumetric fill
+      let x = d.x * 0.44 * rad, y = d.y * 0.30 * rad, z = d.z * 0.40 * rad;
       const w = 1 + 0.05 * Math.sin(y * 42) + 0.02 * Math.sin(x * 20) * Math.sin(z * 18);
       x *= w; y *= w; z *= w;
-      pos.push(x, y - 0.58, z - 0.66);
+      pos.push(x, y - 0.46, z - 0.56);
       const c = pickColor(); const b = 0.4 + Math.random() * 0.5;
       col.push(c.r * b, c.g * b, c.b * b);
     }
@@ -124,7 +136,7 @@
       const t = Math.random();
       const a = Math.random() * Math.PI * 2;
       const r = 0.10 * Math.sqrt(Math.random());
-      pos.push(Math.cos(a) * r, -0.42 - t * 0.42, -0.28 - t * 0.16 + Math.sin(a) * r);
+      pos.push(Math.cos(a) * r, -0.34 - t * 0.40, -0.24 - t * 0.16 + Math.sin(a) * r);
       const b = 0.35 + Math.random() * 0.45;
       col.push(C.ivory.r * b, C.ivory.g * b, C.ivory.b * b);
     }
@@ -132,25 +144,7 @@
   }
   root.add(core);
 
-  /* ---------- deep structures (revealed by the split) ---------- */
-  function makeLabel(text) {
-    const cv = document.createElement('canvas');
-    cv.width = 512; cv.height = 96;
-    const cx2 = cv.getContext('2d');
-    cx2.font = '600 40px Inter, system-ui, sans-serif';
-    cx2.fillStyle = 'rgba(243,241,234,0.96)';
-    cx2.textBaseline = 'middle';
-    cx2.fillText(text.toUpperCase(), 14, 50);
-    const tex = new THREE.CanvasTexture(cv);
-    tex.minFilter = THREE.LinearFilter;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: tex, transparent: true, opacity: 0, depthWrite: false, depthTest: false,
-    }));
-    sp.center.set(0, 0.5);
-    sp.scale.set(0.98, 0.184, 1);
-    return sp;
-  }
-
+  /* ---------- deep structures: glowing inner cores (no text) ---------- */
   function makeCluster(color, n, shape) {
     const pos = [], col = [];
     for (let i = 0; i < n; i++) {
@@ -165,8 +159,8 @@
     const d = sphereDir(); const r = Math.cbrt(Math.random());
     return new THREE.Vector3(d.x * rx * r, d.y * ry * r, d.z * rz * r);
   };
-  // hippocampus: a curved little tube (its classic seahorse arc)
-  const hippoShape = () => {
+  // a curved little tube (a limbic arc)
+  const arcShape = () => {
     const t = Math.random() * 2 - 1;
     return new THREE.Vector3(
       (Math.random() - 0.5) * 0.05,
@@ -175,23 +169,19 @@
     );
   };
 
+  // purely visual cores that flare as the hemispheres part — no labels
   const STRUCTURES = [
-    { label: 'Prefrontal cortex', color: C.gold,   at: 0.18, anchor: [0,  0.16,  0.92], shape: ell(0.08, 0.13, 0.10) },
-    { label: 'Motor cortex',      color: C.ivory,  at: 0.30, anchor: [0,  0.60,  0.14], shape: ell(0.16, 0.06, 0.09) },
-    { label: 'Somatosensory',     color: C.violet, at: 0.42, anchor: [0,  0.57, -0.16], shape: ell(0.16, 0.06, 0.09) },
-    { label: 'Thalamus',          color: C.gold,   at: 0.54, anchor: [0,  0.02, -0.04], shape: ell(0.10, 0.08, 0.12) },
-    { label: 'Hippocampus',       color: C.teal,   at: 0.66, anchor: [0, -0.16, -0.16], shape: hippoShape },
-    { label: 'Amygdala',          color: C.violet, at: 0.78, anchor: [0, -0.20,  0.22], shape: ell(0.07, 0.06, 0.07) },
-    { label: 'Cerebellum',        color: C.ivory,  at: 0.90, anchor: [0, -0.58, -0.66], shape: ell(0.001, 0.001, 0.001) },
+    { color: C.gold,   at: 0.24, anchor: [0,  0.02, -0.02], shape: ell(0.13, 0.10, 0.15) },
+    { color: C.teal,   at: 0.42, anchor: [0, -0.12, -0.08], shape: arcShape },
+    { color: C.violet, at: 0.60, anchor: [0, -0.16,  0.20], shape: ell(0.08, 0.07, 0.08) },
+    { color: C.gold,   at: 0.76, anchor: [0,  0.28, -0.02], shape: ell(0.07, 0.06, 0.07) },
   ];
   const structures = STRUCTURES.map((s) => {
     const grp = new THREE.Group();
-    const pts = makeCluster(s.color, s.label === 'Cerebellum' ? 1 : 150, s.shape);
-    const label = makeLabel(s.label);
-    label.position.set(0.24, 0.10, 0);
-    grp.add(pts, label);
+    const pts = makeCluster(s.color, 240, s.shape);
+    grp.add(pts);
     grp.position.set(s.anchor[0], s.anchor[1], s.anchor[2]);
-    grp.userData = { ...s, pts, label, base: new THREE.Vector3(...s.anchor) };
+    grp.userData = { ...s, pts, base: new THREE.Vector3(...s.anchor) };
     root.add(grp);
     return grp;
   });
@@ -220,13 +210,13 @@
   function renderFrame() {
     const open = smooth(scrollP);
 
-    // hemispheres part along the midline and swing outward like doors
+    // closed: hemispheres meet at a thin fissure. open: they part & swing like doors
     for (const hemi of [hemiL, hemiR]) {
       const s = hemi.userData.side;
-      hemi.position.x = s * (0.30 + open * 0.62);
+      hemi.position.x = s * (0.05 + open * 0.82);
       hemi.rotation.y = s * open * 0.45;
       hemi.rotation.z = -s * open * 0.10;
-      hemi.userData.pts.material.opacity = 0.9 - open * 0.52;
+      hemi.userData.pts.material.opacity = 0.92 - open * 0.5;
     }
     core.position.y = -open * 0.16;
     core.children[0].material.opacity = 0.8 - open * 0.30;
@@ -247,7 +237,6 @@
       const k = 1 + Math.max(0, d) * 1.6;
       grp.scale.setScalar(k);
       u.pts.material.opacity = life * 0.95;
-      u.label.material.opacity = life * 0.92;
     }
 
     // whole-brain motion: idle sway + mouse steering + open tilt
