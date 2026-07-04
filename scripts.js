@@ -41,7 +41,47 @@
 })();
 
 /* -----------------------------------------------------------
-   2. SCROLL REVEAL
+   2. COURSE SIGN-UP (courses.html only)
+   - preselect the course from a ?course= URL param
+   - show a success banner after Formspree redirects back with ?ok=1
+   ----------------------------------------------------------- */
+(function signup() {
+  const params = new URLSearchParams(window.location.search);
+
+  const select = document.getElementById('course');
+  if (select) {
+    const map = {
+      mocap: 'Motion Capture for Scientists',
+      unity: 'VR with Unity for Scientists',
+      printing: '3D Modelling & Printing',
+    };
+    const wanted = map[(params.get('course') || '').toLowerCase()];
+    if (wanted) {
+      Array.from(select.options).forEach((o) => {
+        if (o.value.replace('&amp;', '&') === wanted) o.selected = true;
+      });
+    }
+    // in-page "Choose this course" links preselect + scroll
+    document.querySelectorAll('[data-course]').forEach((a) => {
+      a.addEventListener('click', () => {
+        const w = map[a.getAttribute('data-course')];
+        if (!w) return;
+        Array.from(select.options).forEach((o) => {
+          if (o.value.replace('&amp;', '&') === w) o.selected = true;
+        });
+      });
+    });
+  }
+
+  const banner = document.getElementById('formSuccess');
+  if (banner && params.get('ok') === '1') {
+    banner.classList.add('show');
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+})();
+
+/* -----------------------------------------------------------
+   3. SCROLL REVEAL
    ----------------------------------------------------------- */
 (function reveal() {
   const items = document.querySelectorAll('.reveal');

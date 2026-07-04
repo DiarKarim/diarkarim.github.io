@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Courses &amp; Sign-up — Diar Abdlkarim</title>
+<meta name="description" content="Hands-on courses for scientists: Motion Capture, VR with Unity, and 3D Modelling & Printing. Sign up to register your interest and reserve a place." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <a class="logo" href="index.html#top"><span class="dot"></span> Diar Abdlkarim</a>
+  <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+  <nav class="nav-links">
+    <a href="index.html#about">About</a>
+    <a href="index.html#leadership">Leadership</a>
+    <a href="index.html#research">Research</a>
+    <a href="index.html#publications">Publications</a>
+    <a href="courses.html">Courses</a>
+    <a href="index.html#contact" class="cta">Get in touch</a>
+  </nav>
+</header>
+
+<!-- ============ HEADER ============ -->
+<section class="hero" id="top" style="padding-bottom:clamp(40px,6vw,64px)">
+  <div class="hero-inner">
+    <span class="eyebrow">Training for scientists</span>
+    <h1 style="font-size:clamp(2.4rem,6vw,4rem)">Courses &amp; Sign-up</h1>
+    <p class="sub" style="margin-top:14px">
+      Practical, hands-on training that gets research groups up and running with motion capture, VR in
+      Unity, and rapid prototyping — taught from real lab experience. Reserve your place below; places are
+      limited each cohort and cohorts run periodically through the year.
+    </p>
+    <div class="hero-actions" style="margin-top:26px">
+      <a class="btn btn-accent" href="#signup">Go to sign-up →</a>
+      <a class="btn btn-ghost" href="index.html#top">← Back to home</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COURSE DETAIL ============ -->
+<section class="block" id="details">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker">The courses</span>
+      <h2>Three ways to level up your lab</h2>
+      <p>Each course is designed for researchers — no prior game-dev or engineering background needed to start.</p>
+    </div>
+    <div class="course-grid">
+      <article class="course-card reveal">
+        <div class="c-media"><img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture for Scientists" /></div>
+        <div class="c-body">
+          <div class="c-meta"><span>3 days</span><span>Hands-on</span><span>Small group</span></div>
+          <h3>Motion Capture for Scientists</h3>
+          <p>Set up, capture and analyse motion-capture data end to end — system calibration, marker sets,
+             recording clean trials, troubleshooting, and exporting kinematics ready for your analysis pipeline.</p>
+          <a class="c-cta" href="#signup" data-course="mocap">Choose this course →</a>
+        </div>
+      </article>
+      <article class="course-card reveal">
+        <div class="c-media"><img src="./media/unitycrashcourse.png" alt="VR with Unity for Scientists" /></div>
+        <div class="c-body">
+          <div class="c-meta"><span>5 days</span><span>Hands-on</span><span>Beginner-friendly</span></div>
+          <h3>VR with Unity for Scientists</h3>
+          <p>Build and run your own VR experiments in the Unity game engine — scene setup, interaction,
+             headset deployment and logging trial-by-trial data for rigorous, reproducible studies.</p>
+          <a class="c-cta" href="#signup" data-course="unity">Choose this course →</a>
+        </div>
+      </article>
+      <article class="course-card reveal">
+        <div class="c-media"><img src="./media/3dprintingcourse.png" alt="3D Modelling and Printing" /></div>
+        <div class="c-body">
+          <div class="c-meta"><span>1 day</span><span>Hands-on</span><span>CAD to print</span></div>
+          <h3>3D Modelling &amp; Printing</h3>
+          <p>Practical CAD and rapid prototyping for research — design custom rigs, mounts and apparatus and
+             print them for your experiments, without needing an engineering background.</p>
+          <a class="c-cta" href="#signup" data-course="printing">Choose this course →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIGN-UP FORM ============ -->
+<section class="block" id="signup">
+  <div class="container contact-wrap">
+    <div class="contact-copy reveal">
+      <span class="section-head kicker">Sign up</span>
+      <h2>Reserve your place.</h2>
+      <p>Fill in the form and I'll be in touch with dates, pricing and joining details for your chosen
+         course. There's no payment at this stage — this registers your interest and holds your spot.</p>
+      <div class="contact-links">
+        <a href="mailto:diarkarim@gmail.com"><span class="ic">✉</span><div><b>Prefer email?</b><span>diarkarim@gmail.com</span></div></a>
+        <a href="index.html#courses"><span class="ic">▸</span><div><b>Course overview</b><span>See all courses on the home page</span></div></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="form-success" id="formSuccess">
+        ✓ Thanks — your sign-up has been received. I'll be in touch by email with the details shortly.
+      </div>
+      <!--
+        Sign-ups are delivered by Formspree: each submission is emailed to the address registered on the
+        form and stored in the Formspree dashboard, where they can be exported as a spreadsheet (CSV).
+        To send notifications to diarkarim@gmail.com and/or auto-append to a Google Sheet, create a
+        dedicated Formspree form (formspree.io) or a Google Form and replace the action URL below.
+      -->
+      <form class="contact-form" id="signupForm"
+            action="https://formspree.io/f/xnndynep" method="POST">
+        <input type="hidden" name="_subject" value="New course sign-up — diarkarim.com" />
+        <input type="hidden" name="_next" value="https://www.diarkarim.com/courses.html?ok=1" />
+        <input type="hidden" name="form" value="Course sign-up" />
+
+        <div class="form-grid">
+          <div>
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label for="affiliation">Affiliation / institution</label>
+            <input type="text" id="affiliation" name="affiliation" placeholder="e.g. University of Birmingham" />
+          </div>
+          <div>
+            <label for="course">Course</label>
+            <select id="course" name="course" required>
+              <option value="" disabled selected>Choose a course…</option>
+              <option value="Motion Capture for Scientists">Motion Capture for Scientists (3 days)</option>
+              <option value="VR with Unity for Scientists">VR with Unity for Scientists (5 days)</option>
+              <option value="3D Modelling &amp; Printing">3D Modelling &amp; Printing (1 day)</option>
+              <option value="Not sure yet / bespoke">Not sure yet / bespoke for my lab</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="experience">Experience level (optional)</label>
+          <select id="experience" name="experience">
+            <option value="" disabled selected>Select…</option>
+            <option value="Beginner">Beginner — new to this</option>
+            <option value="Some experience">Some experience</option>
+            <option value="Experienced">Experienced — looking to go deeper</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="message">Anything else? (optional)</label>
+          <textarea id="message" name="message" rows="4" placeholder="Group size, preferred dates, goals for your lab…"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="justify-content:center">Reserve my place →</button>
+        <p class="form-note">By submitting you agree to be contacted about this course. No payment is taken now.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-foot">
+  <div class="container foot-inner">
+    <span>© 2026 Diar Abdlkarim · Sensorimotor neuroscience &amp; immersive technology</span>
+    <span>
+      <a href="index.html#top">Home</a> ·
+      <a href="projects.html">Projects</a> ·
+      <a href="publications.html">Publications</a> ·
+      <a href="funding.html">Funding</a>
+    </span>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>
