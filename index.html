@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Diar Abdlkarim — Sensorimotor Neuroscientist &amp; Research Leader</title>
-<meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, EEG, the science of touch and motion capture. Founder of the markerless Movement Lab; ex-Meta Quest hand tracking. Runs hands-on motion-capture and Unity VR courses for scientists." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<title>Diar Abdlkarim — Movement, understood.</title>
+<meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, EEG, touch and motion capture. Founder of the markerless Movement Lab; ex-Meta Quest hand tracking. Hands-on courses in motion capture and game engines for scientists." />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,8 +15,8 @@
   <button class="nav-toggle" aria-label="Toggle menu">☰</button>
   <nav class="nav-links">
     <a href="#about">About</a>
-    <a href="#leadership">Leadership</a>
     <a href="#research">Research</a>
+    <a href="#work">Work</a>
     <a href="#publications">Publications</a>
     <a href="#courses">Courses</a>
     <a href="#contact" class="cta">Get in touch</a>
@@ -29,39 +26,47 @@
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
   <div class="hero-inner">
-    <span class="eyebrow">University of Birmingham · Motion Dynamics</span>
+    <span class="eyebrow">Sensorimotor neuroscientist · University of Birmingham</span>
     <h1>Diar Abdlkarim</h1>
-    <p class="hero-role">Sensorimotor Neuroscientist &amp; Research Leader</p>
+    <p class="hero-role"><span class="grad">Movement, understood.</span></p>
     <p class="sub">
-      I study how the brain controls natural movement — through <b>EEG</b>, the <b>science of touch</b>,
-      and <b>motion capture</b> — and build the research infrastructure, instruments and ventures that
-      turn it into real-world technology. I also run <a class="tlink" href="#courses">hands-on courses</a>
-      teaching scientists motion capture and VR in Unity.
+      I study how the brain moves the body — and build the technology that proves it.
     </p>
-
-    <div class="roles-strip">
-      <div class="role-chip"><div><b>Research Fellow</b><span>University of Birmingham</span></div></div>
-      <div class="role-chip"><div><b>Facility Lead</b><span>Movement Lab · markerless mocap</span></div></div>
-      <div class="role-chip"><div><b>Co-Founder &amp; Director</b><span>Motion Dynamics</span></div></div>
-    </div>
-
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#leadership">Explore my work</a>
-      <a class="btn btn-accent" href="courses.html#signup">Join a course →</a>
-      <a class="btn btn-ghost" href="./media/CV Diar Abdlkarim.pdf" download>Download CV</a>
+      <a class="btn btn-primary" href="#about">Explore the work</a>
+      <a class="btn btn-ghost" href="courses.html">Join a course</a>
     </div>
+  </div>
+  <div class="hero-canvas-wrap">
+    <canvas id="handCanvas" aria-hidden="true"></canvas>
+    <span class="hero-canvas-cap">Markerless hand tracking · live</span>
+  </div>
+  <span class="scroll-cue" aria-hidden="true">⌄</span>
+</section>
 
-    <div class="venture-banner reveal">
-      <span class="flag">New venture · Seeking partners &amp; funding</span>
-      <div class="vb-body">
-        <h3>Growing minds, away from screens</h3>
-        <p>
-          A new research-led venture on how <b>fine-motor and cognitive development intertwine</b> in early
-          childhood — and how technology can guide young children <b>back toward rich, physical-world
-          interaction</b> during these critical developmental stages.
-        </p>
+<!-- ============ PINNED STORY ============ -->
+<section class="story" aria-label="Research story">
+  <div class="story-track">
+    <div class="story-sticky">
+      <p class="story-kicker">One question. Three instruments.</p>
+      <div class="story-scenes">
+        <div class="scene">
+          <span class="s-num">01</span>
+          <h3>Read the brain.</h3>
+          <p><b>EEG</b> captures the neural signature of a movement — before the hand even begins to move.</p>
+        </div>
+        <div class="scene">
+          <span class="s-num">02</span>
+          <h3>Feel the touch.</h3>
+          <p><b>Psychophysics</b> reveals how skin senses contact, force and texture — and how touch shapes what we do next.</p>
+        </div>
+        <div class="scene">
+          <span class="s-num">03</span>
+          <h3>Capture the motion.</h3>
+          <p><b>Markerless motion capture</b> measures action to the millimetre. No suits. No markers. Just movement.</p>
+        </div>
       </div>
-      <a class="vb-cta" href="#contact">Partner or fund this →</a>
+      <div class="story-dots" aria-hidden="true"><span></span><span></span><span></span></div>
     </div>
   </div>
 </section>
@@ -73,94 +78,83 @@
       <img src="./media/profilepic.jpg" alt="Portrait of Diar Abdlkarim" />
     </div>
     <div class="about-copy reveal">
-      <span class="section-head kicker">About</span>
-      <p class="lead">
-        I build the science, the infrastructure, and the companies that turn how the brain
-        controls movement into technology people can use.
-      </p>
+      <span class="kicker">About</span>
+      <p class="lead">From neuron to product. That's the whole journey — and I work every step of it.</p>
       <p>
         My research asks a deceptively simple question: <b>how does the brain command the body to act
-        in the real world?</b> To answer it I combine <b>EEG</b> to read the neural signatures of movement,
-        <b>psychophysics of touch</b> to probe how we sense contact and force, and <b>motion capture</b> to
-        measure action with millimetre precision — closing the perception–action loop in extended reality.
+        in the real world?</b> Answering it means closing the loop between perception and action —
+        reading neural signals, probing the sense of touch, and measuring movement with precision.
       </p>
       <p>
-        I established and lead the University's <b>markerless Movement Lab</b>, research infrastructure now
-        used across research groups. Previously at <b>Meta</b>, I contributed to the <b>markerless, scalable
-        hand tracking</b> now integral to the <b>Quest</b> product line and used by millions worldwide. As
-        <b>Co-Founder &amp; Director of Motion Dynamics</b>, I translate this science into hand-tracking
-        hardware, haptics and XR software — and I teach it through
-        <a class="tlink" href="#courses">courses for scientists</a>.
+        I founded and lead the University of Birmingham's <b>markerless Movement Lab</b>. At <b>Meta</b>,
+        I helped build the hand tracking now integral to <b>Quest</b>. And as <b>Co-Founder &amp; Director
+        of Motion Dynamics</b>, I turn the science into hardware, haptics and XR software — then
+        <a class="tlink" href="#courses">teach it to other scientists</a>.
       </p>
       <div class="stat-row">
-        <div class="stat"><b>Movement Lab</b><span>Facility I designed &amp; lead</span></div>
-        <div class="stat"><b>£1.5M+</b><span>Research funding contributed</span></div>
+        <div class="stat"><b><span data-count="1.5" data-prefix="£" data-suffix="M+">£1.5M+</span></b><span>Research funding contributed</span></div>
         <div class="stat"><b>CHI 2025</b><span>ACM Best Paper Award</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="meta-highlight reveal">
-      <div class="mh-copy">
-        <div class="badge-row">
-          <span class="chip">Meta · Reality Labs</span>
-          <span class="chip">Quest</span>
-          <span class="chip">Markerless hand tracking</span>
-        </div>
-        <h3>Hand tracking, shipped to millions</h3>
-        <p>
-          At Meta I contributed to <b>markerless, scalable hand tracking</b> — camera-based input that needs
-          no gloves or controllers and holds up across real-world hands, lighting and motion. That technology
-          is now <b>integral to the Quest line</b>, letting <b>millions of people worldwide</b> interact with
-          virtual worlds using nothing but their hands.
-        </p>
-      </div>
-      <div class="mh-media">
-        <img src="./media/quest_performance.png" alt="Markerless hand-tracking performance on Meta Quest" />
+        <div class="stat"><b>1 lab</b><span>Founded, built &amp; led</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ LEADERSHIP & IMPACT ============ -->
-<section class="block" id="leadership">
+<!-- ============ META / QUEST FEATURE ============ -->
+<section class="feature-dark" id="quest">
+  <div class="container">
+    <span class="kicker reveal">Meta · Reality Labs</span>
+    <h2 class="reveal">Hand tracking.<br />In millions of hands.</h2>
+    <p class="f-sub reveal">
+      At Meta, I contributed to <b>markerless, scalable hand tracking</b> — camera-based input that needs
+      no gloves, no controllers, and holds up across real hands, real lighting and real motion.
+      Today it ships on every <b>Quest</b>.
+    </p>
+  </div>
+  <div class="feature-media">
+    <img src="./media/quest_performance.png" alt="Markerless hand-tracking performance on Meta Quest" />
+  </div>
+  <div class="badge-row reveal">
+    <span class="chip">Camera-based</span>
+    <span class="chip">No controllers</span>
+    <span class="chip">Ships on Quest</span>
+  </div>
+</section>
+
+<!-- ============ LEADERSHIP ============ -->
+<section class="block alt" id="leadership">
   <div class="container">
     <div class="section-head reveal">
-      <span class="kicker">Leadership &amp; impact</span>
-      <h2>Building infrastructure, groups and ventures</h2>
-      <p>The through-line of my work is independence: creating the facilities, collaborations and
-         companies that let new science happen — and mentoring the people who deliver it.</p>
+      <span class="kicker">Leadership</span>
+      <h2>Built to outlast me.</h2>
+      <p>Facilities, collaborations and companies that let new science happen — and the people mentored to deliver it.</p>
     </div>
     <div class="lead-grid">
       <article class="lead-card reveal">
-        <span class="tag">Research infrastructure</span>
-        <h3>Founded &amp; lead the Movement Lab</h3>
-        <p>I designed, specced and established a <b>state-of-the-art markerless motion-capture facility</b>
-           now used across research groups at the University of Birmingham — a shared research asset I lead,
-           and a magnet that draws collaborators and grant co-investigator roles into the department.</p>
+        <span class="tag">Infrastructure</span>
+        <h3>The Movement Lab</h3>
+        <p>I designed, specced and established a <b>state-of-the-art markerless motion-capture facility</b> —
+           now a shared research asset used across groups at the University of Birmingham, and a magnet for
+           collaborators and grant co-investigator roles.</p>
       </article>
       <article class="lead-card reveal">
-        <span class="tag">Supervision &amp; independence</span>
-        <h3>Opened a new research line in sign language</h3>
-        <p>I opened a new direction applying <b>kinematic assessment to sign-language acquisition</b>, and I
-           mentor the PhD researcher delivering it — reflected in our co-authored work. It shows an
-           independent research agenda beyond my own hands-on projects.</p>
+        <span class="tag">Supervision</span>
+        <h3>A new research line</h3>
+        <p>I opened an independent direction applying <b>kinematic assessment to sign-language acquisition</b>,
+           and mentor the PhD researcher delivering it — reflected in our co-authored publications.</p>
       </article>
       <article class="lead-card reveal">
-        <span class="tag">Convening &amp; income</span>
-        <h3>Brokered a funded PhD studentship</h3>
-        <p>I initiated a <b>cross-college neuroscience × immersive-simulation collaboration</b> — leveraging
-           facilities no other group in the department has — and converted it into <b>funded PhD capacity</b>,
-           bringing new research income and people into the group.</p>
+        <span class="tag">Convening</span>
+        <h3>Funded PhD capacity</h3>
+        <p>I initiated a <b>cross-college neuroscience × immersive-simulation collaboration</b> — and converted
+           it into a funded PhD studentship, bringing new research income and people into the group.</p>
       </article>
       <article class="lead-card reveal">
-        <span class="tag">Impact, enterprise &amp; training</span>
-        <h3>From lab to real-world impact</h3>
-        <p>Through <b>Motion Dynamics</b>, applied partnerships, the <b>Kenilworth Revealed</b> AR heritage
-           project, and <a class="tlink" href="#courses">training courses for scientists</a>, I take research
-           out of the lab into products, skills and community — the basis of an impact and knowledge-exchange
-           narrative.</p>
+        <span class="tag">Impact</span>
+        <h3>Lab to world</h3>
+        <p>Through <b>Motion Dynamics</b>, the <b>Kenilworth Revealed</b> AR heritage project and
+           <a class="tlink" href="#courses">training courses for scientists</a>, the research leaves the lab —
+           as products, skills and community.</p>
       </article>
     </div>
   </div>
@@ -171,49 +165,49 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="kicker">Research</span>
-      <h2>The neural control of natural action</h2>
-      <p>Four intertwined threads that run from the brain to the fingertip and back.</p>
+      <h2>Four threads. One loop.</h2>
+      <p>From the brain to the fingertip and back again.</p>
     </div>
     <div class="pillars">
       <article class="pillar reveal">
         <div class="num">01</div>
         <div><h3>Brain imaging with EEG</h3>
-          <p>Reading the neural signatures of movement to understand how motor plans are formed, predicted and corrected while people act in naturalistic, real-world tasks.</p></div>
+          <p>Reading how motor plans are formed, predicted and corrected — while people act in naturalistic, real-world tasks.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">02</div>
         <div><h3>The science of touch</h3>
-          <p>Sensory-motor neuroscience of the sense of touch — how the hand senses contact, force and texture, and how tactile feedback shapes what we do next.</p></div>
+          <p>How the hand senses contact, force and texture — and how tactile feedback shapes the next movement.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">03</div>
         <div><h3>Motion capture &amp; tracking</h3>
-          <p>Capturing fine-grained sensorimotor signals with markerless mocap and hand-tracking hardware, measuring action with the precision that experiments demand.</p></div>
+          <p>Fine-grained sensorimotor measurement with markerless mocap and hand-tracking hardware, at experimental precision.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">04</div>
         <div><h3>Immersive technologies</h3>
-          <p>Building XR, HCI and human–robot interaction systems that close the perception–action loop in real time — for research, rehabilitation and collaboration.</p></div>
+          <p>XR, HCI and human–robot systems that close the perception–action loop in real time — for research and rehabilitation.</p></div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ============ PROJECTS ============ -->
-<section class="block" id="projects">
-  <div class="container">
+<!-- ============ WORK / PROJECTS ============ -->
+<section class="block alt" id="work">
+  <div class="container wide">
     <div class="section-head reveal">
       <span class="kicker">Selected work</span>
-      <h2>From neuron to prototype</h2>
+      <h2>Ideas you can hold.</h2>
       <p>Hardware, software and studies that turn sensorimotor science into things people can use.</p>
     </div>
     <div class="proj-grid">
       <article class="proj wide reveal">
         <div class="media"><img src="./media/kenilworthdemo.gif" alt="Kenilworth Revealed augmented-reality heritage experience" /></div>
         <div class="body">
-          <span class="tag">AR · Community &amp; heritage</span>
+          <span class="tag">AR · Heritage</span>
           <h3>Kenilworth Revealed</h3>
-          <p>A collaboration I lead that brings University of Birmingham innovation to the community — AR that lets visitors step into Kenilworth's history, supporting local engagement and tourism.</p>
+          <p>AR that lets visitors step into Kenilworth's history — university innovation, delivered to the community.</p>
         </div>
       </article>
       <article class="proj reveal">
@@ -221,15 +215,15 @@
         <div class="body">
           <span class="tag">Meta · Quest</span>
           <h3>Markerless Hand Tracking</h3>
-          <p>Scalable, camera-based hand tracking I contributed to at Meta — now integral to the Quest line, used by millions.</p>
+          <p>Camera-based hand tracking, now integral to the Quest line.</p>
         </div>
       </article>
       <article class="proj wide reveal">
         <div class="media"><img src="./media/obi_glove.jpg" alt="Obi Robotics advanced hand-tracking glove" /></div>
         <div class="body">
           <span class="tag">Hardware · Motion Dynamics</span>
-          <h3>Obi Robotics Hand-Tracking Glove</h3>
-          <p>A modular glove tracking every finger at high rate, with integrated haptics for precise XR and robotics control.</p>
+          <h3>Obi Robotics Glove</h3>
+          <p>Every finger, tracked at high rate — with integrated haptics for precise XR and robotics control.</p>
         </div>
       </article>
       <article class="proj reveal">
@@ -237,15 +231,15 @@
         <div class="body">
           <span class="tag">Haptics</span>
           <h3>Fingertip Indentation Device</h3>
-          <p>Renders physical button-press sensations with controllable indentation.</p>
+          <p>Physical button-press sensations, rendered with controllable indentation.</p>
         </div>
       </article>
       <article class="proj reveal">
         <div class="media"><img src="./media/billiard_experiment.png" alt="Immersive VR pool with wrist haptics" /></div>
         <div class="body">
           <span class="tag">XR study</span>
-          <h3>Immersive VR Pool + Haptics</h3>
-          <p>A VR billiards task coupled to a wrist squeeze band for impact-synchronised feedback.</p>
+          <h3>VR Pool + Haptics</h3>
+          <p>A billiards task with impact-synchronised wrist feedback.</p>
         </div>
       </article>
       <article class="proj reveal">
@@ -253,12 +247,12 @@
         <div class="body">
           <span class="tag">Clinical</span>
           <h3>Vibrotactile Assessment Rig</h3>
-          <p>A grounded lab system delivering precise vibrotactile stimuli while measuring fingertip force.</p>
+          <p>Precise vibrotactile stimuli, measured fingertip force.</p>
         </div>
       </article>
     </div>
-    <div class="center-cta">
-      <a class="btn btn-ghost" href="projects.html">See all projects →</a>
+    <div class="center-cta reveal">
+      <a class="alink" href="projects.html">See all projects</a>
     </div>
   </div>
 </section>
@@ -268,68 +262,53 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="kicker">Publications</span>
-      <h2>Selected research output</h2>
-      <p>Peer-reviewed work across HCI, sensorimotor neuroscience and XR. Full list on the publications page.</p>
+      <h2>Peer-reviewed. Field-tested.</h2>
+      <p>Selected work across HCI, sensorimotor neuroscience and XR.</p>
     </div>
-    <div class="pub-list">
-      <div class="pub reveal">
+    <div class="pub-list reveal">
+      <div class="pub">
         <div class="year">2025</div>
         <div><h3>Text Entry for XR Trove (TEXT)</h3><div class="authors">Bhatia, Mughrabi, <b>Abdlkarim</b>, Di Luca, Gonzalez-Franco, Ahuja, Seifi</div></div>
         <div class="venue award">CHI · Best Paper</div>
       </div>
-      <div class="pub reveal">
+      <div class="pub">
         <div class="year">2024</div>
         <div><h3>Development and validation of the ISV &amp; ISPLD databases</h3><div class="authors">Biotti, Sidnick, Hatton, <b>Abdlkarim</b>, Wing, Treasure, Happé, Brewer</div></div>
         <div class="venue">Behavior Research Methods</div>
       </div>
-      <div class="pub reveal">
+      <div class="pub">
         <div class="year">2024</div>
         <div><h3>A framework to assess the accuracy of VR hand-tracking systems</h3><div class="authors"><b>Abdlkarim</b>, Di Luca, Aves, Maaß, Yeo, Miall, Wing, Hermosillo</div></div>
         <div class="venue">Behavior Research Methods</div>
       </div>
-      <div class="pub reveal">
+      <div class="pub">
         <div class="year">2024</div>
         <div><h3>Hovering Over the Key to Text Input in XR</h3><div class="authors">Gonzalez-Franco, <b>Abdlkarim</b>, Bhatia, Seifi, Ahuja, Di Luca</div></div>
         <div class="venue">ISMAR</div>
       </div>
-      <div class="pub reveal">
+      <div class="pub">
         <div class="year">2024</div>
         <div><h3>Viewing angle matters in British Sign Language processing</h3><div class="authors">Watkins, <b>Abdlkarim</b>, Winter, Thompson</div></div>
         <div class="venue">Scientific Reports</div>
       </div>
-      <div class="pub reveal">
-        <div class="year">2023</div>
-        <div><h3>Tempo change and leadership in ensemble synchronisation</h3><div class="authors">Li, Tomczak, Elliott, Witek, Bradbury, Goodman, <b>Abdlkarim</b>, Di Luca, Hockman, Wing</div></div>
-        <div class="venue">J. New Music Research</div>
-      </div>
-      <div class="pub reveal">
+      <div class="pub">
         <div class="year">2022</div>
         <div><h3>Robot, Pass me the Tool: Handle Visualisation for HRI</h3><div class="authors">Ortenzi, Filipovica, <b>Abdlkarim</b>, Pardi, Takahashi, Wing, Di Luca, Kuchenbecker</div></div>
         <div class="venue">HRI</div>
       </div>
-      <div class="pub reveal">
-        <div class="year">2021</div>
-        <div><h3>PrendoSim: Proxy-Hand-Based Robot Grasp Generator</h3><div class="authors"><b>Abdlkarim</b>, Ortenzi, Pardi, Filipovica, Kuchenbecker, Wing, Di Luca</div></div>
-        <div class="venue">ICINCO</div>
-      </div>
-      <div class="pub reveal">
-        <div class="year">2019</div>
-        <div><h3>Acting is not the same as feeling</h3><div class="authors">Schuster, Sowden, <b>Abdulkarim</b>, Wing, Cook</div></div>
-        <div class="venue">Front. Hum. Neurosci.</div>
-      </div>
     </div>
-    <div class="center-cta">
-      <a class="btn btn-ghost" href="publications.html">Full publication list →</a>
+    <div class="center-cta reveal">
+      <a class="alink" href="publications.html">Full publication list</a>
     </div>
   </div>
 </section>
 
 <!-- ============ FUNDING ============ -->
-<section class="block" id="funding">
+<section class="block alt" id="funding">
   <div class="container">
     <div class="section-head reveal">
       <span class="kicker">Funding &amp; awards</span>
-      <h2>Backed to build</h2>
+      <h2>Backed to build.</h2>
       <p>Grants, awards and translation funding across research and enterprise.</p>
     </div>
     <div class="fund-grid">
@@ -337,55 +316,61 @@
       <div class="fund reveal"><div class="amt">£1.5M</div><h3>EPSRC ARME</h3><p>Named postdoc delivering XR music system integration &amp; studies.</p></div>
       <div class="fund reveal"><div class="amt">£15k</div><h3>Google Research</h3><p>Gift to explore ten-finger text entry for VR/AR.</p></div>
       <div class="fund reveal"><div class="amt">£30k</div><h3>ICURe Explore</h3><p>Innovate UK market validation for the AR musician system.</p></div>
-      <div class="fund reveal"><div class="amt">Finalist</div><h3>ICURe Exploit</h3><p>Selected as a finalist; the fund was later withdrawn nationally following government changes.</p></div>
+      <div class="fund reveal"><div class="amt">Finalist</div><h3>ICURe Exploit</h3><p>Selected as a finalist; the fund was later withdrawn nationally.</p></div>
       <div class="fund reveal"><div class="amt">£5k</div><h3>BBSRC Touch Test</h3><p>Portable tactile neuropathy assessment proof-of-concept.</p></div>
       <div class="fund reveal"><div class="amt">EPSRC</div><h3>PhD Studentship</h3><p>Immersive biofeedback for upper-limb rehabilitation.</p></div>
-      <div class="fund reveal"><div class="amt">+ more</div><h3>Full record</h3><p><a href="funding.html">See the funding page →</a></p></div>
+      <div class="fund reveal"><div class="amt">+ more</div><h3>Full record</h3><p><a href="funding.html">See the funding page ›</a></p></div>
     </div>
   </div>
 </section>
 
 <!-- ============ COURSES ============ -->
 <section class="block" id="courses">
-  <div class="container">
+  <div class="container wide">
     <div class="section-head reveal">
-      <span class="kicker">Training</span>
-      <h2>Courses for scientists</h2>
-      <p>Hands-on, practical training that gets research groups up and running with motion capture,
-         VR and rapid prototyping — taught from real lab experience. Places are limited each cohort.</p>
+      <span class="kicker">Courses for scientists</span>
+      <h2>Learn it in days.<br />Not years.</h2>
+      <p>Intensive, hands-on training taught from real lab experience. Two cohorts a year. Small groups. You leave with something that works.</p>
     </div>
-    <div class="course-grid">
-      <article class="course-card reveal">
-        <div class="c-media"><img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture for Scientists course" /></div>
-        <div class="c-body">
-          <div class="c-meta"><span>3 days</span><span>Hands-on</span><span>Small group</span></div>
+    <div class="course-duo">
+      <a class="course-hero-card reveal" href="courses.html?course=engine#signup">
+        <div class="media"><img src="./media/unitycrashcourse.png" alt="Game Engines for Scientists course" /></div>
+        <div class="body">
+          <span class="date-chip">May 2027 · 4 days</span>
+          <h3>Game Engines for Scientists</h3>
+          <p>Build and run a VR experiment in a game engine — from empty scene to logged data.</p>
+          <span class="alink">Sign up</span>
+        </div>
+      </a>
+      <a class="course-hero-card reveal" href="courses.html?course=mocap#signup">
+        <div class="media"><img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture for Scientists course" /></div>
+        <div class="body">
+          <span class="date-chip">June 2027 · 3 days</span>
           <h3>Motion Capture for Scientists</h3>
-          <p>Set up, capture and analyse motion-capture data end to end — calibration, marker sets, recording clean trials, and exporting kinematics ready for analysis.</p>
-          <a class="c-cta" href="courses.html?course=mocap#signup">Sign up →</a>
+          <p>Set up, capture and analyse motion data end to end — calibration to kinematics.</p>
+          <span class="alink">Sign up</span>
         </div>
-      </article>
-      <article class="course-card reveal">
-        <div class="c-media"><img src="./media/unitycrashcourse.png" alt="VR with Unity for Scientists course" /></div>
-        <div class="c-body">
-          <div class="c-meta"><span>5 days</span><span>Hands-on</span><span>No code required to start</span></div>
-          <h3>VR with Unity for Scientists</h3>
-          <p>Build and run your own VR experiments in the Unity game engine — from scene setup and interaction to logging trial-by-trial data for your studies.</p>
-          <a class="c-cta" href="courses.html?course=unity#signup">Sign up →</a>
-        </div>
-      </article>
-      <article class="course-card reveal">
-        <div class="c-media"><img src="./media/3dprintingcourse.png" alt="3D modelling and printing course" /></div>
-        <div class="c-body">
-          <div class="c-meta"><span>1 day</span><span>Hands-on</span><span>CAD to print</span></div>
-          <h3>3D Modelling &amp; Printing</h3>
-          <p>Practical CAD and rapid prototyping for research — design custom rigs, mounts and apparatus and print them for your experiments.</p>
-          <a class="c-cta" href="courses.html?course=printing#signup">Sign up →</a>
-        </div>
-      </article>
+      </a>
     </div>
-    <div class="courses-foot">
-      <p>Not sure which fits, or want a course delivered to your lab or department? Get in touch and I'll help you choose.</p>
-      <a class="btn btn-accent" href="courses.html#signup">Sign up for a course →</a>
+    <div class="courses-foot reveal">
+      <p>Not sure which fits — or want a course delivered to your lab?</p>
+      <a class="btn btn-primary" href="courses.html">Explore the courses</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VENTURE ============ -->
+<section class="feature-dark" id="venture">
+  <div class="container">
+    <span class="kicker reveal">New venture · Seeking partners &amp; funding</span>
+    <h2 class="reveal">Growing minds,<br />away from screens.</h2>
+    <p class="f-sub reveal">
+      A research-led venture on how <b>fine-motor and cognitive development intertwine</b> in early
+      childhood — and how technology can guide young children <b>back toward the physical world</b>
+      during the stages that matter most.
+    </p>
+    <div class="reveal" style="margin-top: 8px">
+      <a class="btn btn-ghost" href="#contact">Partner or fund this</a>
     </div>
   </div>
 </section>
@@ -394,11 +379,10 @@
 <section class="block" id="contact">
   <div class="container contact-wrap">
     <div class="contact-copy reveal">
-      <span class="section-head kicker">Contact</span>
-      <h2>Let's build something together.</h2>
-      <p>Collaborations, PhD supervision, speaking, consulting on immersive tech and neurotech, or a
-         conversation about how the brain moves the body — I'd be glad to hear from you. To join a course,
-         use the <a class="tlink" href="courses.html#signup">course sign-up page</a>.</p>
+      <span class="kicker">Contact</span>
+      <h2>Say hello.</h2>
+      <p>Collaborations, PhD supervision, speaking, consulting — or a conversation about how the brain
+         moves the body. To join a course, use the <a class="tlink" href="courses.html#signup">course sign-up page</a>.</p>
       <div class="contact-links">
         <a href="mailto:diarkarim@gmail.com"><span class="ic">✉</span><div><b>Email</b><span>diarkarim@gmail.com</span></div></a>
         <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" rel="noopener"><span class="ic">◷</span><div><b>Book a meeting</b><span>Grab a slot in my calendar</span></div></a>
@@ -414,7 +398,7 @@
         <label for="message">Message</label>
         <textarea id="message" name="message" rows="5" required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary" style="justify-content:center">Send message →</button>
+      <button type="submit" class="btn btn-primary">Send message</button>
     </form>
   </div>
 </section>

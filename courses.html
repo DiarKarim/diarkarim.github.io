@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Courses &amp; Sign-up — Diar Abdlkarim</title>
-<meta name="description" content="Hands-on courses for scientists: Motion Capture, VR with Unity, and 3D Modelling & Printing. Sign up to register your interest and reserve a place." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<title>Courses — Diar Abdlkarim</title>
+<meta name="description" content="Hands-on courses for scientists. Game Engines for Scientists — four days, May 2027. Motion Capture for Scientists — three days, June 2027. Small groups, real equipment, no experience required. Reserve your place." />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,85 +15,142 @@
   <button class="nav-toggle" aria-label="Toggle menu">☰</button>
   <nav class="nav-links">
     <a href="index.html#about">About</a>
-    <a href="index.html#leadership">Leadership</a>
     <a href="index.html#research">Research</a>
+    <a href="index.html#work">Work</a>
     <a href="index.html#publications">Publications</a>
     <a href="courses.html">Courses</a>
-    <a href="index.html#contact" class="cta">Get in touch</a>
+    <a href="#signup" class="cta">Sign up</a>
   </nav>
 </header>
 
-<!-- ============ HEADER ============ -->
-<section class="hero" id="top" style="padding-bottom:clamp(40px,6vw,64px)">
-  <div class="hero-inner">
-    <span class="eyebrow">Training for scientists</span>
-    <h1 style="font-size:clamp(2.4rem,6vw,4rem)">Courses &amp; Sign-up</h1>
-    <p class="sub" style="margin-top:14px">
-      Practical, hands-on training that gets research groups up and running with motion capture, VR in
-      Unity, and rapid prototyping — taught from real lab experience. Reserve your place below; places are
-      limited each cohort and cohorts run periodically through the year.
-    </p>
-    <div class="hero-actions" style="margin-top:26px">
-      <a class="btn btn-accent" href="#signup">Go to sign-up →</a>
-      <a class="btn btn-ghost" href="index.html#top">← Back to home</a>
+<!-- ============ HERO ============ -->
+<section class="page-hero" id="top">
+  <span class="eyebrow">Courses for scientists</span>
+  <h1>The tools of a modern lab.<br /><span class="grad">In your hands.</span></h1>
+  <p class="sub">
+    Two intensive courses, taught from real research experience. Small groups.
+    Real equipment. <b>You leave with something that works.</b>
+  </p>
+  <div class="hero-actions" style="margin-top: 30px">
+    <a class="btn btn-primary" href="#engine">May · Game Engines</a>
+    <a class="btn btn-primary" href="#mocap">June · Motion Capture</a>
+    <a class="btn btn-ghost" href="#signup">Reserve a place</a>
+  </div>
+</section>
+
+<!-- ============ COHORT 1 — GAME ENGINES ============ -->
+<section class="block" id="engine">
+  <div class="container">
+    <div class="cohort">
+      <div class="cohort-media reveal">
+        <img src="./media/unitycrashcourse.png" alt="Game Engines for Scientists — building VR experiments in Unity" />
+      </div>
+      <div class="cohort-body reveal">
+        <span class="date-chip">10–13 May 2027 · 4 days</span>
+        <h2>Game Engines for Scientists</h2>
+        <p class="c-tag">From empty scene to logged data.</p>
+        <p>
+          Game engines are the most powerful experimental platform most scientists never use.
+          In four days, you'll build and run your own <b>VR experiment in Unity</b> — interactions,
+          conditions, trials and data logging — and deploy it to a headset. <b>No coding or
+          game-dev background required to start.</b>
+        </p>
+        <div class="cohort-facts">
+          <span>Small group · max 10</span>
+          <span>All equipment provided</span>
+          <span>Beginner-friendly</span>
+          <span>Certificate of completion</span>
+        </div>
+        <ul class="days">
+          <li><span class="d">Day 1</span><div><b>Foundations</b><span>The engine, scenes, objects and physics — your first interactive world.</span></div></li>
+          <li><span class="d">Day 2</span><div><b>Interaction</b><span>The XR rig, hand tracking and controllers — making the world respond.</span></div></li>
+          <li><span class="d">Day 3</span><div><b>The experiment</b><span>Trials, conditions, randomisation and trial-by-trial data logging.</span></div></li>
+          <li><span class="d">Day 4</span><div><b>Ship it</b><span>Deploy to a headset, run a pilot, and take your data into analysis.</span></div></li>
+        </ul>
+        <a class="btn btn-primary" href="#signup" data-course="engine">Reserve a place — May 2027</a>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ COURSE DETAIL ============ -->
+<!-- ============ COHORT 2 — MOTION CAPTURE ============ -->
+<section class="block alt" id="mocap">
+  <div class="container">
+    <div class="cohort on-alt">
+      <div class="cohort-media reveal">
+        <img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture for Scientists — hands-on capture session" />
+      </div>
+      <div class="cohort-body reveal">
+        <span class="date-chip">14–16 June 2027 · 3 days</span>
+        <h2>Motion Capture for Scientists</h2>
+        <p class="c-tag">From setup to publishable kinematics.</p>
+        <p>
+          Motion capture done wrong produces beautiful noise. In three days, you'll learn to run a
+          capture session <b>end to end</b> — calibration, clean recordings, troubleshooting — and
+          export <b>kinematics ready for your analysis pipeline</b>. Taught in a working research
+          facility, on the systems used for real studies.
+        </p>
+        <div class="cohort-facts">
+          <span>Small group · max 10</span>
+          <span>Real lab systems</span>
+          <span>No experience needed</span>
+          <span>Certificate of completion</span>
+        </div>
+        <ul class="days">
+          <li><span class="d">Day 1</span><div><b>Setup &amp; calibration</b><span>Cameras, capture volumes and calibration — the difference between data and noise.</span></div></li>
+          <li><span class="d">Day 2</span><div><b>Capture</b><span>Recording clean trials, marker sets and markerless workflows, live troubleshooting.</span></div></li>
+          <li><span class="d">Day 3</span><div><b>Analysis</b><span>Export, filtering and kinematics — from raw capture to figures you can publish.</span></div></li>
+        </ul>
+        <a class="btn btn-primary" href="#signup" data-course="mocap">Reserve a place — June 2027</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOGISTICS ============ -->
 <section class="block" id="details">
   <div class="container">
     <div class="section-head reveal">
-      <span class="kicker">The courses</span>
-      <h2>Three ways to level up your lab</h2>
-      <p>Each course is designed for researchers — no prior game-dev or engineering background needed to start.</p>
+      <span class="kicker">How it works</span>
+      <h2>Designed for researchers.</h2>
+      <p>Everything is built around one goal: you go back to your lab able to do this yourself.</p>
     </div>
-    <div class="course-grid">
-      <article class="course-card reveal">
-        <div class="c-media"><img src="./media/mocapcrashcourse.jpeg" alt="Motion Capture for Scientists" /></div>
-        <div class="c-body">
-          <div class="c-meta"><span>3 days</span><span>Hands-on</span><span>Small group</span></div>
-          <h3>Motion Capture for Scientists</h3>
-          <p>Set up, capture and analyse motion-capture data end to end — system calibration, marker sets,
-             recording clean trials, troubleshooting, and exporting kinematics ready for your analysis pipeline.</p>
-          <a class="c-cta" href="#signup" data-course="mocap">Choose this course →</a>
-        </div>
-      </article>
-      <article class="course-card reveal">
-        <div class="c-media"><img src="./media/unitycrashcourse.png" alt="VR with Unity for Scientists" /></div>
-        <div class="c-body">
-          <div class="c-meta"><span>5 days</span><span>Hands-on</span><span>Beginner-friendly</span></div>
-          <h3>VR with Unity for Scientists</h3>
-          <p>Build and run your own VR experiments in the Unity game engine — scene setup, interaction,
-             headset deployment and logging trial-by-trial data for rigorous, reproducible studies.</p>
-          <a class="c-cta" href="#signup" data-course="unity">Choose this course →</a>
-        </div>
-      </article>
-      <article class="course-card reveal">
-        <div class="c-media"><img src="./media/3dprintingcourse.png" alt="3D Modelling and Printing" /></div>
-        <div class="c-body">
-          <div class="c-meta"><span>1 day</span><span>Hands-on</span><span>CAD to print</span></div>
-          <h3>3D Modelling &amp; Printing</h3>
-          <p>Practical CAD and rapid prototyping for research — design custom rigs, mounts and apparatus and
-             print them for your experiments, without needing an engineering background.</p>
-          <a class="c-cta" href="#signup" data-course="printing">Choose this course →</a>
-        </div>
-      </article>
+    <div class="fact-strip">
+      <div class="fact reveal"><b>Max 10</b><span>Small cohorts, individual attention</span></div>
+      <div class="fact reveal"><b>Hands-on</b><span>You build, capture and analyse — not just watch</span></div>
+      <div class="fact reveal"><b>All-inclusive</b><span>Equipment, software and materials provided</span></div>
+      <div class="fact reveal"><b>One a year</b><span>Each course runs once annually — May and June</span></div>
     </div>
   </div>
 </section>
 
-<!-- ============ SIGN-UP FORM ============ -->
-<section class="block" id="signup">
+<!-- ============ SIGN-UP ============ -->
+<section class="block alt" id="signup">
   <div class="container contact-wrap">
     <div class="contact-copy reveal">
-      <span class="section-head kicker">Sign up</span>
+      <span class="kicker">Sign up</span>
       <h2>Reserve your place.</h2>
-      <p>Fill in the form and I'll be in touch with dates, pricing and joining details for your chosen
-         course. There's no payment at this stage — this registers your interest and holds your spot.</p>
+      <p>Choose a cohort and register your interest. I'll follow up by email with pricing, joining
+         details and confirmation. <b>No payment is taken now</b> — registering holds your spot.</p>
+
+      <div class="pick-grid">
+        <div class="pick" data-course="engine" role="button" tabindex="0">
+          <span class="check">✓</span>
+          <span class="p-when">May 2027 · 4 days</span>
+          <h4>Game Engines for Scientists</h4>
+          <span>10–13 May · build a VR experiment</span>
+        </div>
+        <div class="pick" data-course="mocap" role="button" tabindex="0">
+          <span class="check">✓</span>
+          <span class="p-when">June 2027 · 3 days</span>
+          <h4>Motion Capture for Scientists</h4>
+          <span>14–16 June · setup to kinematics</span>
+        </div>
+      </div>
+
       <div class="contact-links">
         <a href="mailto:diarkarim@gmail.com"><span class="ic">✉</span><div><b>Prefer email?</b><span>diarkarim@gmail.com</span></div></a>
-        <a href="index.html#courses"><span class="ic">▸</span><div><b>Course overview</b><span>See all courses on the home page</span></div></a>
+        <a href="index.html#courses"><span class="ic">▸</span><div><b>Course overview</b><span>Back to the home page</span></div></a>
       </div>
     </div>
 
@@ -107,10 +161,8 @@
       <!--
         Sign-ups are delivered by Formspree: each submission is emailed to the address registered on the
         form and stored in the Formspree dashboard, where they can be exported as a spreadsheet (CSV).
-        To send notifications to diarkarim@gmail.com and/or auto-append to a Google Sheet, create a
-        dedicated Formspree form (formspree.io) or a Google Form and replace the action URL below.
       -->
-      <form class="contact-form" id="signupForm"
+      <form class="contact-form reveal" id="signupForm"
             action="https://formspree.io/f/xnndynep" method="POST">
         <input type="hidden" name="_subject" value="New course sign-up — diarkarim.com" />
         <input type="hidden" name="_next" value="https://www.diarkarim.com/courses.html?ok=1" />
@@ -133,12 +185,12 @@
             <input type="text" id="affiliation" name="affiliation" placeholder="e.g. University of Birmingham" />
           </div>
           <div>
-            <label for="course">Course</label>
+            <label for="course">Cohort</label>
             <select id="course" name="course" required>
-              <option value="" disabled selected>Choose a course…</option>
-              <option value="Motion Capture for Scientists">Motion Capture for Scientists (3 days)</option>
-              <option value="VR with Unity for Scientists">VR with Unity for Scientists (5 days)</option>
-              <option value="3D Modelling &amp; Printing">3D Modelling &amp; Printing (1 day)</option>
+              <option value="" disabled selected>Choose a cohort…</option>
+              <option value="Game Engines for Scientists — May 2027 (4 days)">Game Engines for Scientists — May 2027 (4 days)</option>
+              <option value="Motion Capture for Scientists — June 2027 (3 days)">Motion Capture for Scientists — June 2027 (3 days)</option>
+              <option value="3D Modelling &amp; Printing — on request (1 day)">3D Modelling &amp; Printing — on request (1 day)</option>
               <option value="Not sure yet / bespoke">Not sure yet / bespoke for my lab</option>
             </select>
           </div>
@@ -156,12 +208,49 @@
 
         <div>
           <label for="message">Anything else? (optional)</label>
-          <textarea id="message" name="message" rows="4" placeholder="Group size, preferred dates, goals for your lab…"></textarea>
+          <textarea id="message" name="message" rows="4" placeholder="Group size, goals for your lab, questions…"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="justify-content:center">Reserve my place →</button>
+        <button type="submit" class="btn btn-primary">Reserve my place</button>
         <p class="form-note">By submitting you agree to be contacted about this course. No payment is taken now.</p>
       </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="block" id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker">Questions</span>
+      <h2>Good to know.</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>Do I need any prior experience?</summary>
+        <p>No. Both courses are designed for researchers starting from zero — no coding, game-development
+           or engineering background required. If you already have some experience, you'll simply go deeper.</p>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <p>Pricing is shared by email when you register — it varies with cohort size and institutional
+           arrangements. Registering is free and non-binding, and no payment is taken until your place is confirmed.</p>
+      </details>
+      <details>
+        <summary>What do I need to bring?</summary>
+        <p>Just yourself. All equipment, software and materials are provided. For the game-engine course,
+           you're welcome to bring your own laptop if you'd like to leave with everything installed.</p>
+      </details>
+      <details>
+        <summary>Can you run a course at my institution?</summary>
+        <p>Yes — both courses, plus a one-day 3D Modelling &amp; Printing course, can be delivered to your
+           lab or department. Choose “bespoke” on the form or <a class="tlink" href="mailto:diarkarim@gmail.com">email me</a> directly.</p>
+      </details>
+      <details>
+        <summary>Who teaches it?</summary>
+        <p>I do — drawing on a decade of sensorimotor research, building the University of Birmingham's
+           markerless Movement Lab, and shipping hand tracking at Meta. You learn the workflows used in real studies.</p>
+      </details>
     </div>
   </div>
 </section>
