@@ -106,11 +106,15 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
    3b. GESTURE LAYER — one hand, continuous through the page.
        A fixed full-viewport canvas draws a 21-landmark hand that
        travels between per-section anchors and morphs through a
-       gesture vocabulary: rest → pulse (EEG) → press → mocap →
-       point → pinch (jitter filter) → hover → slide → grasp →
-       swipe → offer → wave. Props (surfaces, cube, traces) fade
-       in with their beat. Narrow screens and reduced motion get
-       the hero-only hand.
+       gesture vocabulary, and every beat has something to touch:
+       a sensing field under the resting hand, EEG pulses, a film
+       that deflects when pressed, tracking brackets, a UI target
+       the index clicks, a jitter-filter trace at the pinch,
+       columns built under the palm, a texture strip, a grasped
+       cube, a swiped page card, a coin dropped onto a stack, a
+       hologram over the offered palm, a seedling growing from
+       the hand, and signal arcs off the goodbye wave. Narrow
+       screens and reduced motion get the hero-only hand.
    ----------------------------------------------------------- */
 (function gestureLayer() {
   const canvas = document.getElementById('gestureCanvas');
@@ -300,14 +304,12 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     rot: Math.sin(t * 0.0009) * 0.16,
     ox: 0, oy: 0,
   });
-  const pointSample = (t) => {
-    const nudge = keyf((t % 1500) / 1500, [[0, 0], [0.22, 1], [0.5, 0], [1, 0]]);
-    return {
-      pts: pose({ curls: [0.55, 0, 0.85, 0.9, 0.94], splay: 0.92 }),
-      rot: 1.3,
-      ox: -4 - nudge * 8, oy: 0,
-    };
-  };
+  const pokePh = (t) => keyf((t % 1500) / 1500, [[0, 0], [0.22, 1], [0.5, 0], [1, 0]]);
+  const pointSample = (t) => ({
+    pts: pose({ curls: [0.55, 0, 0.85, 0.9, 0.94], splay: 0.92 }),
+    rot: 1.3,
+    ox: -4 - pokePh(t) * 8, oy: 0,
+  });
   const pinchSample = (t) => ({
     pts: pose({ curls: [0.22, 0.3, 0.5, 0.62, 0.74], meet: 0.6 + 0.36 * (0.5 + 0.5 * Math.sin(t * 0.0034)) }),
     rot: -0.2,
@@ -341,6 +343,15 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     pts: pose({ curls: [0.08, 0.05, 0.04, 0.07, 0.12], splay: 1.06 }),
     rot: -0.5 + Math.sin(t * 0.0012) * 0.04,
     ox: 0, oy: Math.sin(t * 0.0012) * 5,
+  });
+  const dropPh = (t) => (t % 2600) / 2600;
+  const coinSample = (t) => ({
+    pts: pose({
+      curls: [0.22, 0.3, 0.5, 0.62, 0.74],
+      meet: keyf(dropPh(t), [[0, 0.92], [0.5, 0.92], [0.62, 0.38], [0.82, 0.38], [1, 0.92]]),
+    }),
+    rot: -0.2,
+    ox: 0, oy: Math.sin(t * 0.0012) * 3,
   });
   const waveSample = (t) => ({
     pts: pose({ curls: [0.06, 0.04, 0.03, 0.05, 0.1], splay: 1.08 }),
@@ -389,6 +400,28 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       c.moveTo(x + sx * L, y); c.lineTo(x, y); c.lineTo(x, y + sy * L);
       c.stroke();
     });
+  }
+
+  // Hero: a sensing field — grid dots inside the bracket light up
+  // wherever a fingertip passes, like a touch surface reading the hand
+  function heroProps(c, h, t, a) {
+    const xs = h.P.map((p) => p[0]), ys = h.P.map((p) => p[1]);
+    const x0 = Math.min(...xs) - 20, x1 = Math.max(...xs) + 20;
+    const y0 = Math.min(...ys) - 20, y1 = Math.max(...ys) + 20;
+    const tips = TIPS.map((i) => h.P[i]);
+    const step = 26;
+    for (let gx = x0 + step / 2; gx < x1; gx += step) {
+      for (let gy = y0 + step / 2; gy < y1; gy += step) {
+        let d = 1e9;
+        for (const p of tips) d = Math.min(d, Math.hypot(gx - p[0], gy - p[1]));
+        const lit = clamp(1 - d / 48, 0, 1);
+        c.fillStyle = lit > 0.02
+          ? col('tip', h.mix, a * (0.14 + 0.7 * lit))
+          : col('faint', h.mix, a * 0.4);
+        c.beginPath(); c.arc(gx, gy, 1.1 + lit * 1.1, 0, Math.PI * 2); c.fill();
+      }
+    }
+    bracketProps(c, h, t, a);
   }
 
   // EEG: a pulse travels wrist -> fingertip along each digit
@@ -444,6 +477,39 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     c.beginPath(); c.arc(p[0], p[1], 6.5, 0, Math.PI * 2); c.stroke();
   }
 
+  // About: the index locks onto a UI target — dotted ray, ring, click ripple
+  function targetProps(c, h, t, a) {
+    const tip = h.P[8];
+    const poke = pokePh(t);
+    const ph = (t % 1500) / 1500;
+    const tgt = [h.x - h.s * 0.9, tip[1]];
+    const r = h.s * 0.11;
+    const dx = tgt[0] - tip[0], dy = tgt[1] - tip[1];
+    const L = Math.hypot(dx, dy);
+    if (L > r + 14) {
+      c.strokeStyle = col('faint', h.mix, a * 0.9);
+      c.lineWidth = 1;
+      c.setLineDash([3, 5]);
+      c.beginPath();
+      c.moveTo(tip[0] + (dx / L) * 9, tip[1] + (dy / L) * 9);
+      c.lineTo(tgt[0] + r + 4, tgt[1]);
+      c.stroke();
+      c.setLineDash([]);
+    }
+    c.strokeStyle = col(poke > 0.7 ? 'tip' : 'joint', h.mix, a * (0.45 + poke * 0.5));
+    c.lineWidth = 1.4;
+    c.beginPath(); c.arc(tgt[0], tgt[1], r, 0, Math.PI * 2); c.stroke();
+    c.fillStyle = col('tip', h.mix, a * (0.35 + poke * 0.65));
+    c.beginPath(); c.arc(tgt[0], tgt[1], 2.6 + poke * 1.4, 0, Math.PI * 2); c.fill();
+    // click ripple just after the poke lands
+    if (ph > 0.22 && ph < 0.5) {
+      const k = (ph - 0.22) / 0.28;
+      c.strokeStyle = col('tip', h.mix, a * (1 - k) * 0.7);
+      c.lineWidth = 1;
+      c.beginPath(); c.arc(tgt[0], tgt[1], r + k * 14, 0, Math.PI * 2); c.stroke();
+    }
+  }
+
   // Quest: raw jittery trace enters the pinch, leaves filtered-smooth
   function traceProps(c, h, t, a) {
     const pinch = [(h.P[4][0] + h.P[8][0]) / 2, (h.P[4][1] + h.P[8][1]) / 2];
@@ -475,15 +541,28 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     c.beginPath(); c.arc(pinch[0], y0, 8 + Math.sin(t * 0.004) * 2, 0, Math.PI * 2); c.stroke();
   }
 
-  // Leadership: a steady baseline beneath the hovering palm
-  function baselineProps(c, h, t, a) {
+  // Leadership: columns rise one by one beneath the steady palm —
+  // each tops out with a marker before the set resets and builds again
+  function buildProps(c, h, t, a) {
     const sy = h.y + h.s * 0.55;
+    const half = h.s * 1.1;
     c.strokeStyle = col('faint', h.mix, a);
     c.lineWidth = 1.5;
-    c.beginPath(); c.moveTo(h.x - h.s * 1.1, sy); c.lineTo(h.x + h.s * 1.1, sy); c.stroke();
-    c.lineWidth = 1;
-    [-0.7, 0, 0.7].forEach((k) => {
-      c.beginPath(); c.moveTo(h.x + h.s * k, sy); c.lineTo(h.x + h.s * k, sy + 7); c.stroke();
+    c.beginPath(); c.moveTo(h.x - half, sy); c.lineTo(h.x + half, sy); c.stroke();
+    const ph = (t % 5600) / 5600;
+    const w = h.s * 0.3;
+    [-0.78, -0.26, 0.26, 0.78].forEach((k, i) => {
+      const g = keyf(ph, [[0.04 + i * 0.1, 0], [0.16 + i * 0.1, 1], [0.88, 1], [0.98, 0]]);
+      if (g <= 0.01) return;
+      const hgt = h.s * (0.24 + 0.1 * i) * g;
+      const x = h.x + half * k;
+      c.strokeStyle = col('joint', h.mix, a * 0.6);
+      c.lineWidth = 1.2;
+      c.strokeRect(x - w / 2, sy - hgt, w, hgt);
+      if (g > 0.99) {
+        c.fillStyle = col('tip', h.mix, a);
+        c.beginPath(); c.arc(x, sy - hgt - 5, 2, 0, Math.PI * 2); c.fill();
+      }
     });
   }
 
@@ -577,6 +656,131 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
   }
 
+  // Funding: the pinch releases a coin that drops onto a small stack
+  function coinProps(c, h, t, a) {
+    const ph = dropPh(t);
+    const pinch = [(h.P[4][0] + h.P[8][0]) / 2, (h.P[4][1] + h.P[8][1]) / 2];
+    const sy = h.y + h.s * 0.95;
+    const rx = h.s * 0.16, ry = rx * 0.34;
+    const sx = h.x + h.s * 0.05;
+    // baseline + the resting stack
+    c.strokeStyle = col('faint', h.mix, a);
+    c.lineWidth = 1;
+    c.beginPath(); c.moveTo(h.x - h.s * 0.85, sy + ry + 3); c.lineTo(h.x + h.s * 0.85, sy + ry + 3); c.stroke();
+    c.lineWidth = 1.2;
+    for (let i = 0; i < 3; i++) {
+      c.strokeStyle = col('joint', h.mix, a * 0.55);
+      c.beginPath(); c.ellipse(sx, sy - i * ry * 2.4, rx, ry, 0, 0, Math.PI * 2); c.stroke();
+    }
+    // the coin: held in the pinch, falling on release, then landed
+    const topY = sy - 3 * ry * 2.4;
+    let cx, cy, ca = a * 0.9;
+    if (ph < 0.56) { cx = pinch[0]; cy = pinch[1]; }
+    else if (ph < 0.8) {
+      const f = (ph - 0.56) / 0.24;
+      cx = lerp(pinch[0], sx, f);
+      cy = lerp(pinch[1], topY, f * f); // gravity
+    } else {
+      cx = sx; cy = topY;
+      ca = a * 0.9 * clamp(1 - (ph - 0.9) / 0.1, 0, 1);
+    }
+    c.strokeStyle = col('tip', h.mix, ca);
+    c.beginPath(); c.ellipse(cx, cy, rx * 0.92, ry * 0.92, 0, 0, Math.PI * 2); c.stroke();
+    // landing ripple
+    if (ph > 0.8 && ph < 0.95) {
+      const k = (ph - 0.8) / 0.15;
+      c.strokeStyle = col('tip', h.mix, a * (1 - k) * 0.6);
+      c.lineWidth = 1;
+      c.beginPath(); c.ellipse(sx, topY + ry, rx + k * 12, ry + k * 4, 0, 0, Math.PI * 2); c.stroke();
+    }
+  }
+
+  // Courses: a wireframe hologram spins above the offered palm,
+  // with an orbiting satellite and sparks drifting up off it
+  function holoProps(c, h, t, a) {
+    const cx = h.x, cy = h.y - h.s * 1.08 + Math.sin(t * 0.0012) * 5;
+    const s = h.s * 0.17;
+    const rot = t * 0.0011, cosr = Math.cos(rot), sinr = Math.sin(rot);
+    const corners = [];
+    for (let i = 0; i < 8; i++) {
+      let x = (i & 1 ? 1 : -1) * s, y = (i & 2 ? 1 : -1) * s, z = (i & 4 ? 1 : -1) * s;
+      [x, z] = [x * cosr + z * sinr, -x * sinr + z * cosr];
+      corners.push([cx + x, cy + y * 0.82 + z * 0.3]);
+    }
+    const edges = [[0, 1], [1, 3], [3, 2], [2, 0], [4, 5], [5, 7], [7, 6], [6, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+    c.lineWidth = 1.1;
+    c.strokeStyle = col('joint', h.mix, a * 0.6);
+    c.beginPath();
+    edges.forEach(([i, j]) => { c.moveTo(corners[i][0], corners[i][1]); c.lineTo(corners[j][0], corners[j][1]); });
+    c.stroke();
+    // orbit ring + satellite
+    c.strokeStyle = col('faint', h.mix, a);
+    c.lineWidth = 1;
+    c.beginPath(); c.ellipse(cx, cy, s * 2.1, s * 0.62, 0, 0, Math.PI * 2); c.stroke();
+    const oa = t * 0.0016;
+    c.fillStyle = col('tip', h.mix, a);
+    c.beginPath(); c.arc(cx + Math.cos(oa) * s * 2.1, cy + Math.sin(oa) * s * 0.62, 2.4, 0, Math.PI * 2); c.fill();
+    // sparks rising from the palm toward the hologram
+    for (let i = 0; i < 3; i++) {
+      const ph = (t * 0.00035 + i / 3) % 1;
+      c.fillStyle = col('tip', h.mix, a * (1 - ph) * 0.7);
+      c.beginPath();
+      c.arc(cx + (i - 1) * s * 0.9, cy + s * 2 - ph * s * 2.8, 1.6, 0, Math.PI * 2);
+      c.fill();
+    }
+  }
+
+  // Venture: a seedling grows out of the open palm — sprout, leaves, bud
+  function sproutProps(c, h, t, a) {
+    const ph = (t % 6400) / 6400;
+    const g = keyf(ph, [[0.04, 0], [0.46, 1], [0.85, 1], [0.97, 0]]);
+    if (g <= 0.01) return;
+    const base = h.tx ? h.tx([-0.05, -0.18]) : [h.x, h.y];
+    const hh = h.s * 0.85 * g;
+    const lean = -h.s * 0.34 * g; // arc away from the leaning fingers
+    const sway = Math.sin(t * 0.0014) * 3 * g;
+    const pt = (k) => [base[0] + (lean + sway) * k * k, base[1] - hh * k];
+    c.strokeStyle = col('joint', h.mix, a * 0.75);
+    c.lineWidth = 1.4;
+    c.beginPath();
+    c.moveTo(base[0], base[1]);
+    c.quadraticCurveTo(base[0] + (lean + sway) * 0.12, base[1] - hh * 0.55, pt(1)[0], pt(1)[1]);
+    c.stroke();
+    const leaf = (k, dir) => {
+      const lg = clamp((g - k) / 0.25, 0, 1);
+      if (lg <= 0.01) return;
+      const [x, y] = pt(k);
+      c.strokeStyle = col('tip', h.mix, a * 0.8 * lg);
+      c.lineWidth = 1.2;
+      c.beginPath();
+      c.moveTo(x, y);
+      c.quadraticCurveTo(x + dir * 10 * lg, y - 4 * lg, x + dir * 16 * lg, y - 12 * lg);
+      c.quadraticCurveTo(x + dir * 5 * lg, y - 8 * lg, x, y);
+      c.stroke();
+    };
+    leaf(0.45, -1);
+    leaf(0.62, 1);
+    const bud = clamp((g - 0.85) / 0.15, 0, 1);
+    if (bud > 0.01) {
+      c.fillStyle = col('tip', h.mix, a * bud);
+      c.beginPath(); c.arc(pt(1)[0], pt(1)[1], 2.6, 0, Math.PI * 2); c.fill();
+    }
+  }
+
+  // Contact: friendly signal arcs ripple out from the waving hand
+  function helloProps(c, h, t, a) {
+    const cx = h.x, cy = h.y - h.s * 0.1;
+    const tilt = Math.sin(t * 0.0045) * 0.24; // matches the wave's rotation
+    for (let i = 0; i < 3; i++) {
+      const ph = (t * 0.00042 + i / 3) % 1;
+      c.strokeStyle = col('tip', h.mix, a * (1 - ph) * 0.55);
+      c.lineWidth = 1.3;
+      c.beginPath();
+      c.arc(cx, cy, h.s * (0.75 + ph * 0.75), -Math.PI / 2 - 0.55 + tilt, -Math.PI / 2 + 0.55 + tilt);
+      c.stroke();
+    }
+  }
+
   /* ---- beats: the hand's journey down the page ----
      Each beat activates at a document-space trigger Y. Triggers are
      cached and refreshed every ~2s (and on resize/load), so the frame
@@ -593,20 +797,20 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   };
 
   const beats = [
-    { id: 'hero', bg: 0, alpha: 1, anchor: heroAnchor, trigger: () => -Infinity, sample: restSample(true), props: bracketProps },
+    { id: 'hero', bg: 0, alpha: 1, anchor: heroAnchor, trigger: () => -Infinity, sample: restSample(true), props: heroProps },
     { id: 'eeg', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(0), sample: eegSample, props: pulseProps },
     { id: 'press', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(1 / 3), sample: pressSample, props: pressProps },
     { id: 'mocap', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(2 / 3), sample: mocapSample, props: mocapProps },
-    { id: 'about', bg: 1, alpha: 1, anchor: sideAnchor('#about .about-copy', 1, 0.3), trigger: secTrig('#about'), sample: pointSample },
+    { id: 'about', bg: 1, alpha: 1, anchor: sideAnchor('#about .about-copy', 1, 0.3), trigger: secTrig('#about'), sample: pointSample, props: targetProps },
     { id: 'quest', bg: 0, alpha: 1, anchor: sideAnchor('#quest .container', -1, 0.42), trigger: secTrig('#quest'), sample: pinchSample, props: traceProps },
-    { id: 'lead', bg: 1, alpha: 1, anchor: sideAnchor('#leadership .section-head', 1, 0.5), trigger: secTrig('#leadership'), sample: flatSample, props: baselineProps },
+    { id: 'lead', bg: 1, alpha: 1, anchor: sideAnchor('#leadership .section-head', 1, 0.5), trigger: secTrig('#leadership'), sample: flatSample, props: buildProps },
     { id: 'research', bg: 1, alpha: 1, anchor: sideAnchor('#research .section-head', -1, 0.45), trigger: secTrig('#research'), sample: slideSample, props: textureProps },
     { id: 'work', bg: 1, alpha: 1, anchor: sideAnchor('#work .section-head', 1, 0.45), trigger: secTrig('#work'), sample: graspSample, props: cubeProps },
     { id: 'pubs', bg: 1, alpha: 1, anchor: sideAnchor('#publications .section-head', -1, 0.45), trigger: secTrig('#publications'), sample: swipeSample, props: cardProps },
-    { id: 'funding', bg: 1, alpha: 0.55, anchor: sideAnchor('#funding .section-head', -1, 0.5), trigger: secTrig('#funding'), sample: restSample(false) },
-    { id: 'courses', bg: 1, alpha: 1, anchor: sideAnchor('#courses .section-head', 1, 0.5), trigger: secTrig('#courses'), sample: offerSample },
-    { id: 'venture', bg: 0, alpha: 0.55, anchor: sideAnchor('#venture .container', 1, 0.5), trigger: secTrig('#venture'), sample: restSample(false) },
-    { id: 'contact', bg: 1, alpha: 1, anchor: contactAnchor, trigger: secTrig('#contact'), sample: waveSample, pivot: [0, -0.92] },
+    { id: 'funding', bg: 1, alpha: 0.9, anchor: sideAnchor('#funding .section-head', -1, 0.5), trigger: secTrig('#funding'), sample: coinSample, props: coinProps },
+    { id: 'courses', bg: 1, alpha: 1, anchor: sideAnchor('#courses .section-head', 1, 0.5), trigger: secTrig('#courses'), sample: offerSample, props: holoProps },
+    { id: 'venture', bg: 0, alpha: 0.85, anchor: sideAnchor('#venture .container', 1, 0.5), trigger: secTrig('#venture'), sample: offerSample, props: sproutProps },
+    { id: 'contact', bg: 1, alpha: 1, anchor: contactAnchor, trigger: secTrig('#contact'), sample: waveSample, pivot: [0, -0.92], props: helloProps },
   ];
 
   let trig = null, trigStamp = -Infinity;
@@ -678,7 +882,7 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduced) s.oy = (s.oy || 0) + p * 40;
     const aa = { x: a.x, y: a.y, s: a.s * (1 + p * 0.08) };
     const P = s.pts.map(mkTx(aa, s, null));
-    bracketProps(ctx, { x: aa.x, y: aa.y, s: aa.s, mix: 0, P }, t, alpha * 0.9);
+    heroProps(ctx, { x: aa.x, y: aa.y, s: aa.s, mix: 0, P }, t, alpha * 0.9);
     drawHand(ctx, P, 0, alpha, t);
     fbDrawn = true;
   }
