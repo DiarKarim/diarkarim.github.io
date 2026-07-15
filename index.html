@@ -3,13 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Diar Abdlkarim — Scalable, non-invasive brain–computer interfaces</title>
-<meta name="description" content="Diar Abdlkarim — sensorimotor neuroscientist building scalable, non-invasive brain–computer interfaces. Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. EEG neural decoding, the science of touch, and markerless motion capture. Founder of the Movement Lab; ex-Meta Quest hand tracking. Hands-on courses for scientists." />
+<title>Diar Abdlkarim — Movement, understood.</title>
+<meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, EEG, touch and motion capture. Founder of the markerless Movement Lab; ex-Meta Quest hand tracking. Hands-on courses in motion capture and game engines for scientists." />
 <link rel="stylesheet" href="styles.css" />
 <noscript><style>.reveal, .feature-media { opacity: 1 !important; transform: none !important; } .scene { position: relative; opacity: 1; transform: none; } .story-track { height: auto; } .story-sticky { position: static; height: auto; }</style></noscript>
-<script type="importmap">
-{ "imports": { "three": "./vendor/three/three.module.js" } }
-</script>
 </head>
 <body>
 
@@ -21,36 +18,31 @@
   <a class="logo" href="#top"><span class="dot"></span> Diar Abdlkarim</a>
   <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="site-nav">☰</button>
   <nav class="nav-links" id="site-nav">
-    <a href="#bci">BCI</a>
     <a href="#about">About</a>
     <a href="#research">Research</a>
     <a href="#work">Work</a>
     <a href="#publications">Publications</a>
+    <a href="#courses">Courses</a>
     <a href="#contact" class="cta">Get in touch</a>
   </nav>
 </header>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="hero-grid">
-    <div class="hero-inner">
-      <span class="eyebrow">Non-invasive brain–computer interfaces · Built to scale</span>
-      <h1>Diar Abdlkarim</h1>
-      <p class="hero-role"><span class="grad">Scalable, non-invasive BCI.</span></p>
-      <p class="sub">
-        I build brain–computer interfaces that read neural activity from the surface of the head —
-        no surgery, wearable, and designed to scale from the lab to the world.
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#bci">The mission</a>
-        <a class="btn btn-ghost" href="#about">Explore the work</a>
-      </div>
+  <div class="hero-inner">
+    <span class="eyebrow">Sensorimotor neuroscientist · University of Birmingham</span>
+    <h1>Diar Abdlkarim</h1>
+    <p class="hero-role"><span class="grad">Movement, understood.</span></p>
+    <p class="sub">
+      I study how the brain moves the body — and build the technology that proves it.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#about">Explore the work</a>
+      <a class="btn btn-ghost" href="courses.html">Join a course</a>
     </div>
-    <div class="hero-viz" aria-hidden="true">
-      <div class="brain-stage" id="brainStage"></div>
-      <div class="hero-hand"></div>
-      <span class="hero-canvas-cap">Non-invasive EEG · brain → hand</span>
-    </div>
+  </div>
+  <div class="hero-canvas-wrap" aria-hidden="true">
+    <span class="hero-canvas-cap">Markerless hand tracking · 21 landmarks</span>
   </div>
   <span class="scroll-cue" aria-hidden="true">⌄</span>
 </section>
@@ -59,65 +51,25 @@
 <section class="story" aria-label="Research story">
   <div class="story-track">
     <div class="story-sticky">
-      <p class="story-kicker">One loop. Brain to action.</p>
+      <p class="story-kicker">One question. Three instruments.</p>
       <div class="story-scenes">
         <div class="scene">
           <span class="s-num">01</span>
           <h3>Record the brain.</h3>
-          <p><b>EEG</b> reads the brain's electrical activity from the scalp — the neural signature of a movement, captured without an implant.</p>
+          <p><b>EEG</b> captures the neural signature of a movement — before the hand even begins to move.</p>
         </div>
         <div class="scene">
           <span class="s-num">02</span>
-          <h3>Decode the signal.</h3>
-          <p><b>Neural decoding</b> turns raw cortical activity into intent — what the brain is about to do, read out in real time.</p>
+          <h3>Feel the touch.</h3>
+          <p><b>Psychophysics</b> reveals how skin senses contact, force and texture — and how touch shapes what we do next.</p>
         </div>
         <div class="scene">
           <span class="s-num">03</span>
-          <h3>Close the loop.</h3>
-          <p><b>Touch and motion</b> complete the circuit — driving action, then feeding the result back to the brain to refine the next move.</p>
+          <h3>Capture the motion.</h3>
+          <p><b>Markerless motion capture</b> measures action to the millimetre. No suits. No markers. Just movement.</p>
         </div>
       </div>
       <div class="story-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ BCI MISSION ============ -->
-<section class="bci" id="bci">
-  <div class="container wide bci-grid">
-    <div class="bci-copy">
-      <span class="kicker reveal">The mission</span>
-      <h2 class="reveal">Scalable,<br />non-invasive BCI.</h2>
-      <p class="bci-lead reveal">
-        The brain–computer interfaces that work best today need surgery. They don't scale.
-      </p>
-      <p class="reveal">
-        I'm building the alternative: interfaces that read the brain from the <b>surface of the head</b> —
-        comfortable enough to wear all day, and cheap enough to reach <b>millions of people</b>,
-        not a handful of patients.
-      </p>
-      <div class="bci-points reveal">
-        <div class="bci-point">
-          <span class="bp-k">01</span>
-          <div><b>Non-invasive</b><span>EEG from the scalp. No implant, no operating theatre.</span></div>
-        </div>
-        <div class="bci-point">
-          <span class="bp-k">02</span>
-          <div><b>Scalable</b><span>Wearable, low-cost hardware and decoders built to reach everyone.</span></div>
-        </div>
-        <div class="bci-point">
-          <span class="bp-k">03</span>
-          <div><b>Closed-loop</b><span>Neural signal in, action out, feedback back to the brain.</span></div>
-        </div>
-      </div>
-      <div class="badge-row reveal">
-        <span class="chip">EEG · 10–20 system</span>
-        <span class="chip">Real-time decoding</span>
-        <span class="chip">Wearable</span>
-      </div>
-    </div>
-    <div class="bci-stage" aria-hidden="true">
-      <span class="bci-stage-cap">Non-invasive neural decoding · live</span>
     </div>
   </div>
 </section>
@@ -130,12 +82,11 @@
     </div>
     <div class="about-copy reveal">
       <span class="kicker">About</span>
-      <p class="lead">From neural signal to real-world action. I work every step of that path.</p>
+      <p class="lead">From neural signal to shipped product. I work every step of that path.</p>
       <p>
-        My research asks how the brain commands the body to act in the real world — and
-        <b>how we can read that command from outside the skull.</b> Answering it is the foundation
-        for <b>non-invasive brain–computer interfaces</b>: recording neural signals with EEG,
-        decoding intent, and closing the loop with touch and movement.
+        My research asks a deceptively simple question: <b>how does the brain command the body to act
+        in the real world?</b> Answering it means closing the loop between perception and action —
+        reading neural signals, probing the sense of touch, and measuring movement with precision.
       </p>
       <p>
         I founded and lead the University of Birmingham's <b>markerless Movement Lab</b>. At <b>Meta</b>,
@@ -161,8 +112,7 @@
       At Meta, I characterised the noise and jitter of camera-based hand tracking — then used
       <b>psychophysical methods</b> to measure exactly what the eye can detect. Those thresholds
       informed the filtering that holds jitter <b>below perceivable levels</b>, in the hand-tracking
-      pipeline that ships on <b>every Quest headset</b>. The same discipline — pulling clean signal
-      out of noise — is what makes non-invasive neural decoding possible.
+      pipeline that ships on <b>every Quest headset</b>.
     </p>
   </div>
   <div class="feature-media">
@@ -219,29 +169,29 @@
   <div class="container">
     <div class="section-head reveal">
       <span class="kicker">Research</span>
-      <h2>Four threads. One interface.</h2>
-      <p>The science that makes a non-invasive brain–computer interface work.</p>
+      <h2>Four threads. One loop.</h2>
+      <p>From the brain to the fingertip and back again.</p>
     </div>
     <div class="pillars">
       <article class="pillar reveal">
         <div class="num">01</div>
-        <div><h3>Non-invasive neural recording</h3>
-          <p>Reading motor plans from the scalp with EEG — how intentions are formed, predicted and corrected while people act in real-world tasks.</p></div>
+        <div><h3>Brain imaging with EEG</h3>
+          <p>Reading how motor plans are formed, predicted and corrected — while people act in naturalistic, real-world tasks.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">02</div>
-        <div><h3>Decoding movement intent</h3>
-          <p>Turning noisy cortical signals into a reliable read-out of what the body is about to do — the heart of a usable BCI.</p></div>
+        <div><h3>The science of touch</h3>
+          <p>How the hand senses contact, force and texture — and how tactile feedback shapes the next movement.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">03</div>
-        <div><h3>Closed-loop touch</h3>
-          <p>How the hand senses contact, force and texture — and how tactile feedback closes the loop and shapes the next movement.</p></div>
+        <div><h3>Motion capture &amp; tracking</h3>
+          <p>Fine-grained sensorimotor measurement with markerless mocap and hand-tracking hardware, at experimental precision.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">04</div>
-        <div><h3>Motion capture as ground truth</h3>
-          <p>Markerless mocap and hand tracking measure the action the brain produced — the reference every decoder is trained against.</p></div>
+        <div><h3>Immersive technologies</h3>
+          <p>XR, HCI and human–robot systems that close the perception–action loop in real time — for research and rehabilitation.</p></div>
       </article>
     </div>
   </div>
@@ -471,6 +421,5 @@
 </footer>
 
 <script src="scripts.js"></script>
-<script type="module" src="brain3d.js"></script>
 </body>
 </html>

@@ -262,23 +262,13 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     };
   }
   const heroAnchor = () => {
-    const el = q('.hero-hand'); if (!el) return null;
+    const el = q('.hero-canvas-wrap'); if (!el) return null;
     const r = el.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.48, s: clamp(r.height * 0.5, 58, 104) };
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.54, s: Math.min(r.width, r.height) * 0.46 };
   };
   const storyAnchor = () => {
     const s = clamp((VW / 2 - 450) * 0.5, 60, 118);
     return { x: Math.min(VW / 2 + 495, VW - s - 30), y: VH * 0.52, s };
-  };
-  // BCI section: the offered palm sits low in the reserved stage; the
-  // brain floats above it (drawn by the beat's props)
-  const bciAnchor = () => {
-    const el = q('.bci-stage'); if (!el) return null;
-    const r = el.getBoundingClientRect();
-    const s = clamp(Math.min(r.width, r.height) * 0.15, 54, 96);
-    const rawY = r.top + r.height * 0.84;
-    const fade = clamp((rawY - 40) / 200, 0, 1) * clamp((VH - r.top) / 220, 0, 1);
-    return { x: r.left + r.width * 0.5, y: clamp(rawY, 220, VH * 0.9), s, fade };
   };
   // the contact copy is flush with the container edge, so the wave
   // lives in the open space beneath the contact links instead
@@ -432,9 +422,6 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       }
     }
     bracketProps(c, h, t, a);
-    // decoded signal streaming down from the 3D brain above into the fingertips
-    const bb = window.__brainBase;
-    if (bb && bb.on) streamToHand(c, bb, TIPS.map((i) => h.P[i]), h.mix, a, t);
   }
 
   // EEG: a pulse travels wrist -> fingertip along each digit
@@ -794,63 +781,6 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
   }
 
-  /* The 3D brain is now a real WebGL model (brain3d.js). Here we keep
-     only the 2D helpers that stitch the hand into the neural loop: a
-     stream of decoded signal running from a source point into the
-     fingertips, and the BCI-section decode motif. ---- */
-
-  /* decoded signal streaming from a source point down into the
-     fingertips — the "action out" half of the loop (hero brain->hand
-     and the BCI beat both use it) */
-  function streamToHand(c, from, tips, mix, alpha, t) {
-    tips.forEach((tp, i) => {
-      const u = ((t * 0.0006 + i * 0.19) % 1 + 1) % 1;
-      const x = lerp(from.x, tp[0], u), y = lerp(from.y, tp[1], u);
-      c.strokeStyle = col('faint', mix, alpha * 0.28);
-      c.setLineDash([2, 5]);
-      c.lineWidth = 1;
-      c.beginPath(); c.moveTo(from.x, from.y); c.lineTo(tp[0], tp[1]); c.stroke();
-      c.setLineDash([]);
-      c.fillStyle = col('tip', mix, alpha * (1 - u) * 0.9);
-      c.beginPath(); c.arc(x, y, 1.8, 0, Math.PI * 2); c.fill();
-    });
-  }
-
-  // BCI: a non-invasive EEG trace enters, is decoded into intent above
-  // the offered palm, then streamed into the fingertips
-  function bciProps(c, h, t, a) {
-    const half = h.s * 1.4;
-    const midY = h.y - h.s * 1.75;
-    const x0 = h.x - half, x1 = h.x - h.s * 0.1;
-    // incoming EEG waveform, growing as it nears the decoder
-    c.strokeStyle = col('tip', h.mix, a * 0.75);
-    c.lineWidth = 1.3;
-    c.beginPath();
-    let first = true;
-    for (let x = x0; x <= x1; x += 4) {
-      const k = (x - x0) / (x1 - x0);
-      const yy = midY + noise1(x * 0.05 + t * 0.004) * 10 * (0.35 + 0.65 * k);
-      first ? c.moveTo(x, yy) : c.lineTo(x, yy);
-      first = false;
-    }
-    c.stroke();
-    // decoder node with an expanding ring
-    c.fillStyle = col('tip', h.mix, a);
-    c.beginPath(); c.arc(x1, midY, 3, 0, Math.PI * 2); c.fill();
-    const dr = 5 + ((t * 0.02) % 13);
-    c.strokeStyle = col('tip', h.mix, a * clamp(1 - dr / 17, 0, 1) * 0.6);
-    c.lineWidth = 1;
-    c.beginPath(); c.arc(x1, midY, dr, 0, Math.PI * 2); c.stroke();
-    // decoded "intent" bars to the right of the decoder
-    for (let i = 0; i < 4; i++) {
-      const bh = 5 + 15 * (0.5 + 0.5 * Math.sin(t * 0.004 + i * 1.25));
-      c.fillStyle = col('tip', h.mix, a * (0.35 + 0.12 * i));
-      c.fillRect(x1 + 14 + i * 8, midY - bh / 2, 4, bh);
-    }
-    // stream the decoded signal into the fingertips
-    streamToHand(c, { x: x1, y: midY }, TIPS.map((i) => h.P[i]), h.mix, a, t);
-  }
-
   /* ---- beats: the hand's journey down the page ----
      Each beat activates at a document-space trigger Y. Triggers are
      cached and refreshed every ~2s (and on resize/load), so the frame
@@ -871,7 +801,6 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     { id: 'eeg', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(0), sample: eegSample, props: pulseProps },
     { id: 'press', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(1 / 3), sample: pressSample, props: pressProps },
     { id: 'mocap', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(2 / 3), sample: mocapSample, props: mocapProps },
-    { id: 'bci', bg: 0, alpha: 1, anchor: bciAnchor, trigger: secTrig('#bci', 0.62), sample: offerSample, props: bciProps },
     { id: 'about', bg: 1, alpha: 1, anchor: sideAnchor('#about .about-copy', 1, 0.3), trigger: secTrig('#about'), sample: pointSample, props: targetProps },
     { id: 'quest', bg: 0, alpha: 1, anchor: sideAnchor('#quest .container', -1, 0.42), trigger: secTrig('#quest'), sample: pinchSample, props: traceProps },
     { id: 'lead', bg: 1, alpha: 1, anchor: sideAnchor('#leadership .section-head', 1, 0.5), trigger: secTrig('#leadership'), sample: flatSample, props: buildProps },
@@ -932,6 +861,8 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function fallbackFrame(now) {
     const reduced = rmq.matches;
     const key = Math.round(window.scrollY) + '|' + VW + '|' + VH + '|' + reduced;
+    // idle: nothing on canvas and nothing changed, or a static reduced-motion
+    // hand that is already drawn — skip even the layout reads
     if (key === fbKey && !stale && (!fbDrawn || reduced)) return;
     const a = heroAnchor();
     const heroEl = q('.hero');

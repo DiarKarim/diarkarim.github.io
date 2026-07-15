@@ -141,50 +141,39 @@ section[id], footer[id] { scroll-margin-top: 60px; }
   background: var(--dark);
   color: var(--dark-ink);
   min-height: 100svh;
-  display: grid; place-items: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
   overflow: hidden;
-  padding: 84px 0 40px;
+  padding: 96px 6% 0;
 }
-/* aurora wash so the brain reads against a living black */
-.hero::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(46% 44% at 74% 46%, rgba(41, 151, 255, 0.16), transparent 70%),
-    radial-gradient(40% 46% at 82% 74%, rgba(120, 80, 255, 0.1), transparent 72%);
-}
-.hero-grid {
-  position: relative; z-index: 2;
-  width: min(92%, var(--maxw-wide));
-  display: grid; grid-template-columns: 1.02fr 0.98fr;
-  gap: clamp(20px, 3.5vw, 56px); align-items: center;
-}
-.hero-inner { text-align: left; max-width: 620px; }
+.hero-inner { position: relative; z-index: 2; max-width: 860px; margin-inline: auto; }
 .eyebrow {
   display: inline-block; font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--dark-2); margin-bottom: 18px; font-weight: 500;
 }
 .hero h1 {
-  font-size: clamp(2.5rem, 5.2vw, 4.4rem);
+  font-size: clamp(3rem, 9vw, 6rem);
   letter-spacing: -0.03em;
   margin: 0 0 8px;
   color: #f5f5f7;
 }
 .hero .hero-role {
-  font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+  font-size: clamp(1.7rem, 4.4vw, 3rem);
   font-weight: 700; letter-spacing: -0.02em;
   line-height: 1.12;
   margin: 0 0 22px;
 }
 .hero .sub {
-  font-size: clamp(1.02rem, 1.5vw, 1.24rem);
+  font-size: clamp(1.05rem, 1.9vw, 1.35rem);
   color: var(--dark-2);
-  max-width: 44ch; margin: 0;
+  max-width: 42ch; margin: 0 auto;
   font-weight: 400; line-height: 1.45;
 }
 .hero .sub b { color: var(--dark-ink); font-weight: 500; }
 .hero-actions {
   display: flex; gap: 16px; flex-wrap: wrap;
-  align-items: center; justify-content: flex-start; margin-top: 30px;
+  align-items: center; justify-content: center; margin-top: 30px;
 }
 
 /* gesture layer — one fixed canvas; the hand travels the whole page */
@@ -195,20 +184,17 @@ section[id], footer[id] { scroll-margin-top: 60px; }
   z-index: 40; /* below the nav (50), above section content */
 }
 
-/* hero visual column: the WebGL brain sits above the reserved hand space */
-.hero-viz {
-  position: relative;
-  width: 100%;
-  height: min(76vh, 640px);
-  display: flex; flex-direction: column;
+/* hero anchor: reserves the hero's hand space and carries the caption */
+.hero-canvas-wrap {
+  position: relative; z-index: 1;
+  width: min(560px, 88vw);
+  height: clamp(240px, 38vh, 380px);
+  margin-top: 10px;
 }
-.brain-stage { position: relative; flex: 1 1 auto; min-height: 0; }
-.brain-stage canvas { display: block; }
-.hero-hand { position: relative; flex: 0 0 auto; height: clamp(120px, 19vh, 180px); }
 .hero-canvas-cap {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
   font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(245, 245, 247, 0.32); white-space: nowrap;
+  color: rgba(245, 245, 247, 0.35); white-space: nowrap;
 }
 
 /* scroll cue */
@@ -363,62 +349,6 @@ section.block.dark { background: var(--dark); color: var(--dark-ink); }
   font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--dark-2); border: 1px solid var(--hairline-dark);
   padding: 5px 13px; border-radius: 999px;
-}
-
-/* =====================================================
-   BCI MISSION — dark, brain canvas stage beside the copy
-   ===================================================== */
-.bci {
-  background: var(--dark); color: var(--dark-ink);
-  padding: clamp(96px, 12vw, 160px) 0;
-  overflow: hidden;
-  position: relative;
-}
-/* faint aurora wash behind the brain, keeps the black from feeling flat */
-.bci::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(60% 55% at 78% 42%, rgba(41, 151, 255, 0.16), transparent 70%),
-    radial-gradient(50% 50% at 88% 70%, rgba(169, 114, 255, 0.1), transparent 72%);
-}
-.bci-grid {
-  position: relative; z-index: 1;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(32px, 5vw, 72px); align-items: center;
-}
-.bci-copy { text-align: left; }
-.bci-copy .kicker {
-  font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--dark-2); font-weight: 500; display: block; margin-bottom: 14px;
-}
-.bci-copy h2 { font-size: clamp(2.3rem, 5.2vw, 3.7rem); letter-spacing: -0.03em; margin: 0 0 20px; }
-.bci-lead {
-  font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 600; letter-spacing: -0.015em;
-  line-height: 1.22; color: var(--dark-ink); margin: 0 0 18px;
-}
-.bci-copy p { color: var(--dark-2); font-size: clamp(1.02rem, 1.5vw, 1.15rem); margin: 0 0 16px; max-width: 46ch; }
-.bci-copy p b { color: var(--dark-ink); font-weight: 500; }
-
-.bci-points { display: flex; flex-direction: column; gap: 4px; margin: 28px 0 26px; }
-.bci-point {
-  display: flex; gap: 16px; align-items: baseline;
-  padding: 14px 0; border-top: 1px solid var(--hairline-dark);
-}
-.bci-point:last-child { border-bottom: 1px solid var(--hairline-dark); }
-.bci-point .bp-k { color: #2997ff; font-size: 0.8rem; font-weight: 600; min-width: 22px; letter-spacing: 0.04em; }
-.bci-point b { color: var(--dark-ink); font-weight: 600; font-size: 1.02rem; display: block; margin-bottom: 2px; }
-.bci-point span { color: var(--dark-2); font-size: 0.9rem; }
-
-/* reserved region the fixed gesture canvas draws the 3D brain into */
-.bci-stage {
-  position: relative;
-  min-height: clamp(380px, 52vh, 560px);
-  border-radius: var(--radius-lg);
-}
-.bci-stage-cap {
-  position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%);
-  font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(245, 245, 247, 0.34); white-space: nowrap;
 }
 
 /* =====================================================
@@ -720,14 +650,7 @@ footer.site-foot { background: var(--bg-alt); padding: 34px 0; color: var(--ink-
    RESPONSIVE
    ===================================================== */
 @media (max-width: 960px) {
-  .hero { padding-top: 92px; }
-  .hero-grid { grid-template-columns: 1fr; gap: 8px; text-align: center; }
-  .hero-inner { text-align: center; margin: 0 auto; max-width: 640px; order: 1; }
-  .hero-actions { justify-content: center; }
-  .hero-viz { order: 2; height: min(58vh, 480px); margin-top: 8px; }
   .about-grid { grid-template-columns: 1fr; }
-  .bci-grid { grid-template-columns: 1fr; }
-  .bci-stage { min-height: clamp(320px, 44vh, 460px); order: -1; }
   .portrait { max-width: 340px; margin-inline: auto; }
   .lead-grid { grid-template-columns: 1fr; }
   .pillars { grid-template-columns: 1fr; }
