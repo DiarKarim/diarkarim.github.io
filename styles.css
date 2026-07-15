@@ -352,6 +352,62 @@ section.block.dark { background: var(--dark); color: var(--dark-ink); }
 }
 
 /* =====================================================
+   BCI MISSION — dark, brain canvas stage beside the copy
+   ===================================================== */
+.bci {
+  background: var(--dark); color: var(--dark-ink);
+  padding: clamp(96px, 12vw, 160px) 0;
+  overflow: hidden;
+  position: relative;
+}
+/* faint aurora wash behind the brain, keeps the black from feeling flat */
+.bci::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 78% 42%, rgba(41, 151, 255, 0.16), transparent 70%),
+    radial-gradient(50% 50% at 88% 70%, rgba(169, 114, 255, 0.1), transparent 72%);
+}
+.bci-grid {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 72px); align-items: center;
+}
+.bci-copy { text-align: left; }
+.bci-copy .kicker {
+  font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dark-2); font-weight: 500; display: block; margin-bottom: 14px;
+}
+.bci-copy h2 { font-size: clamp(2.3rem, 5.2vw, 3.7rem); letter-spacing: -0.03em; margin: 0 0 20px; }
+.bci-lead {
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 600; letter-spacing: -0.015em;
+  line-height: 1.22; color: var(--dark-ink); margin: 0 0 18px;
+}
+.bci-copy p { color: var(--dark-2); font-size: clamp(1.02rem, 1.5vw, 1.15rem); margin: 0 0 16px; max-width: 46ch; }
+.bci-copy p b { color: var(--dark-ink); font-weight: 500; }
+
+.bci-points { display: flex; flex-direction: column; gap: 4px; margin: 28px 0 26px; }
+.bci-point {
+  display: flex; gap: 16px; align-items: baseline;
+  padding: 14px 0; border-top: 1px solid var(--hairline-dark);
+}
+.bci-point:last-child { border-bottom: 1px solid var(--hairline-dark); }
+.bci-point .bp-k { color: #2997ff; font-size: 0.8rem; font-weight: 600; min-width: 22px; letter-spacing: 0.04em; }
+.bci-point b { color: var(--dark-ink); font-weight: 600; font-size: 1.02rem; display: block; margin-bottom: 2px; }
+.bci-point span { color: var(--dark-2); font-size: 0.9rem; }
+
+/* reserved region the fixed gesture canvas draws the 3D brain into */
+.bci-stage {
+  position: relative;
+  min-height: clamp(380px, 52vh, 560px);
+  border-radius: var(--radius-lg);
+}
+.bci-stage-cap {
+  position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%);
+  font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(245, 245, 247, 0.34); white-space: nowrap;
+}
+
+/* =====================================================
    LEADERSHIP CARDS
    ===================================================== */
 .lead-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
@@ -651,6 +707,8 @@ footer.site-foot { background: var(--bg-alt); padding: 34px 0; color: var(--ink-
    ===================================================== */
 @media (max-width: 960px) {
   .about-grid { grid-template-columns: 1fr; }
+  .bci-grid { grid-template-columns: 1fr; }
+  .bci-stage { min-height: clamp(320px, 44vh, 460px); order: -1; }
   .portrait { max-width: 340px; margin-inline: auto; }
   .lead-grid { grid-template-columns: 1fr; }
   .pillars { grid-template-columns: 1fr; }
