@@ -262,9 +262,9 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     };
   }
   const heroAnchor = () => {
-    const el = q('.hero-canvas-wrap'); if (!el) return null;
+    const el = q('.hero-hand'); if (!el) return null;
     const r = el.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.54, s: Math.min(r.width, r.height) * 0.46 };
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.48, s: clamp(r.height * 0.5, 58, 104) };
   };
   const storyAnchor = () => {
     const s = clamp((VW / 2 - 450) * 0.5, 60, 118);
@@ -432,13 +432,13 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       }
     }
     bracketProps(c, h, t, a);
+    // decoded signal streaming down from the 3D brain above into the fingertips
+    const bb = window.__brainBase;
+    if (bb && bb.on) streamToHand(c, bb, TIPS.map((i) => h.P[i]), h.mix, a, t);
   }
 
-  // EEG: a small brain above the hand fires signals that travel down
-  // each digit — the "record the brain" beat of the loop
+  // EEG: a pulse travels wrist -> fingertip along each digit
   function pulseProps(c, h, t, a) {
-    const cx = h.x, cy = h.y - h.s * 1.9, scale = h.s * 0.82;
-    drawBrain(c, cx, cy, scale, h.mix, a * 0.92, t);
     for (let fi = 0; fi < 5; fi++) {
       const chain = [0].concat(FINGERS[fi]).map((i) => h.P[i]);
       const p = along(chain, (t * 0.00038 + fi * 0.2) % 1);
@@ -794,176 +794,14 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
   }
 
-  /* ---- 3D brain: a procedural point cloud in the hand's line-art
-     style. Two folded hemispheres, a cerebellum and a brainstem; EEG
-     electrodes sit on the scalp and fire pulses that converge down to
-     a decoder at the base. Generated once (seeded, so it's identical
-     each load), then rotated + projected per frame. This is the BCI
-     centrepiece — the brain the hand offers, and the source of the
-     signals that drive the fingertips. ---- */
-  const BRAIN = (() => {
-    let s = 0x1a2b3c4d;
-    const rnd = () => {
-      s |= 0; s = (s + 0x6d2b79f5) | 0;
-      let t = Math.imul(s ^ (s >>> 15), 1 | s);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-    const pts = [];
-    // two hemispheres, offset to open the longitudinal fissure
-    const hemi = (sign, n) => {
-      for (let i = 0; i < n; i++) {
-        const th = Math.acos(2 * rnd() - 1), ph = 2 * Math.PI * rnd();
-        const sx = Math.sin(th) * Math.cos(ph), sy = Math.cos(th), sz = Math.sin(th) * Math.sin(ph);
-        const fold = 0.055 * Math.sin(6 * ph + 3 * th) + 0.04 * Math.sin(9 * th + sign) + 0.03 * Math.sin(13 * ph);
-        const rr = 1 + fold;
-        let x = sx * rr * 0.5, y = sy * rr * 0.6, z = sz * rr * 1.02;
-        if (y < 0) y *= 0.8;                 // flatter underside
-        z += 0.12 * Math.max(0, 1 - Math.abs(y) - 0.2); // frontal/occipital bulge
-        x += sign * 0.5;                     // split the hemispheres
-        pts.push([x, y, z]);
-      }
-    };
-    hemi(1, 175); hemi(-1, 175);
-    const nCortex = pts.length;
-    // cerebellum — small dense cluster, low and to the back
-    for (let i = 0; i < 64; i++) {
-      const th = Math.acos(2 * rnd() - 1), ph = 2 * Math.PI * rnd();
-      const rr = 1 + 0.13 * Math.sin(11 * ph);
-      pts.push([
-        Math.sin(th) * Math.cos(ph) * 0.52 * rr,
-        -0.52 + Math.cos(th) * 0.24 * rr,
-        -0.92 + Math.sin(th) * Math.sin(ph) * 0.3 * rr,
-      ]);
-    }
-    // brainstem — a short taper dropping from the base
-    for (let i = 0; i < 11; i++) {
-      const k = i / 10;
-      pts.push([(rnd() - 0.5) * 0.06, -0.52 - k * 0.42, -0.5 + k * 0.06]);
-    }
-    // edges: connect each cortex point to its two nearest neighbours
-    const edgeSet = new Set(), edges = [];
-    const d2 = (a, b) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2;
-    for (let i = 0; i < nCortex; i++) {
-      let a = -1, b = -1, da = 1e9, db = 1e9;
-      for (let j = 0; j < nCortex; j++) {
-        if (j === i) continue;
-        const d = d2(pts[i], pts[j]);
-        if (d < da) { db = da; b = a; da = d; a = j; }
-        else if (d < db) { db = d; b = j; }
-      }
-      [a, b].forEach((j) => {
-        if (j < 0 || d2(pts[i], pts[j]) > 0.16) return; // no long spans across the fissure
-        const key = i < j ? i + ',' + j : j + ',' + i;
-        if (!edgeSet.has(key)) { edgeSet.add(key); edges.push([i, j]); }
-      });
-    }
-    // EEG electrodes: seed directions across the scalp, snapped to the
-    // nearest upper-surface point so they sit on the cortex
-    const seeds = [
-      [0, 1, 0.15], [0, 0.9, 0.7], [0, 0.85, -0.7],
-      [0.5, 0.8, 0.4], [-0.5, 0.8, 0.4], [0.5, 0.8, -0.4], [-0.5, 0.8, -0.4],
-      [0.85, 0.5, 0.1], [-0.85, 0.5, 0.1], [0.6, 0.6, 0.75], [-0.6, 0.6, 0.75],
-      [0.35, 0.95, 0], [-0.35, 0.95, 0],
-    ];
-    const base = [0, -0.5, -0.4];
-    const electrodes = seeds.map((dir) => {
-      let best = 0, bd = 1e9;
-      for (let i = 0; i < nCortex; i++) {
-        if (pts[i][1] < 0.1) continue;
-        const d = (pts[i][0] - dir[0]) ** 2 + (pts[i][1] - dir[1] * 0.75) ** 2 + (pts[i][2] - dir[2]) ** 2;
-        if (d < bd) { bd = d; best = i; }
-      }
-      const p = pts[best];
-      const mid = [p[0] * 0.55, (p[1] + base[1]) * 0.5 + 0.05, p[2] * 0.5]; // gentle bowed path to the decoder
-      return { p, path: [p, mid, base] };
-    });
-    return { pts, edges, electrodes, base, nCortex };
-  })();
+  /* The 3D brain is now a real WebGL model (brain3d.js). Here we keep
+     only the 2D helpers that stitch the hand into the neural loop: a
+     stream of decoded signal running from a source point into the
+     fingertips, and the BCI-section decode motif. ---- */
 
-  // sample a 3D polyline at u in [0,1]
-  function along3(path, u) {
-    const n = path.length - 1, f = clamp(u, 0, 1) * n;
-    const i = Math.min(Math.floor(f), n - 1), k = f - i;
-    const a = path[i], b = path[i + 1];
-    return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
-  }
-
-  /* Draw the brain at screen (cx,cy) with the given scale. Rotates
-     slowly on its vertical axis with a fixed forward tilt. Returns the
-     projected base point so callers can stream decoded signals onward
-     to the hand. */
-  function drawBrain(c, cx, cy, scale, mix, alpha, t, opts) {
-    opts = opts || {};
-    const anim = opts.anim === false ? 0 : t;
-    const rotY = (opts.rotY != null ? opts.rotY : anim * 0.00022) ;
-    const tilt = opts.tilt != null ? opts.tilt : -0.32;
-    const cyaw = Math.cos(rotY), syaw = Math.sin(rotY);
-    const ct = Math.cos(tilt), st = Math.sin(tilt);
-    const FOV = 3.4;
-    const proj = (p) => {
-      const x1 = p[0] * cyaw + p[2] * syaw;
-      const z1 = -p[0] * syaw + p[2] * cyaw;
-      const y1 = p[1] * ct - z1 * st;
-      const z2 = p[1] * st + z1 * ct;
-      const pp = FOV / (FOV + z2);
-      return { x: cx + x1 * scale * pp, y: cy - y1 * scale * pp, z: z2, pp };
-    };
-    const shade = (z) => clamp((z + 1.5) / 3, 0, 1);
-
-    const P = BRAIN.pts.map(proj);
-
-    // edges — faint mesh, batched into one stroke
-    c.strokeStyle = col('faint', mix, alpha * 0.5);
-    c.lineWidth = 1;
-    c.beginPath();
-    BRAIN.edges.forEach(([i, j]) => { c.moveTo(P[i].x, P[i].y); c.lineTo(P[j].x, P[j].y); });
-    c.stroke();
-
-    // points — depth-sorted so nearer nodes sit on top
-    const order = P.map((_, i) => i).sort((a, b) => P[a].z - P[b].z);
-    order.forEach((i) => {
-      const pr = P[i], sh = shade(pr.z);
-      c.fillStyle = col(sh > 0.55 ? 'joint' : 'faint', mix, alpha * (0.2 + sh * 0.7));
-      c.beginPath(); c.arc(pr.x, pr.y, (0.8 + sh * 1.5) * pr.pp, 0, Math.PI * 2); c.fill();
-    });
-
-    // electrodes + converging signal pulses
-    const basePt = proj(BRAIN.base);
-    BRAIN.electrodes.forEach((e, i) => {
-      const ep = proj(e.p), sh = shade(ep.z);
-      const u = ((anim * 0.00034 + i * 0.137) % 1 + 1) % 1;
-      const fire = clamp(1 - u / 0.16, 0, 1);           // just fired
-      // electrode node
-      c.fillStyle = col('tip', mix, alpha * (0.5 + sh * 0.5));
-      c.beginPath(); c.arc(ep.x, ep.y, (1.7 + sh) * ep.pp, 0, Math.PI * 2); c.fill();
-      c.strokeStyle = col('tip', mix, alpha * (0.25 + fire * 0.6) * sh);
-      c.lineWidth = 1;
-      c.beginPath(); c.arc(ep.x, ep.y, (3.6 + fire * 5) * ep.pp, 0, Math.PI * 2); c.stroke();
-      // travelling pulse toward the decoder
-      const pp = proj(along3(e.path, u));
-      const psh = shade(pp.z);
-      c.fillStyle = col('tip', mix, alpha * (0.35 + 0.55 * psh) * clamp(1 - u * 0.3, 0, 1));
-      c.beginPath(); c.arc(pp.x, pp.y, 1.7 * pp.pp, 0, Math.PI * 2); c.fill();
-      const tp = proj(along3(e.path, Math.max(0, u - 0.07)));
-      c.strokeStyle = col('tip', mix, alpha * 0.3 * psh);
-      c.lineWidth = 1;
-      c.beginPath(); c.moveTo(tp.x, tp.y); c.lineTo(pp.x, pp.y); c.stroke();
-    });
-
-    // decoder node at the base
-    c.fillStyle = col('tip', mix, alpha);
-    c.beginPath(); c.arc(basePt.x, basePt.y, 2.6 * basePt.pp, 0, Math.PI * 2); c.fill();
-    const dr = 5 + ((anim * 0.02) % 12);
-    c.strokeStyle = col('tip', mix, alpha * clamp(1 - dr / 16, 0, 1) * 0.6);
-    c.lineWidth = 1;
-    c.beginPath(); c.arc(basePt.x, basePt.y, dr * basePt.pp, 0, Math.PI * 2); c.stroke();
-
-    return { x: basePt.x, y: basePt.y };
-  }
-
-  /* decoded signal streaming from the brain's base down into the
-     fingertips — the "action out" half of the loop */
+  /* decoded signal streaming from a source point down into the
+     fingertips — the "action out" half of the loop (hero brain->hand
+     and the BCI beat both use it) */
   function streamToHand(c, from, tips, mix, alpha, t) {
     tips.forEach((tp, i) => {
       const u = ((t * 0.0006 + i * 0.19) % 1 + 1) % 1;
@@ -978,13 +816,39 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     });
   }
 
-  // BCI: the brain floats above the offered palm, electrodes firing,
-  // decoded signal streaming down into the fingertips
+  // BCI: a non-invasive EEG trace enters, is decoded into intent above
+  // the offered palm, then streamed into the fingertips
   function bciProps(c, h, t, a) {
-    const cx = h.x, cy = h.y - h.s * 2.55;
-    const scale = h.s * 1.95;
-    const base = drawBrain(c, cx, cy, scale, h.mix, a, t);
-    streamToHand(c, base, TIPS.map((i) => h.P[i]), h.mix, a, t);
+    const half = h.s * 1.4;
+    const midY = h.y - h.s * 1.75;
+    const x0 = h.x - half, x1 = h.x - h.s * 0.1;
+    // incoming EEG waveform, growing as it nears the decoder
+    c.strokeStyle = col('tip', h.mix, a * 0.75);
+    c.lineWidth = 1.3;
+    c.beginPath();
+    let first = true;
+    for (let x = x0; x <= x1; x += 4) {
+      const k = (x - x0) / (x1 - x0);
+      const yy = midY + noise1(x * 0.05 + t * 0.004) * 10 * (0.35 + 0.65 * k);
+      first ? c.moveTo(x, yy) : c.lineTo(x, yy);
+      first = false;
+    }
+    c.stroke();
+    // decoder node with an expanding ring
+    c.fillStyle = col('tip', h.mix, a);
+    c.beginPath(); c.arc(x1, midY, 3, 0, Math.PI * 2); c.fill();
+    const dr = 5 + ((t * 0.02) % 13);
+    c.strokeStyle = col('tip', h.mix, a * clamp(1 - dr / 17, 0, 1) * 0.6);
+    c.lineWidth = 1;
+    c.beginPath(); c.arc(x1, midY, dr, 0, Math.PI * 2); c.stroke();
+    // decoded "intent" bars to the right of the decoder
+    for (let i = 0; i < 4; i++) {
+      const bh = 5 + 15 * (0.5 + 0.5 * Math.sin(t * 0.004 + i * 1.25));
+      c.fillStyle = col('tip', h.mix, a * (0.35 + 0.12 * i));
+      c.fillRect(x1 + 14 + i * 8, midY - bh / 2, 4, bh);
+    }
+    // stream the decoded signal into the fingertips
+    streamToHand(c, { x: x1, y: midY }, TIPS.map((i) => h.P[i]), h.mix, a, t);
   }
 
   /* ---- beats: the hand's journey down the page ----
@@ -1061,56 +925,35 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     });
   }
 
-  /* ---- fallback: hero-only hand + the BCI brain (narrow screens /
-     reduced motion). The traveling hand is off here, but the brain is
-     the site's focus, so it still renders whenever the BCI stage is on
-     screen. Idles when nothing is live and nothing changed. ---- */
+  /* ---- fallback: hero-only hand (narrow screens / reduced motion).
+     Idles when there is nothing new to draw: past the hero, or with
+     reduced motion and no scroll/size change since the last frame. ---- */
   let fbKey = '', fbDrawn = false;
   function fallbackFrame(now) {
     const reduced = rmq.matches;
+    const key = Math.round(window.scrollY) + '|' + VW + '|' + VH + '|' + reduced;
+    if (key === fbKey && !stale && (!fbDrawn || reduced)) return;
     const a = heroAnchor();
     const heroEl = q('.hero');
     const p = heroEl ? clamp(window.scrollY / (heroEl.offsetHeight * 0.7), 0, 1) : 0;
-    const heroAlpha = a ? clamp(1 - p * 1.3, 0, 1) : 0;
-
-    // BCI stage visibility (drives its own brain)
-    const bs = q('.bci-stage');
-    let bvis = 0, br = null;
-    if (bs) {
-      br = bs.getBoundingClientRect();
-      if (br.bottom > 40 && br.top < VH - 40 && br.height > 0) {
-        bvis = clamp((Math.min(br.bottom, VH) - Math.max(br.top, 0)) / Math.min(br.height, VH), 0, 1);
-      }
+    const alpha = a ? clamp(1 - p * 1.3, 0, 1) : 0;
+    if (alpha <= 0) {
+      if (fbDrawn) { ctx.clearRect(0, 0, VW, VH); fbDrawn = false; }
+      fbKey = key;
+      stale = false;
+      return;
     }
-    const live = heroAlpha > 0 || bvis > 0;
-
-    const key = Math.round(window.scrollY) + '|' + VW + '|' + VH + '|' + reduced;
-    // reduced motion is static: redraw only on change. Animated mode keeps
-    // running while something is on screen; idles once nothing is live.
-    if (reduced ? (key === fbKey && !stale) : (!live && key === fbKey && !stale && !fbDrawn)) return;
     stale = false;
     fbKey = key;
     ctx.clearRect(0, 0, VW, VH);
-    fbDrawn = false;
     const t = reduced ? 0 : now;
-
-    if (heroAlpha > 0 && a) {
-      const s = restSample(!reduced)(t, a);
-      if (!reduced) s.oy = (s.oy || 0) + p * 40;
-      const aa = { x: a.x, y: a.y, s: a.s * (1 + p * 0.08) };
-      const P = s.pts.map(mkTx(aa, s, null));
-      heroProps(ctx, { x: aa.x, y: aa.y, s: aa.s, mix: 0, P }, t, heroAlpha * 0.9);
-      drawHand(ctx, P, 0, heroAlpha, t);
-      fbDrawn = true;
-    }
-
-    if (bvis > 0 && br) {
-      const cx = br.left + br.width * 0.5;
-      const cy = br.top + br.height * 0.46;
-      const scale = clamp(Math.min(br.width, br.height) * 0.42, 90, 200);
-      drawBrain(ctx, cx, cy, scale, 0, bvis, t, { anim: !reduced });
-      fbDrawn = true;
-    }
+    const s = restSample(!reduced)(t, a);
+    if (!reduced) s.oy = (s.oy || 0) + p * 40;
+    const aa = { x: a.x, y: a.y, s: a.s * (1 + p * 0.08) };
+    const P = s.pts.map(mkTx(aa, s, null));
+    heroProps(ctx, { x: aa.x, y: aa.y, s: aa.s, mix: 0, P }, t, alpha * 0.9);
+    drawHand(ctx, P, 0, alpha, t);
+    fbDrawn = true;
   }
 
   /* ---- main loop with snappy morph transitions ---- */

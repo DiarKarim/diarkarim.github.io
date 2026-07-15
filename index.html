@@ -7,6 +7,9 @@
 <meta name="description" content="Diar Abdlkarim — sensorimotor neuroscientist building scalable, non-invasive brain–computer interfaces. Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. EEG neural decoding, the science of touch, and markerless motion capture. Founder of the Movement Lab; ex-Meta Quest hand tracking. Hands-on courses for scientists." />
 <link rel="stylesheet" href="styles.css" />
 <noscript><style>.reveal, .feature-media { opacity: 1 !important; transform: none !important; } .scene { position: relative; opacity: 1; transform: none; } .story-track { height: auto; } .story-sticky { position: static; height: auto; }</style></noscript>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js" } }
+</script>
 </head>
 <body>
 
@@ -29,21 +32,25 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="hero-inner">
-    <span class="eyebrow">Non-invasive brain–computer interfaces · Built to scale</span>
-    <h1>Diar Abdlkarim</h1>
-    <p class="hero-role"><span class="grad">Scalable, non-invasive BCI.</span></p>
-    <p class="sub">
-      I build brain–computer interfaces that read neural activity from the surface of the head —
-      no surgery, wearable, and designed to scale from the lab to the world.
-    </p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="#bci">The mission</a>
-      <a class="btn btn-ghost" href="#about">Explore the work</a>
+  <div class="hero-grid">
+    <div class="hero-inner">
+      <span class="eyebrow">Non-invasive brain–computer interfaces · Built to scale</span>
+      <h1>Diar Abdlkarim</h1>
+      <p class="hero-role"><span class="grad">Scalable, non-invasive BCI.</span></p>
+      <p class="sub">
+        I build brain–computer interfaces that read neural activity from the surface of the head —
+        no surgery, wearable, and designed to scale from the lab to the world.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#bci">The mission</a>
+        <a class="btn btn-ghost" href="#about">Explore the work</a>
+      </div>
     </div>
-  </div>
-  <div class="hero-canvas-wrap" aria-hidden="true">
-    <span class="hero-canvas-cap">EEG · scalp to signal · non-invasive</span>
+    <div class="hero-viz" aria-hidden="true">
+      <div class="brain-stage" id="brainStage"></div>
+      <div class="hero-hand"></div>
+      <span class="hero-canvas-cap">Non-invasive EEG · brain → hand</span>
+    </div>
   </div>
   <span class="scroll-cue" aria-hidden="true">⌄</span>
 </section>
@@ -464,5 +471,6 @@
 </footer>
 
 <script src="scripts.js"></script>
+<script type="module" src="brain3d.js"></script>
 </body>
 </html>
