@@ -591,6 +591,92 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     c.stroke();
   }
 
+  // Spotlight: a haptic unit on a belt line pulses beneath the palm —
+  // rings of touch rising toward the hand
+  function hapticProps(c, h, t, a) {
+    const ux = h.x, uy = h.y + h.s * 0.72;
+    const w = h.s * 0.32;
+    c.strokeStyle = col('faint', h.mix, a);
+    c.lineWidth = 1;
+    c.beginPath();
+    c.moveTo(h.x - h.s * 1.1, uy); c.lineTo(ux - w / 2, uy);
+    c.moveTo(ux + w / 2, uy); c.lineTo(h.x + h.s * 1.1, uy);
+    c.stroke();
+    c.strokeStyle = col('joint', h.mix, a * 0.6);
+    c.lineWidth = 1.3;
+    if (c.roundRect) { c.beginPath(); c.roundRect(ux - w / 2, uy - w * 0.32, w, w * 0.64, 5); c.stroke(); }
+    else c.strokeRect(ux - w / 2, uy - w * 0.32, w, w * 0.64);
+    c.fillStyle = col('tip', h.mix, a * (0.55 + 0.45 * Math.sin(t * 0.006)));
+    c.beginPath(); c.arc(ux, uy, 2, 0, Math.PI * 2); c.fill();
+    for (let i = 0; i < 3; i++) {
+      const ph = (t * 0.0005 + i / 3) % 1;
+      c.strokeStyle = col('tip', h.mix, a * (1 - ph) * 0.7);
+      c.lineWidth = 1.3;
+      c.beginPath();
+      c.arc(ux, uy - w * 0.32, w * (0.4 + ph * 1.25), -Math.PI * 0.78, -Math.PI * 0.22);
+      c.stroke();
+    }
+  }
+
+  // Schools: a green-screen panel — the sliding hand wipes a castle
+  // into the frame; the un-keyed side stays a field of chroma dots
+  function chromaProps(c, h, t, a) {
+    const w = h.s * 2.3, ht = h.s * 0.9;
+    const x0 = h.x - w / 2, y0 = h.y + h.s * 0.55, y1 = y0 + ht;
+    const tipX = clamp((h.P[8][0] + h.P[12][0]) / 2, x0 + 10, x0 + w - 10);
+    c.lineWidth = 1.3;
+    c.strokeStyle = col('joint', h.mix, a * 0.55);
+    if (c.roundRect) { c.beginPath(); c.roundRect(x0, y0, w, ht, 8); c.stroke(); }
+    else c.strokeRect(x0, y0, w, ht);
+    c.fillStyle = col('faint', h.mix, a * 0.75);
+    for (let gx = tipX + 12; gx < x0 + w - 8; gx += 13) {
+      for (let gy = y0 + 10; gy < y1 - 8; gy += 13) {
+        c.fillRect(gx - 0.8, gy - 0.8, 1.6, 1.6);
+      }
+    }
+    // castle silhouette, revealed left of the wipe
+    const gy0 = y1 - ht * 0.14;
+    const sc = ht * 0.7;
+    const S = [
+      [0.05, 0], [0.05, 0.42],
+      [0.10, 0.42], [0.10, 0.52], [0.16, 0.52], [0.16, 0.42],
+      [0.22, 0.42], [0.22, 0.52], [0.28, 0.52], [0.28, 0.42],
+      [0.35, 0.42], [0.35, 0.88],
+      [0.41, 0.88], [0.41, 1], [0.47, 1], [0.47, 0.88],
+      [0.53, 0.88], [0.53, 1], [0.59, 1], [0.59, 0.88],
+      [0.65, 0.88], [0.65, 0.42],
+      [0.72, 0.42], [0.72, 0.52], [0.78, 0.52], [0.78, 0.42],
+      [0.84, 0.42], [0.84, 0.52], [0.90, 0.52], [0.90, 0.42],
+      [0.95, 0.42], [0.95, 0],
+    ];
+    c.save();
+    c.beginPath(); c.rect(x0, y0, Math.max(tipX - x0, 0), ht); c.clip();
+    c.strokeStyle = col('joint', h.mix, a * 0.8);
+    c.beginPath();
+    c.moveTo(x0 + w * 0.02, gy0); c.lineTo(x0 + w * 0.98, gy0); // ground
+    S.forEach(([u, v], i) => {
+      const X = x0 + u * w, Y = gy0 - v * sc;
+      i ? c.lineTo(X, Y) : c.moveTo(X, Y);
+    });
+    c.stroke();
+    // gate arch at the tower's base
+    c.beginPath(); c.arc(x0 + 0.5 * w, gy0, ht * 0.14, Math.PI, Math.PI * 2); c.stroke();
+    // pennant on the keep, fluttering
+    const fx = x0 + 0.5 * w, fy = gy0 - sc;
+    c.beginPath(); c.moveTo(fx, fy); c.lineTo(fx, fy - ht * 0.16); c.stroke();
+    c.fillStyle = col('tip', h.mix, a * 0.85);
+    c.beginPath();
+    c.moveTo(fx, fy - ht * 0.16);
+    c.lineTo(fx + w * 0.045 + Math.sin(t * 0.004) * 2, fy - ht * 0.125);
+    c.lineTo(fx, fy - ht * 0.09);
+    c.closePath(); c.fill();
+    c.restore();
+    // the wipe line itself
+    c.strokeStyle = col('tip', h.mix, a * 0.9);
+    c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(tipX, y0 + 3); c.lineTo(tipX, y1 - 3); c.stroke();
+  }
+
   // Work: a wireframe cube held in the grasp, lifted off a baseline
   function cubeProps(c, h, t, a) {
     const L = liftD(t);
@@ -805,10 +891,12 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     { id: 'quest', bg: 0, alpha: 1, anchor: sideAnchor('#quest .container', -1, 0.42), trigger: secTrig('#quest'), sample: pinchSample, props: traceProps },
     { id: 'lead', bg: 1, alpha: 1, anchor: sideAnchor('#leadership .section-head', 1, 0.5), trigger: secTrig('#leadership'), sample: flatSample, props: buildProps },
     { id: 'research', bg: 1, alpha: 1, anchor: sideAnchor('#research .section-head', -1, 0.45), trigger: secTrig('#research'), sample: slideSample, props: textureProps },
+    { id: 'spotlight', bg: 0, alpha: 1, anchor: sideAnchor('#spotlight .section-head', 1, 0.5), trigger: secTrig('#spotlight'), sample: flatSample, props: hapticProps },
     { id: 'work', bg: 1, alpha: 1, anchor: sideAnchor('#work .section-head', 1, 0.45), trigger: secTrig('#work'), sample: graspSample, props: cubeProps },
     { id: 'pubs', bg: 1, alpha: 1, anchor: sideAnchor('#publications .section-head', -1, 0.45), trigger: secTrig('#publications'), sample: swipeSample, props: cardProps },
     { id: 'funding', bg: 1, alpha: 0.9, anchor: sideAnchor('#funding .section-head', -1, 0.5), trigger: secTrig('#funding'), sample: coinSample, props: coinProps },
     { id: 'courses', bg: 1, alpha: 1, anchor: sideAnchor('#courses .section-head', 1, 0.5), trigger: secTrig('#courses'), sample: offerSample, props: holoProps },
+    { id: 'schools', bg: 1, alpha: 1, anchor: sideAnchor('#schools .section-head', -1, 0.5), trigger: secTrig('#schools'), sample: slideSample, props: chromaProps },
     { id: 'venture', bg: 0, alpha: 0.85, anchor: sideAnchor('#venture .container', 1, 0.5), trigger: secTrig('#venture'), sample: offerSample, props: sproutProps },
     { id: 'contact', bg: 1, alpha: 1, anchor: contactAnchor, trigger: secTrig('#contact'), sample: waveSample, pivot: [0, -0.92], props: helloProps },
   ];
