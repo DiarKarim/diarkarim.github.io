@@ -1151,3 +1151,73 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 })();
+
+/* -----------------------------------------------------------
+   7. SCROLL FX — one rAF loop drives the nav progress hairline,
+      the gentle image parallax and the sideways field rail.
+   ----------------------------------------------------------- */
+(function scrollFX() {
+  const bar = document.querySelector('.nav-progress');
+  const plx = Array.from(document.querySelectorAll('img[data-plx]'));
+  const track = document.getElementById('railTrack');
+  const rail = track ? track.closest('.rail') : null;
+  if (!bar && !plx.length && !track) return;
+
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const vh = window.innerHeight;
+
+    if (bar) {
+      const dh = document.documentElement.scrollHeight - vh;
+      bar.style.transform = `scaleX(${dh > 0 ? clamp(window.scrollY / dh, 0, 1) : 0})`;
+    }
+
+    if (!REDUCED) {
+      // parallax: each image drifts against its mask, centred on the viewport middle
+      for (const el of plx) {
+        const box = (el.parentElement || el).getBoundingClientRect();
+        if (box.bottom < -80 || box.top > vh + 80) continue; // offscreen
+        const mid = box.top + box.height / 2 - vh / 2;
+        const f = parseFloat(el.dataset.plx) || 0.06;
+        el.style.setProperty('--plx', `${clamp(-mid * f, -30, 30).toFixed(1)}px`);
+      }
+
+      // rail: slide the strip sideways as the section crosses the viewport
+      if (track && window.innerWidth >= 960) {
+        const r = rail.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < vh) {
+          const p = clamp((vh - r.top) / (vh + r.height), 0, 1);
+          const overflow = track.scrollWidth - window.innerWidth;
+          if (overflow > 0) track.style.transform = `translate3d(${(-p * overflow).toFixed(1)}px, 0, 0)`;
+        }
+      }
+    }
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  window.addEventListener('load', update);
+  update();
+})();
+
+/* -----------------------------------------------------------
+   8. AMBIENT VIDEO — card loops only play while on screen
+   ----------------------------------------------------------- */
+(function ambientVideo() {
+  const vids = document.querySelectorAll('video[data-ambient]');
+  if (!vids.length) return;
+  if (REDUCED) { vids.forEach((v) => { v.removeAttribute('autoplay'); v.pause(); }); return; }
+  if (!('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      const v = e.target;
+      if (e.isIntersecting) { v.play().catch(() => {}); } else { v.pause(); }
+    });
+  }, { threshold: 0.2 });
+  vids.forEach((v) => io.observe(v));
+})();

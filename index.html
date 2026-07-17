@@ -4,9 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Diar Abdlkarim — Movement, understood.</title>
-<meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, EEG, touch and motion capture. Founder of the markerless Movement Lab; ex-Meta Quest hand tracking. Hands-on courses in motion capture and game engines for scientists." />
+<meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, non-invasive BCIs, touch and markerless motion capture. Founder of the Movement Lab; ex-Meta Quest hand tracking. Courses, outreach with schools, and research on hands-on learning." />
 <link rel="stylesheet" href="styles.css" />
-<noscript><style>.reveal, .feature-media { opacity: 1 !important; transform: none !important; } .scene { position: relative; opacity: 1; transform: none; } .story-track { height: auto; } .story-sticky { position: static; height: auto; }</style></noscript>
+<noscript><style>.reveal, .feature-media { opacity: 1 !important; transform: none !important; } .scene { position: relative; opacity: 1; transform: none; } .story-track { height: auto; } .story-sticky { position: static; height: auto; } .rail-viewport { overflow-x: auto; } img[data-plx] { transform: none; }</style></noscript>
 </head>
 <body>
 
@@ -26,6 +26,7 @@
     <a href="#schools">Outreach</a>
     <a href="#contact" class="cta">Get in touch</a>
   </nav>
+  <span class="nav-progress" aria-hidden="true"></span>
 </header>
 
 <!-- ============ HERO ============ -->
@@ -55,16 +56,19 @@
       <p class="story-kicker">One question. Three instruments.</p>
       <div class="story-scenes">
         <div class="scene">
+          <div class="s-media" aria-hidden="true"><img src="./media/new_images/eeg-cap.jpg" alt="" loading="lazy" /></div>
           <span class="s-num">01</span>
           <h3>Record the brain.</h3>
           <p><b>EEG</b> captures the neural signature of a movement — before the hand even begins to move.</p>
         </div>
         <div class="scene">
+          <div class="s-media" aria-hidden="true"><img src="./media/new_images/touch-device.jpg" alt="" loading="lazy" /></div>
           <span class="s-num">02</span>
           <h3>Feel the touch.</h3>
           <p><b>Psychophysics</b> reveals how skin senses contact, force and texture — and how touch shapes what we do next.</p>
         </div>
         <div class="scene">
+          <div class="s-media" aria-hidden="true"><img src="./media/new_images/tracking-rays.jpg" alt="" loading="lazy" /></div>
           <span class="s-num">03</span>
           <h3>Capture the motion.</h3>
           <p><b>Markerless motion capture</b> measures action to the millimetre. No suits. No markers. Just movement.</p>
@@ -79,7 +83,7 @@
 <section class="block" id="about">
   <div class="container about-grid">
     <div class="portrait reveal">
-      <img src="./media/profilepic.jpg" alt="Portrait of Diar Abdlkarim" />
+      <img src="./media/new_images/portrait-2026.jpg" alt="Portrait of Diar Abdlkarim" data-plx="0.05" />
     </div>
     <div class="about-copy reveal">
       <span class="kicker">About</span>
@@ -90,16 +94,51 @@
         reading neural signals, probing the sense of touch, and measuring movement with precision.
       </p>
       <p>
-        I founded and lead the University of Birmingham's <b>markerless Movement Lab</b>. At <b>Meta</b>,
-        I helped build the hand tracking now integral to <b>Quest</b>. And as <b>Co-Founder &amp; Director
-        of Motion Dynamics</b>, I turn the science into hardware, haptics and XR software — then
+        I founded and lead the University of Birmingham's <b>markerless Movement Lab</b>, and work as a
+        research fellow on an <b>ARIA-funded programme</b> decoding naturalistic movement with
+        <b>non-invasive brain–computer interfaces</b>. At <b>Meta</b>, I helped build the hand tracking
+        now integral to <b>Quest</b>. And as co-founder of <b>Motion Dynamics</b> and <b>Obi Robotics</b>,
+        I turn the science into hardware, haptics and XR software — then
         <a class="tlink" href="#courses">teach it to other scientists</a>.
       </p>
       <div class="stat-row">
         <div class="stat"><b><span data-count="1.5" data-prefix="£" data-suffix="M+">£1.5M+</span></b><span>Research funding contributed</span></div>
         <div class="stat"><b>CHI 2025</b><span>ACM Best Paper Award</span></div>
-        <div class="stat"><b>1 lab</b><span>Founded, built &amp; led</span></div>
+        <div class="stat"><b><span data-count="150" data-suffix="+">150+</span></b><span>Researchers trained</span></div>
+        <div class="stat"><b>2</b><span>Companies co-founded</span></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIELD RAIL ============ -->
+<section class="rail" id="field" aria-label="Scenes from the work">
+  <div class="container wide rail-head">
+    <span class="kicker reveal">Field notes</span>
+    <h2 class="reveal">Where the work happens.</h2>
+  </div>
+  <div class="rail-viewport">
+    <div class="rail-track" id="railTrack">
+      <figure class="rail-item">
+        <img src="./media/new_images/movement-lab.jpg" alt="The markerless Movement Lab: motion-capture cameras surrounding a participant at a keyboard" loading="lazy" />
+        <figcaption>The Movement Lab · Birmingham</figcaption>
+      </figure>
+      <figure class="rail-item">
+        <img src="./media/new_images/golf-analytics-poster.jpg" alt="A golf swing on video beside its extracted 3D skeleton" loading="lazy" />
+        <figcaption>Video to kinematics · Motion Dynamics</figcaption>
+      </figure>
+      <figure class="rail-item">
+        <img src="./media/new_images/robotics-lab.jpg" alt="Teleoperating a robot arm through a haptic controller at the National Centre for Nuclear Robotics" loading="lazy" />
+        <figcaption>Human–robot interaction · NCNR</figcaption>
+      </figure>
+      <figure class="rail-item">
+        <img src="./media/new_images/belt-vr-study.jpg" alt="Virtual avatar reaching for targets in a haptics study" loading="lazy" />
+        <figcaption>Haptic navigation study · VR</figcaption>
+      </figure>
+      <figure class="rail-item">
+        <img src="./media/new_images/md-team.jpg" alt="The Motion Dynamics team at a technology exhibition stand" loading="lazy" />
+        <figcaption>Motion Dynamics, on the road</figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -117,7 +156,7 @@
     </p>
   </div>
   <div class="feature-media">
-    <img src="./media/new_images/oculus-quest-hand-tracking.jpg" alt="Hands tracked by Meta Quest headset cameras" />
+    <img src="./media/new_images/oculus-quest-hand-tracking.jpg" alt="Hands tracked by Meta Quest headset cameras" data-plx="0.07" />
   </div>
   <div class="badge-row reveal">
     <span class="chip">Noise, characterised</span>
@@ -176,8 +215,8 @@
     <div class="pillars">
       <article class="pillar reveal">
         <div class="num">01</div>
-        <div><h3>Brain imaging with EEG</h3>
-          <p>Reading how motor plans are formed, predicted and corrected — while people act in naturalistic, real-world tasks.</p></div>
+        <div><h3>EEG &amp; brain–computer interfaces</h3>
+          <p>Reading how motor plans are formed, predicted and corrected — now as a research fellow on an <b>ARIA-funded programme</b> decoding naturalistic movement with non-invasive BCIs.</p></div>
       </article>
       <article class="pillar reveal">
         <div class="num">02</div>
@@ -208,7 +247,7 @@
     </div>
     <div class="spot-row">
       <div class="spot-media reveal">
-        <img src="./media/new_images/haptic-belt-system.jpg" alt="Haptic belt system: a belt of voice-coil actuator units driven by a Raspberry Pi, worn while walking through a virtual environment in a Meta Quest 3 headset" />
+        <img src="./media/new_images/haptic-belt-system.jpg" alt="Haptic belt system: a belt of voice-coil actuator units driven by a Raspberry Pi, worn while walking through a virtual environment in a Meta Quest 3 headset" data-plx="0.05" />
       </div>
       <div class="spot-copy reveal">
         <span class="tag">Haptics · First-author · ACM CHI</span>
@@ -226,7 +265,7 @@
     </div>
     <div class="spot-row flip">
       <div class="spot-media reveal">
-        <img src="./media/new_images/remote-grasp-system.png" alt="Remote grasping system diagram: an operator wearing a VR headset and fingertip haptic thimbles controls a simulated remote robot gripper holding an unknown object" />
+        <img src="./media/new_images/remote-grasp-system.png" alt="Remote grasping system diagram: an operator wearing a VR headset and fingertip haptic thimbles controls a simulated remote robot gripper holding an unknown object" data-plx="0.05" />
       </div>
       <div class="spot-copy reveal">
         <span class="tag">Human–robot interaction · Preprint</span>
@@ -269,20 +308,32 @@
           <p>Camera-based hand tracking, now integral to the Quest line.</p>
         </div>
       </article>
-      <article class="proj wide reveal">
-        <div class="media"><img src="./media/obi_glove.jpg" alt="Obi Robotics advanced hand-tracking glove" /></div>
+      <article class="proj reveal">
+        <div class="media">
+          <video src="./media/new_images/obi-hand.mp4" poster="./media/new_images/obi-hand-poster.jpg" muted loop playsinline autoplay preload="metadata" data-ambient></video>
+        </div>
         <div class="body">
-          <span class="tag">Hardware · Motion Dynamics</span>
+          <span class="tag">Hardware · Obi Robotics</span>
           <h3>Obi Robotics Glove</h3>
           <p>Every finger, tracked at high rate — with integrated haptics for precise XR and robotics control.</p>
         </div>
       </article>
-      <article class="proj reveal">
-        <div class="media"><img src="./media/Slide1.png" alt="Fingertip indentation feedback device" /></div>
+      <article class="proj wide reveal">
+        <div class="media">
+          <video src="./media/new_images/golf-analytics.mp4" poster="./media/new_images/golf-analytics-poster.jpg" muted loop playsinline autoplay preload="metadata" data-ambient></video>
+        </div>
         <div class="body">
-          <span class="tag">Haptics</span>
-          <h3>Fingertip Indentation Device</h3>
-          <p>Physical button-press sensations, rendered with controllable indentation.</p>
+          <span class="tag">Motion Dynamics</span>
+          <h3>Video in. Kinematics out.</h3>
+          <p>Standard video becomes joint-level motion analytics — no suits, no markers, live from a single camera.</p>
+        </div>
+      </article>
+      <article class="proj reveal">
+        <div class="media"><img src="./media/new_images/touch-device.jpg" alt="Fingertip resting on the Adaptive Touch Testing System's measurement platform" /></div>
+        <div class="body">
+          <span class="tag">Clinical · BBSRC</span>
+          <h3>Adaptive Touch Testing System</h3>
+          <p>Portable fingertip assessment, built to speed tactile neuropathy diagnosis.</p>
         </div>
       </article>
       <article class="proj reveal">
@@ -294,11 +345,11 @@
         </div>
       </article>
       <article class="proj reveal">
-        <div class="media"><img src="./media/Slide3.png" alt="Desktop clinical vibrotactile assessment device" /></div>
+        <div class="media"><img src="./media/Slide1.png" alt="Fingertip indentation feedback device" /></div>
         <div class="body">
-          <span class="tag">Clinical</span>
-          <h3>Vibrotactile Assessment Rig</h3>
-          <p>Precise vibrotactile stimuli, measured fingertip force.</p>
+          <span class="tag">Haptics</span>
+          <h3>Fingertip Indentation Device</h3>
+          <p>Physical button-press sensations, rendered with controllable indentation.</p>
         </div>
       </article>
     </div>
@@ -462,19 +513,23 @@
   </div>
 </section>
 
-<!-- ============ VENTURE ============ -->
+<!-- ============ WHAT'S NEXT ============ -->
 <section class="feature-dark" id="venture">
   <div class="container">
-    <span class="kicker reveal">New venture · Seeking partners &amp; funding</span>
-    <h2 class="reveal">Growing minds,<br />away from screens.</h2>
+    <span class="kicker reveal">What's next · Fellowship application under review</span>
+    <h2 class="reveal">Growing minds,<br />hands first.</h2>
     <p class="f-sub reveal">
-      A research-led venture on how <b>fine-motor and cognitive development intertwine</b> in early
-      childhood — and how technology can guide young children <b>back toward the physical world</b>
-      during the stages that matter most.
+      Watching children's hands move from objects to glass sparked the next research programme: how
+      <b>hands-on, effortful play</b> builds young minds in a screen- and AI-mediated world — and how
+      technology can hand that work back. I'm currently applying for a <b>major international research
+      fellowship</b> to pursue it. More once I can share details.
     </p>
-    <div class="reveal" style="margin-top: 8px">
-      <a class="btn btn-ghost" href="#contact">Partner or fund this</a>
-    </div>
+  </div>
+  <div class="feature-media narrow">
+    <img src="./media/new_images/hands-tablet.jpg" alt="Hands writing on a tablet with a stylus" data-plx="0.07" />
+  </div>
+  <div class="reveal" style="margin-top: 36px">
+    <a class="btn btn-ghost" href="#contact">Partner in this</a>
   </div>
 </section>
 

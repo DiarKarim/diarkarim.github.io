@@ -1,0 +1,5 @@
+.DS_Store
+# Confidential — do not publish
+*.odt
+# Raw source materials (large; processed copies live in media/new_images)
+website_materials/
