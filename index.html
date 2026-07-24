@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Diar Abdlkarim — Movement, understood.</title>
+<title>Diar Abdlkarim — From cortex to fingertip</title>
 <meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, non-invasive BCIs, touch and markerless motion capture. Founder of the Movement Lab; ex-Meta Quest hand tracking. Courses, outreach with schools, and research on hands-on learning." />
 <link rel="stylesheet" href="styles.css" />
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <noscript><style>.reveal, .feature-media { opacity: 1 !important; transform: none !important; } .scene { position: relative; opacity: 1; transform: none; } .story-track { height: auto; } .story-sticky { position: static; height: auto; } .rail-viewport { overflow-x: auto; } img[data-plx] { transform: none; }</style></noscript>
 </head>
 <body>
@@ -34,7 +35,7 @@
   <div class="hero-inner">
     <span class="eyebrow">Sensorimotor neuroscientist · University of Birmingham</span>
     <h1>Diar Abdlkarim</h1>
-    <p class="hero-role"><span class="grad">Movement, understood.</span></p>
+    <p class="hero-role">From cortex to fingertip.</p>
     <p class="sub">
       I study how the brain moves the body — and build the technology that proves it.
     </p>
@@ -44,7 +45,7 @@
     </div>
   </div>
   <div class="hero-canvas-wrap" aria-hidden="true">
-    <span class="hero-canvas-cap">Markerless hand tracking · 21 landmarks</span>
+    <span class="hero-canvas-cap">Markerless hand tracking · rendered live</span>
   </div>
   <span class="scroll-cue" aria-hidden="true">⌄</span>
 </section>
@@ -56,7 +57,9 @@
       <p class="story-kicker">One question. Three instruments.</p>
       <div class="story-scenes">
         <div class="scene">
-          <div class="s-media" aria-hidden="true"><img src="./media/new_images/eeg-cap.jpg" alt="" loading="lazy" /></div>
+          <div class="s-media" aria-hidden="true">
+            <video src="./media/new_images/Aria_Pegboard_hands.mp4" poster="./media/new_images/aria-pegboard-poster.jpg" muted loop playsinline autoplay preload="metadata" data-ambient></video>
+          </div>
           <span class="s-num">01</span>
           <h3>Record the brain.</h3>
           <p><b>EEG</b> captures the neural signature of a movement — before the hand even begins to move.</p>
@@ -68,7 +71,7 @@
           <p><b>Psychophysics</b> reveals how skin senses contact, force and texture — and how touch shapes what we do next.</p>
         </div>
         <div class="scene">
-          <div class="s-media" aria-hidden="true"><img src="./media/new_images/tracking-rays.jpg" alt="" loading="lazy" /></div>
+          <div class="s-media" aria-hidden="true"><img src="./media/new_images/tracking-rays.png" alt="" loading="lazy" /></div>
           <span class="s-num">03</span>
           <h3>Capture the motion.</h3>
           <p><b>Markerless motion capture</b> measures action to the millimetre. No suits. No markers. Just movement.</p>
@@ -124,8 +127,12 @@
         <figcaption>The Movement Lab · Birmingham</figcaption>
       </figure>
       <figure class="rail-item">
-        <img src="./media/new_images/golf-analytics-poster.jpg" alt="A golf swing on video beside its extracted 3D skeleton" loading="lazy" />
+        <video src="./media/new_images/golf-swing-skeleton.mp4" poster="./media/new_images/golf-swing-poster.jpg" muted loop playsinline autoplay preload="metadata" data-ambient aria-label="A golf swing on video beside its extracted 3D skeleton"></video>
         <figcaption>Video to kinematics · Motion Dynamics</figcaption>
+      </figure>
+      <figure class="rail-item">
+        <video src="./media/new_images/tennis-serve-trace.mp4" poster="./media/new_images/tennis-serve-poster.jpg" muted loop playsinline autoplay preload="metadata" data-ambient aria-label="A tennis serve traced frame by frame with its tracked skeleton"></video>
+        <figcaption>A serve, frame by frame</figcaption>
       </figure>
       <figure class="rail-item">
         <img src="./media/new_images/robotics-lab.jpg" alt="Teleoperating a robot arm through a haptic controller at the National Centre for Nuclear Robotics" loading="lazy" />
@@ -233,6 +240,35 @@
         <div><h3>Immersive technologies</h3>
           <p>XR, HCI and human–robot systems that close the perception–action loop in real time — for research and rehabilitation.</p></div>
       </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAIN — interactive 3D model ============ -->
+<section class="brain dark" id="brain">
+  <div class="container">
+    <div class="brain-grid">
+      <div class="brain-copy reveal">
+        <span class="kicker">Non-invasive BCIs · ARIA</span>
+        <h2>Every movement<br />starts here.</h2>
+        <p>Before a finger so much as twitches, the intention to move is already written
+           across the <b>motor cortex</b>. On the ARIA-funded programme, I work on reading
+           that intention <b>non-invasively</b> — decoding naturalistic movement without a
+           single electrode beneath the skin.</p>
+        <p>This is the organ in question. Take it for a spin.</p>
+      </div>
+      <div class="brain-stage reveal">
+        <model-viewer
+          src="./media/models/human-brain.glb"
+          ios-src="./media/models/human-brain.usdz"
+          alt="Interactive 3D model of a human brain"
+          camera-controls auto-rotate rotation-per-second="10deg"
+          ar ar-modes="quick-look scene-viewer webxr"
+          interaction-prompt="none"
+          shadow-intensity="0.6"
+          loading="lazy"></model-viewer>
+        <span class="brain-hint">Drag to rotate · Pinch or scroll to zoom · AR on iPhone &amp; iPad</span>
+      </div>
     </div>
   </div>
 </section>

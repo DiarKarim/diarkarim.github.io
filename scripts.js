@@ -104,8 +104,9 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* -----------------------------------------------------------
    3b. GESTURE LAYER — one hand, continuous through the page.
-       A fixed full-viewport canvas draws a 21-landmark hand that
-       travels between per-section anchors and morphs through a
+       A fixed full-viewport canvas draws a faceted low-poly hand
+       (skinned over 21 tracked landmarks) that travels between
+       per-section anchors and morphs through a
        gesture vocabulary, and every beat has something to touch:
        a sensing field under the resting hand, EEG pulses, a film
        that deflects when pressed, tracking brackets, a UI target
@@ -199,12 +200,12 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     return pts;
   }
 
-  /* ---- ink: crossfades between dark-bg and light-bg palettes ---- */
+  /* ---- ink: crossfades between deep-bg and paper-bg palettes ---- */
   const PAL = {
-    bone:  [[245, 245, 247, 0.38], [29, 29, 31, 0.4]],
-    joint: [[245, 245, 247, 0.9],  [29, 29, 31, 0.78]],
-    tip:   [[41, 151, 255, 1],     [0, 113, 227, 1]],
-    faint: [[245, 245, 247, 0.28], [29, 29, 31, 0.26]],
+    bone:  [[205, 220, 245, 0.35], [30, 42, 60, 0.38]],
+    joint: [[228, 238, 252, 0.85], [30, 42, 60, 0.75]],
+    tip:   [[110, 168, 255, 1],    [43, 107, 240, 1]],
+    faint: [[205, 220, 245, 0.26], [30, 42, 60, 0.24]],
   };
   const col = (name, mix, a) => {
     const d = PAL[name][0], l = PAL[name][1];
@@ -917,28 +918,103 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     return idx;
   }
 
-  /* ---- hand rendering ---- */
+  /* ---- hand rendering: a faceted low-poly hand ----
+     The 21 landmarks still drive everything; here they are skinned
+     with a palm fan and tapered finger strips of flat-shaded,
+     translucent triangles — a glassy sculpture on deep sections,
+     cut slate on paper ones. Props keep reading h.P unchanged. */
+  const FACET = {
+    dark:  { lo: [118, 150, 208], hi: [208, 226, 252], a: 0.30, edge: [216, 232, 255], ea: 0.30 },
+    light: { lo: [38, 52, 72],    hi: [104, 124, 150], a: 0.26, edge: [22, 34, 52],    ea: 0.28 },
+  };
+  const facetHash = (i) => (((i + 1) * 2654435761) % 1000) / 1000;
+  function facetFill(mix, alpha, k) {
+    const d = FACET.dark, l = FACET.light;
+    const ch = (j) => Math.round(lerp(lerp(d.lo[j], d.hi[j], k), lerp(l.lo[j], l.hi[j], k), mix));
+    return `rgba(${ch(0)},${ch(1)},${ch(2)},${(lerp(d.a, l.a, mix) * alpha).toFixed(3)})`;
+  }
+  function facetEdge(mix, alpha) {
+    const d = FACET.dark, l = FACET.light;
+    const ch = (j) => Math.round(lerp(d.edge[j], l.edge[j], mix));
+    return `rgba(${ch(0)},${ch(1)},${ch(2)},${(lerp(d.ea, l.ea, mix) * alpha).toFixed(3)})`;
+  }
+  // flat shading: pseudo-light from the top-left + a per-facet grain
+  function facetTri(c, p0, p1, p2, mix, alpha, i) {
+    const ex = p1[0] - p0[0], ey = p1[1] - p0[1];
+    const L = Math.hypot(ex, ey) || 1;
+    const dot = (-ey * -0.55 + ex * -0.83) / L;
+    const k = clamp(0.3 + 0.42 * (0.5 + 0.5 * dot) + 0.28 * facetHash(i), 0, 1);
+    c.fillStyle = facetFill(mix, alpha, k);
+    c.beginPath();
+    c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.lineTo(p2[0], p2[1]);
+    c.closePath();
+    c.fill(); c.stroke();
+  }
+  // a tapered strip of facets along a joint chain, with a pointed cap
+  function facetStrip(c, pts, widths, mix, alpha, seed) {
+    const n = pts.length, Lp = [], Rp = [];
+    for (let i = 0; i < n; i++) {
+      const a = pts[Math.max(i - 1, 0)], b = pts[Math.min(i + 1, n - 1)];
+      let dx = b[0] - a[0], dy = b[1] - a[1];
+      const L = Math.hypot(dx, dy) || 1;
+      dx /= L; dy /= L;
+      Lp.push([pts[i][0] - dy * widths[i], pts[i][1] + dx * widths[i]]);
+      Rp.push([pts[i][0] + dy * widths[i], pts[i][1] - dx * widths[i]]);
+    }
+    let f = seed;
+    for (let i = 0; i < n - 1; i++) {
+      facetTri(c, Lp[i], Lp[i + 1], Rp[i], mix, alpha, f++);
+      facetTri(c, Lp[i + 1], Rp[i + 1], Rp[i], mix, alpha, f++);
+    }
+    const tip = pts[n - 1], prev = pts[n - 2];
+    let dx = tip[0] - prev[0], dy = tip[1] - prev[1];
+    const L = Math.hypot(dx, dy) || 1;
+    facetTri(c, Lp[n - 1],
+      [tip[0] + (dx / L) * widths[n - 1] * 1.2, tip[1] + (dy / L) * widths[n - 1] * 1.2],
+      Rp[n - 1], mix, alpha, f++);
+  }
+
   function drawHand(c, P, mix, alpha, t) {
     if (alpha <= 0.01) return;
-    c.lineWidth = 1.25;
-    c.strokeStyle = col('bone', mix, alpha);
-    c.beginPath();
-    BONES.forEach(([i, j]) => { c.moveTo(P[i][0], P[i][1]); c.lineTo(P[j][0], P[j][1]); });
-    c.stroke();
-    P.forEach((p, i) => {
-      const tip = TIPS.includes(i);
-      c.beginPath();
-      c.arc(p[0], p[1], tip ? 3.2 : 2.3, 0, Math.PI * 2);
-      c.fillStyle = tip ? col('tip', mix, alpha) : col('joint', mix, alpha);
-      c.fill();
-      if (tip) {
-        c.beginPath();
-        c.arc(p[0], p[1], 6.5 + Math.sin(t * 0.003 + i) * 1.3, 0, Math.PI * 2);
-        c.strokeStyle = col('tip', mix, alpha * 0.35);
-        c.lineWidth = 1;
-        c.stroke();
-        c.lineWidth = 1.25;
-      }
+    const S = Math.hypot(P[9][0] - P[0][0], P[9][1] - P[0][1]) || 1; // wrist -> middle MCP
+    const cx = (P[0][0] + P[5][0] + P[9][0] + P[13][0] + P[17][0]) / 5;
+    const cy = (P[0][1] + P[5][1] + P[9][1] + P[13][1] + P[17][1]) / 5;
+
+    c.strokeStyle = facetEdge(mix, alpha * 0.55);
+    c.lineWidth = 0.75;
+
+    // palm: a fan over the wrist + knuckle ring, slightly inflated
+    const ring = [0, 1, 5, 9, 13, 17].map((idx) => {
+      const gx = P[idx][0] - cx, gy = P[idx][1] - cy;
+      const g = Math.hypot(gx, gy) || 1;
+      const grow = idx === 0 ? S * 0.14 : S * 0.07;
+      return [P[idx][0] + (gx / g) * grow, P[idx][1] + (gy / g) * grow];
+    });
+    for (let i = 0; i < ring.length; i++) {
+      facetTri(c, [cx, cy], ring[i], ring[(i + 1) % ring.length], mix, alpha, i);
+    }
+
+    // fingers: strips rooted just inside the palm so the skin is seamless
+    const TAPER = [0.10, 0.095, 0.08, 0.065, 0.05];
+    const FSCALE = [1.3, 1.05, 1.05, 0.98, 0.85]; // thumb widest, pinky slimmest
+    FINGERS.forEach((chain, fi) => {
+      const mcp = P[chain[0]];
+      const root = fi === 0
+        ? [lerp(P[0][0], mcp[0], 0.35), lerp(P[0][1], mcp[1], 0.35)]
+        : [lerp(cx, mcp[0], 0.55), lerp(cy, mcp[1], 0.55)];
+      const pts = [root].concat(chain.map((i) => P[i]));
+      const widths = TAPER.map((w) => w * S * FSCALE[fi]);
+      facetStrip(c, pts, widths, mix, alpha, 20 + fi * 12);
+    });
+
+    // fingertip accents — the hand still reads as tracked
+    TIPS.forEach((i) => {
+      const p = P[i];
+      c.fillStyle = col('tip', mix, alpha * 0.9);
+      c.beginPath(); c.arc(p[0], p[1], 2.2, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = col('tip', mix, alpha * 0.28);
+      c.lineWidth = 1;
+      c.beginPath(); c.arc(p[0], p[1], 6 + Math.sin(t * 0.003 + i) * 1.2, 0, Math.PI * 2); c.stroke();
     });
   }
 
