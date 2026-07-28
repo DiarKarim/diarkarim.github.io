@@ -1297,3 +1297,31 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, { threshold: 0.2 });
   vids.forEach((v) => io.observe(v));
 })();
+
+/* -----------------------------------------------------------
+   9. BRAIN HOTSPOT — motor-cortex highlight + click-to-place
+   Shift-click (or Alt-click) the model surface to log a
+   data-position/data-normal and move the red marker there,
+   so the highlight can be dialled onto the exact gyrus.
+   Copy the logged values into the hotspot in index.html.
+   ----------------------------------------------------------- */
+(function brainHotspot() {
+  const mv = document.getElementById('brain-model');
+  if (!mv) return;
+  const spot = mv.querySelector('[slot="hotspot-motor"]');
+  mv.addEventListener('click', (event) => {
+    if (!event.shiftKey && !event.altKey) return;
+    const rect = mv.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const hit = mv.positionAndNormalFromPoint(x, y);
+    if (!hit) { console.log('[brain] no surface under cursor'); return; }
+    const pos = hit.position.toString();
+    const nrm = hit.normal.toString();
+    console.log('[brain] data-position="' + pos + '" data-normal="' + nrm + '"');
+    if (spot) {
+      spot.dataset.position = pos;
+      spot.dataset.normal = nrm;
+    }
+  });
+})();

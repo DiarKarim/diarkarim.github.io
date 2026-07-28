@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Diar Abdlkarim — From cortex to fingertip</title>
 <meta name="description" content="Diar Abdlkarim — Research Fellow at the University of Birmingham and Co-Founder & Director of Motion Dynamics. Sensorimotor neuroscience, non-invasive BCIs, touch and markerless motion capture. Founder of the Movement Lab; ex-Meta Quest hand tracking. Courses, outreach with schools, and research on hands-on learning." />
-<link rel="stylesheet" href="styles.css?v=20260725" />
+<link rel="stylesheet" href="styles.css?v=20260727" />
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 <noscript><style>.reveal, .feature-media { opacity: 1 !important; transform: none !important; } .scene { position: relative; opacity: 1; transform: none; } .story-track { height: auto; } .story-sticky { position: static; height: auto; } .rail-viewport { overflow-x: auto; } img[data-plx] { transform: none; }</style></noscript>
 </head>
@@ -258,15 +258,21 @@
         <p>This is the organ in question. Take it for a spin.</p>
       </div>
       <div class="brain-stage reveal">
-        <model-viewer
-          src="./media/models/human-brain.glb"
+        <model-viewer id="brain-model"
+          src="./media/models/human-brain-gray.glb"
           ios-src="./media/models/human-brain.usdz"
           alt="Interactive 3D model of a human brain"
           camera-controls auto-rotate rotation-per-second="10deg"
           ar ar-modes="quick-look scene-viewer webxr"
           interaction-prompt="none"
           shadow-intensity="0.6"
-          loading="lazy"></model-viewer>
+          loading="lazy">
+          <button class="brain-hotspot" slot="hotspot-motor"
+                  data-position="0 0.82 0.12" data-normal="0 1 0"
+                  data-visibility-attribute="visible">
+            <span class="brain-hotspot-label">Motor cortex</span>
+          </button>
+        </model-viewer>
         <span class="brain-hint">Drag to rotate · Pinch or scroll to zoom · AR on iPhone &amp; iPad</span>
       </div>
     </div>
@@ -610,6 +616,6 @@
   </div>
 </footer>
 
-<script src="scripts.js?v=20260725"></script>
+<script src="scripts.js?v=20260727"></script>
 </body>
 </html>

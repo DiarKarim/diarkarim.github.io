@@ -275,7 +275,7 @@ section[id], footer[id] { scroll-margin-top: 60px; }
 /* each scene is anchored by a real photograph from the work —
    kept small and slightly dimmed so the words stay the subject */
 .s-media {
-  width: min(320px, 58vw); aspect-ratio: 16/9;
+  width: min(640px, 90vw); aspect-ratio: 16/9;
   border-radius: var(--radius); overflow: hidden;
   margin: 0 auto 26px;
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
@@ -286,7 +286,7 @@ section[id], footer[id] { scroll-margin-top: 60px; }
   width: 100%; height: 100%; object-fit: cover; display: block;
   filter: brightness(0.94);
 }
-@media (max-height: 700px) { .s-media { display: none; } }
+@media (max-height: 820px) { .s-media { display: none; } }
 .scene p {
   font-size: clamp(1.05rem, 1.9vw, 1.3rem); color: var(--dark-2);
   max-width: 46ch; margin: 0; line-height: 1.5;
@@ -479,6 +479,39 @@ img[data-plx] {
   font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: rgba(233, 238, 247, 0.4);
 }
+/* motor-cortex highlight: a red core that glows and pulses,
+   anchored to the model surface so it rotates with the brain */
+.brain-hotspot {
+  --hs: 18px;
+  width: var(--hs); height: var(--hs);
+  border: none; border-radius: 50%; padding: 0; cursor: pointer;
+  background: radial-gradient(circle at 50% 50%,
+    #ff5a4d 0%, #e11d1d 45%, rgba(225, 29, 29, 0) 72%);
+  box-shadow:
+    0 0 10px 4px rgba(255, 70, 60, 0.65),
+    0 0 26px 10px rgba(255, 40, 30, 0.35);
+  animation: motor-pulse 2.4s var(--ease, ease-in-out) infinite;
+  /* model-viewer sets --min-hotspot-opacity; hide cleanly when occluded */
+  transition: opacity 0.25s ease;
+}
+.brain-hotspot[data-visible="false"] { opacity: 0; pointer-events: none; }
+.brain-hotspot-label {
+  position: absolute; left: 50%; top: -6px;
+  transform: translate(-50%, -100%);
+  white-space: nowrap; padding: 4px 9px; border-radius: 999px;
+  font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #ffdedb; background: rgba(120, 12, 12, 0.72);
+  border: 1px solid rgba(255, 90, 77, 0.45);
+  backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.25s ease; pointer-events: none;
+}
+.brain-hotspot:hover .brain-hotspot-label,
+.brain-hotspot:focus-visible .brain-hotspot-label { opacity: 1; }
+@keyframes motor-pulse {
+  0%, 100% { transform: scale(1);   box-shadow: 0 0 10px 4px rgba(255,70,60,0.6),  0 0 24px 9px rgba(255,40,30,0.30); }
+  50%      { transform: scale(1.25); box-shadow: 0 0 15px 6px rgba(255,90,77,0.85), 0 0 40px 16px rgba(255,50,40,0.5); }
+}
+@media (prefers-reduced-motion: reduce) { .brain-hotspot { animation: none; } }
 
 /* =====================================================
    FIELD RAIL — photographs slide sideways as you scroll
