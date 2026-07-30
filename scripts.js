@@ -1325,3 +1325,51 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
   });
 })();
+
+/* -----------------------------------------------------------
+   10. LEADERSHIP LIGHTBOX — click a card image to enlarge it
+   over a darkened, blurred backdrop; the card's text rides
+   along as a caption strip at the foot of the image.
+   ----------------------------------------------------------- */
+(function leadLightbox() {
+  const cards = document.querySelectorAll('.lead-card');
+  if (!cards.length) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'lightbox';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.innerHTML =
+    '<figure class="lightbox-frame"><img alt="" /><figcaption class="lightbox-cap"></figcaption></figure>';
+  document.body.appendChild(overlay);
+
+  const frame = overlay.querySelector('.lightbox-frame');
+  const img = overlay.querySelector('img');
+  const cap = overlay.querySelector('.lightbox-cap');
+
+  const close = () => {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  const open = (card) => {
+    const thumb = card.querySelector('.lead-media img');
+    const body = card.querySelector('.lead-body');
+    if (!thumb) return;
+    img.src = thumb.src;
+    img.alt = thumb.alt;
+    cap.innerHTML = body ? body.innerHTML : '';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  cards.forEach((card) => {
+    const media = card.querySelector('.lead-media');
+    if (media) media.addEventListener('click', () => open(card));
+  });
+  overlay.addEventListener('click', (e) => {
+    if (!frame.contains(e.target) || e.target.closest('a')) close();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+  });
+})();

@@ -584,8 +584,42 @@ img[data-plx] {
 .lead-media {
   flex: 0 0 clamp(118px, 11vw, 164px);
   border-radius: calc(var(--radius-lg) - 10px); overflow: hidden;
+  cursor: zoom-in;
 }
 .lead-body { flex: 1; min-width: 0; }
+
+/* lightbox: an enlarged card image over a darkened, blurred page */
+.lightbox {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4vmin; cursor: zoom-out;
+  background: rgba(8, 11, 22, 0.6);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.35s var(--ease), visibility 0.35s;
+}
+.lightbox.open { opacity: 1; visibility: visible; }
+.lightbox-frame {
+  position: relative; margin: 0; cursor: default;
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5);
+  transform: scale(0.96); transition: transform 0.35s var(--ease);
+}
+.lightbox.open .lightbox-frame { transform: scale(1); }
+.lightbox-frame img { display: block; max-width: min(1080px, 92vw); max-height: 85vh; width: auto; height: auto; }
+.lightbox-cap {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 48px 26px 18px; color: #f5f5f7;
+  background: linear-gradient(to top, rgba(8, 11, 22, 0.82), rgba(8, 11, 22, 0.42) 55%, transparent);
+}
+.lightbox-cap .tag {
+  display: inline-block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(245, 245, 247, 0.65); font-weight: 500; margin-bottom: 6px;
+}
+.lightbox-cap h3 { margin: 0 0 6px; font-size: 1.15rem; color: #fff; }
+.lightbox-cap p { margin: 0; font-size: 0.9rem; color: rgba(245, 245, 247, 0.85); }
+.lightbox-cap p b { color: #fff; font-weight: 500; }
+.lightbox-cap a { color: #9db8ff; }
 .lead-media img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform 0.6s var(--ease);
