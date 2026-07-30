@@ -569,6 +569,15 @@ img[data-plx] {
 }
 .alt .lead-card { background: var(--bg); }
 .lead-card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.1); }
+.lead-media {
+  margin: 0 0 20px; border-radius: calc(var(--radius-lg) - 10px);
+  overflow: hidden; aspect-ratio: 2 / 1;
+}
+.lead-media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.6s var(--ease);
+}
+.lead-card:hover .lead-media img { transform: scale(1.03); }
 .lead-card .tag {
   display: inline-block; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--ink-3); font-weight: 500; margin-bottom: 14px;
