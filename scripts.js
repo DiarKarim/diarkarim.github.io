@@ -1,14 +1,19 @@
 /* ============================================================
    Diar Abdlkarim — site interactions
-   1. Nav (mobile menu + scrollspy)
-   2. Scroll reveal with stagger
-   3. Hero scroll unfold + gesture layer (one hand, whole page)
-   4. Pinned story (scenes crossfade with scroll)
+   1. Nav (mobile menu, scrollspy, progress hairline)
+   2. Scroll reveal
+   3. Hero: live hand-landmark tracker (canvas)
+   4. Field rail buttons
    5. Animated counters
-   6. Course sign-up (preselect + picker cards + success banner)
+   6. Ambient video (play only while visible)
+   7. Course sign-up (preselect + picker cards + success banner)
+   8. Leadership lightbox
+   No scroll-jacking: the page always scrolls natively.
    ============================================================ */
 
+document.documentElement.classList.add('js');
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const HAS_IO = 'IntersectionObserver' in window;
 
 /* -----------------------------------------------------------
    1. NAV
@@ -22,1130 +27,325 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       toggle.setAttribute('aria-expanded', String(open));
     };
     toggle.addEventListener('click', () => setOpen(!links.classList.contains('open')));
-    links.querySelectorAll('a').forEach((a) =>
-      a.addEventListener('click', () => setOpen(false)));
+    links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && links.classList.contains('open')) { setOpen(false); toggle.focus(); }
     });
+    window.addEventListener('resize', () => { if (window.innerWidth > 960) setOpen(false); });
   }
 
-  // scrollspy: highlight the section currently in view
-  const navAnchors = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
-  const sections = navAnchors
-    .map((a) => document.querySelector(a.hash))
-    .filter(Boolean);
-  if (sections.length && 'IntersectionObserver' in window) {
+  // scrollspy
+  const anchors = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
+  const sections = anchors.map((a) => document.querySelector(a.hash)).filter(Boolean);
+  if (sections.length && HAS_IO) {
     const spy = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        navAnchors.forEach((a) =>
-          a.classList.toggle('active', a.hash === '#' + e.target.id));
+        anchors.forEach((a) => a.classList.toggle('active', a.hash === '#' + e.target.id));
       });
-    }, { rootMargin: '-40% 0px -55% 0px' });
+    }, { rootMargin: '-45% 0px -50% 0px' });
     sections.forEach((s) => spy.observe(s));
+  }
+
+  // reading-progress hairline
+  const bar = document.querySelector('.nav-progress');
+  if (bar) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const dh = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = `scaleX(${dh > 0 ? Math.min(Math.max(window.scrollY / dh, 0), 1) : 0})`;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
   }
 })();
 
 /* -----------------------------------------------------------
-   2. SCROLL REVEAL — staggered within each section
+   2. SCROLL REVEAL — staggered among siblings
    ----------------------------------------------------------- */
 (function reveal() {
-  const items = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window) || REDUCED || !items.length) {
-    items.forEach((i) => i.classList.add('in'));
-    return;
-  }
-  // stagger siblings that reveal together
-  document.querySelectorAll('section, .container').forEach((scope) => {
-    scope.querySelectorAll(':scope > .reveal, :scope > * > .reveal').forEach((el, i) => {
-      if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', `${Math.min(i * 0.09, 0.45)}s`);
-    });
+  const items = Array.from(document.querySelectorAll('.reveal'));
+  if (!items.length) return;
+  if (!HAS_IO || REDUCED) { items.forEach((i) => i.classList.add('in')); return; }
+
+  const groups = new Map();
+  items.forEach((el) => {
+    const p = el.parentElement;
+    const idx = groups.get(p) || 0;
+    groups.set(p, idx + 1);
+    if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', `${Math.min(idx * 0.08, 0.4)}s`);
   });
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
   items.forEach((i) => io.observe(i));
 
-  // feature media scale-in
-  const media = document.querySelectorAll('.feature-media');
-  if (media.length) {
-    const mio = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('in'); mio.unobserve(e.target); }
-      });
-    }, { threshold: 0.35 });
-    media.forEach((m) => mio.observe(m));
-  }
+  // safety net: anything already on screen at load shows immediately
+  requestAnimationFrame(() => items.forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('in');
+  }));
 })();
 
 /* -----------------------------------------------------------
-   3a. HERO SCROLL UNFOLD — content recedes as you scroll away
+   3. HERO — a 21-landmark hand that cycles through gestures,
+      with raw (noisy) vs filtered tip estimates, fingertip
+      trails and a live coordinate readout.
    ----------------------------------------------------------- */
-(function heroUnfold() {
-  const hero = document.querySelector('.hero');
-  const inner = document.querySelector('.hero-inner');
-  const cap = document.querySelector('.hero-canvas-wrap');
-  if (!hero || !inner || REDUCED) return;
-
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    const p = Math.min(Math.max(window.scrollY / (hero.offsetHeight * 0.7), 0), 1);
-    inner.style.opacity = String(1 - p * 1.15);
-    inner.style.transform = `translateY(${p * -46}px) scale(${1 - p * 0.05})`;
-    if (cap) cap.style.opacity = String(1 - p * 1.3);
-  };
-  window.addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(update); }
-  }, { passive: true });
-})();
-
-/* -----------------------------------------------------------
-   3b. GESTURE LAYER — one hand, continuous through the page.
-       A fixed full-viewport canvas draws a faceted low-poly hand
-       (skinned over 21 tracked landmarks) that travels between
-       per-section anchors and morphs through a
-       gesture vocabulary, and every beat has something to touch:
-       a sensing field under the resting hand, EEG pulses, a film
-       that deflects when pressed, tracking brackets, a UI target
-       the index clicks, a jitter-filter trace at the pinch,
-       columns built under the palm, a texture strip, a grasped
-       cube, a swiped page card, a coin dropped onto a stack, a
-       hologram over the offered palm, a seedling growing from
-       the hand, and signal arcs off the goodbye wave. Narrow
-       screens and reduced motion get the hero-only hand.
-   ----------------------------------------------------------- */
-(function gestureLayer() {
-  const canvas = document.getElementById('gestureCanvas');
+(function heroHand() {
+  const canvas = document.getElementById('handCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const readout = document.getElementById('handReadout');
+  const poseLabel = document.getElementById('handPose');
 
-  const q = (s) => document.querySelector(s);
-  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+  // normalised landmarks, y up (MediaPipe-style topology)
+  const BASE = [
+    [0.00, -0.92],
+    [-0.34, -0.72], [-0.54, -0.50], [-0.67, -0.32], [-0.77, -0.16],
+    [-0.30, -0.05], [-0.34, 0.28], [-0.36, 0.50], [-0.37, 0.68],
+    [-0.08, 0.00], [-0.08, 0.36], [-0.08, 0.62], [-0.08, 0.82],
+    [0.14, -0.03], [0.16, 0.30], [0.17, 0.55], [0.18, 0.73],
+    [0.34, -0.10], [0.40, 0.14], [0.44, 0.33], [0.47, 0.48],
+  ];
+  const FINGERS = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16], [17, 18, 19, 20]];
+  const TIPS = [4, 8, 12, 16, 20];
+  const BONES = [];
+  FINGERS.forEach((f) => { BONES.push([0, f[0]]); for (let i = 0; i < 3; i++) BONES.push([f[i], f[i + 1]]); });
+  BONES.push([5, 9], [9, 13], [13, 17]);
+
+  // [thumb, index, middle, ring, pinky] curl 0..1, pinch 0..1
+  const POSES = [
+    { name: 'Open palm', c: [0, 0, 0, 0, 0], pinch: 0 },
+    { name: 'Precision pinch', c: [0.2, 0.25, 0.12, 0.15, 0.2], pinch: 1 },
+    { name: 'Point', c: [0.7, 0, 0.92, 0.92, 0.92], pinch: 0 },
+    { name: 'Two-finger', c: [0.7, 0, 0, 0.92, 0.92], pinch: 0 },
+    { name: 'Power grasp', c: [0.6, 0.75, 0.78, 0.8, 0.82], pinch: 0 },
+  ];
+  const HOLD = 2.2, MOVE = 0.9;
+
   const lerp = (a, b, t) => a + (b - a) * t;
-  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-  /* ---- viewport ---- */
-  let VW = 0, VH = 0, dpr = 1;
+  let W = 0, H = 0, dpr = 1;
   const resize = () => {
+    const r = canvas.getBoundingClientRect();
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    VW = window.innerWidth; VH = window.innerHeight;
-    canvas.width = VW * dpr; canvas.height = VH * dpr;
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    stale = true;
   };
-  let stale = false; // beat triggers + fallback cache need refreshing
   resize();
   window.addEventListener('resize', resize);
 
-  // sampled live so enabling Reduce Motion mid-session takes effect
-  const rmq = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const roaming = () => VW >= 1160 && !rmq.matches;
+  // pointer parallax
+  let px = 0, py = 0, tx = 0, ty = 0;
+  canvas.parentElement.addEventListener('pointermove', (e) => {
+    const r = canvas.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+  });
+  canvas.parentElement.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
 
-  /* ---- hand model: 21 landmarks (normalised, y up) ---- */
-  const BASE = [
-    [0.00, -0.92],                                                  // 0 wrist
-    [-0.34, -0.72], [-0.54, -0.50], [-0.67, -0.32], [-0.77, -0.16], // thumb
-    [-0.30, -0.05], [-0.34, 0.28], [-0.36, 0.50], [-0.37, 0.68],    // index
-    [-0.08, 0.00], [-0.08, 0.36], [-0.08, 0.62], [-0.08, 0.82],     // middle
-    [0.14, -0.03], [0.16, 0.30], [0.17, 0.55], [0.18, 0.73],        // ring
-    [0.34, -0.10], [0.40, 0.14], [0.44, 0.33], [0.47, 0.48],        // pinky
-  ];
-  const FINGERS = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16], [17, 18, 19, 20]];
-  const BONES = [];
-  FINGERS.forEach((f) => { BONES.push([0, f[0]]); for (let i = 0; i < 3; i++) BONES.push([f[i], f[i + 1]]); });
-  BONES.push([5, 9], [9, 13], [13, 17]); // knuckle arc
-  const TIPS = [4, 8, 12, 16, 20];
-
-  /* pose builder: per-finger curl (foreshorten toward the knuckle),
-     splay (spread/compress), meet (pinch thumb+index), enclose (grasp) */
-  function pose(o) {
-    const curls = o.curls || [0, 0, 0, 0, 0];
-    const pts = BASE.map((p) => [p[0], p[1]]);
-    FINGERS.forEach((f, fi) => {
-      const c = curls[fi];
-      if (!c) return;
-      const mcp = BASE[f[0]];
-      for (let j = 1; j < 4; j++) {
-        const k = 1 - c * (j / 3) * 0.78;
-        pts[f[j]][0] = mcp[0] + (BASE[f[j]][0] - mcp[0]) * k;
-        pts[f[j]][1] = mcp[1] + (BASE[f[j]][1] - mcp[1]) * k;
-      }
-    });
-    if (o.splay != null && o.splay !== 1) {
-      pts.forEach((p, i) => {
-        if (i === 0) return;
-        const w = i <= 4 ? 0.55 : 1; // the thumb compresses less
-        p[0] = -0.06 + (p[0] + 0.06) * lerp(1, o.splay, w);
-      });
+  const curlFinger = (pts, f, curl, isThumb) => {
+    // frontal projection of a flexing finger: each segment foreshortens
+    // by cos of the cumulative flexion angle
+    const ang = isThumb ? [0.35, 0.7, 1.0] : [0.9, 1.9, 2.6];
+    let prev = pts[f[0]];
+    for (let i = 1; i < 4; i++) {
+      const a = BASE[f[i - 1]], b = BASE[f[i]];
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      const k = Math.cos(Math.min(ang[i - 1] * curl, Math.PI * 0.95));
+      let nx = prev[0] + dx * k, ny = prev[1] + dy * k;
+      if (isThumb) { nx = lerp(nx, -0.05, curl * 0.35 * i / 3); ny = lerp(ny, -0.25, curl * 0.3 * i / 3); }
+      pts[f[i]] = [nx, ny];
+      prev = pts[f[i]];
     }
-    if (o.meet) {
-      const m = [(pts[4][0] + pts[8][0]) / 2, (pts[4][1] + pts[8][1]) / 2];
-      const W = [0, 0.18, 0.52, 1];
-      [FINGERS[0], FINGERS[1]].forEach((chain) => {
-        const dx = (m[0] - pts[chain[3]][0]) * o.meet;
-        const dy = (m[1] - pts[chain[3]][1]) * o.meet;
-        chain.forEach((ji, j) => { pts[ji][0] += dx * W[j]; pts[ji][1] += dy * W[j]; });
-      });
-    }
-    if (o.enclose) {
-      FINGERS.forEach((f) => f.forEach((ji, j) => {
-        const w = [0, 0.12, 0.32, 0.55][j] * o.enclose;
-        pts[ji][0] += (-0.05 - pts[ji][0]) * w;
-        pts[ji][1] += (-0.2 - pts[ji][1]) * w;
-      }));
-    }
-    return pts;
-  }
-
-  /* ---- ink: crossfades between deep-bg and paper-bg palettes ---- */
-  const PAL = {
-    bone:  [[205, 220, 245, 0.35], [30, 42, 60, 0.38]],
-    joint: [[228, 238, 252, 0.85], [30, 42, 60, 0.75]],
-    tip:   [[110, 168, 255, 1],    [43, 107, 240, 1]],
-    faint: [[205, 220, 245, 0.26], [30, 42, 60, 0.24]],
-  };
-  const col = (name, mix, a) => {
-    const d = PAL[name][0], l = PAL[name][1];
-    const r = Math.round(lerp(d[0], l[0], mix));
-    const g = Math.round(lerp(d[1], l[1], mix));
-    const b = Math.round(lerp(d[2], l[2], mix));
-    return `rgba(${r},${g},${b},${(lerp(d[3], l[3], mix) * (a == null ? 1 : a)).toFixed(3)})`;
   };
 
-  /* ---- pointer parallax (hero only) ---- */
-  let PX = 0, PY = 0, TX = 0, TY = 0;
-  window.addEventListener('pointermove', (e) => {
-    TX = (e.clientX / VW - 0.5) * 2;
-    TY = (e.clientY / VH - 0.5) * 2;
-  }, { passive: true });
-
-  /* ---- keyframe interpolation for gesture cycles ---- */
-  function keyf(ph, keys) {
-    if (ph <= keys[0][0]) return keys[0][1];
-    for (let i = 1; i < keys.length; i++) {
-      if (ph <= keys[i][0]) {
-        const p = (ph - keys[i - 1][0]) / (keys[i][0] - keys[i - 1][0]);
-        return lerp(keys[i - 1][1], keys[i][1], 0.5 - 0.5 * Math.cos(p * Math.PI));
-      }
-    }
-    return keys[keys.length - 1][1];
-  }
-  const noise1 = (x) => Math.sin(x * 1.7) * 0.5 + Math.sin(x * 3.1 + 1.3) * 0.32 + Math.sin(x * 5.3 + 2.1) * 0.18;
-
-  /* ---- anchors ---- */
-  function sideAnchor(sel, side, yf) {
-    return () => {
-      const el = q(sel); if (!el) return null;
-      const r = el.getBoundingClientRect();
-      // the hand's stage is the gutter beside the anchored block: the
-      // centred section heading itself, or the element's real container
-      // (which also handles .wide sections correctly)
-      const contEl = el.classList.contains('section-head') ? el : (el.closest('.container') || el);
-      const cr = contEl.getBoundingClientRect();
-      const gap = Math.max(side < 0 ? cr.left : VW - cr.right, 0); // true gutter width
-      const s = clamp(gap * 0.42, 44, 120);
-      const inset = Math.max(gap / 2, s * 0.92 + 8); // keep the whole hand on screen
-      const rawY = r.top + r.height * (yf == null ? 0.5 : yf);
-      // ease the hand out quickly once its anchor scrolls past, and when
-      // the gutter is too tight for it to sit beside the content — it
-      // ghosts out rather than overlapping text or cards
-      const fadeY = clamp((rawY - 60) / 170, 0, 1);
-      const fitFade = clamp((gap - (s * 1.9 + 20)) / 35 + 1, 0, 1);
-      return {
-        x: side < 0 ? inset : VW - inset,
-        y: clamp(rawY, 150, VH * 0.8),
-        s,
-        fade: fadeY * fitFade,
-      };
-    };
-  }
-  const heroAnchor = () => {
-    const el = q('.hero-canvas-wrap'); if (!el) return null;
-    const r = el.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.54, s: Math.min(r.width, r.height) * 0.46 };
-  };
-  const storyAnchor = () => {
-    const s = clamp((VW / 2 - 450) * 0.5, 60, 118);
-    return { x: Math.min(VW / 2 + 495, VW - s - 30), y: VH * 0.52, s };
-  };
-  // the contact copy is flush with the container edge, so the wave
-  // lives in the open space beneath the contact links instead
-  const contactAnchor = () => {
-    const el = q('#contact .contact-links'); if (!el) return null;
-    const r = el.getBoundingClientRect();
-    return { x: r.left + r.width * 0.5, y: clamp(r.bottom + 140, 150, VH * 0.86), s: 84 };
-  };
-
-  /* ---- gesture samples: (t, anchor) -> {pts, rot, ox, oy} ---- */
-  const restSample = (parallax) => (t) => {
-    const curls = [0, 1, 2, 3, 4].map((fi) => 0.16 + 0.16 * Math.sin(t * 0.0011 + fi * 0.9));
-    return {
-      pts: pose({ curls }),
-      rot: Math.sin(t * 0.0006) * 0.05 + (parallax ? PX * 0.12 : 0),
-      ox: parallax ? PX * 14 : 0,
-      oy: parallax ? -PY * 10 : 0,
-    };
-  };
-  const eegSample = (t) => ({
-    pts: pose({ curls: [0.05, 0.03, 0.02, 0.04, 0.07], splay: 1.1 }),
-    rot: Math.sin(t * 0.0008) * 0.06,
-    ox: 0, oy: Math.sin(t * 0.0013) * 4,
-  });
-  const pressD = (t) => keyf((t % 1700) / 1700, [[0, 0], [0.3, 1], [0.55, 1], [0.85, 0], [1, 0]]);
-  const pressSample = (t, a) => ({
-    pts: pose({ curls: [0.55, 0, 0.85, 0.9, 0.94], splay: 0.92 }),
-    rot: 2.75,
-    ox: 0, oy: pressD(t) * a.s * 0.28 - a.s * 0.02,
-  });
-  const mocapSample = (t) => ({
-    pts: pose({ curls: [0.04, 0.02, 0.02, 0.03, 0.05], splay: 1.08 }),
-    rot: Math.sin(t * 0.0009) * 0.16,
-    ox: 0, oy: 0,
-  });
-  const pokePh = (t) => keyf((t % 1500) / 1500, [[0, 0], [0.22, 1], [0.5, 0], [1, 0]]);
-  const pointSample = (t) => ({
-    pts: pose({ curls: [0.55, 0, 0.85, 0.9, 0.94], splay: 0.92 }),
-    rot: 1.3,
-    ox: -4 - pokePh(t) * 8, oy: 0,
-  });
-  const pinchSample = (t) => ({
-    pts: pose({ curls: [0.22, 0.3, 0.5, 0.62, 0.74], meet: 0.6 + 0.36 * (0.5 + 0.5 * Math.sin(t * 0.0034)) }),
-    rot: -0.2,
-    ox: 0, oy: Math.sin(t * 0.0012) * 3,
-  });
-  const flatSample = (t) => ({
-    pts: pose({ curls: [0.12, 0, 0, 0, 0.05], splay: 0.55 }),
-    rot: 1.45,
-    ox: 0, oy: Math.sin(t * 0.0015) * 4 - 2,
-  });
-  const slideSample = (t, a) => ({
-    pts: pose({ curls: [0.5, 0, 0, 0.85, 0.92], splay: 0.8 }),
-    rot: 2.9,
-    ox: Math.sin(t * 0.0016) * a.s * 0.55,
-    oy: a.s * 0.03,
-  });
-  const liftD = (t) => keyf((t % 2600) / 2600, [[0, 0], [0.12, 0], [0.38, 1], [0.6, 1], [0.85, 0], [1, 0]]);
-  const graspSample = (t, a) => ({
-    pts: pose({ curls: [0.55, 0.62, 0.62, 0.64, 0.68], splay: 0.85, enclose: 0.55 }),
-    rot: -0.25,
-    ox: 0, oy: -liftD(t) * a.s * 0.3,
-  });
-  const swipePh = (t) => (t % 2100) / 2100;
-  const swipeSample = (t, a) => ({
-    pts: pose({ curls: [0.55, 0, 0, 0.88, 0.92], splay: 0.72 }),
-    rot: 2.6,
-    ox: keyf(swipePh(t), [[0, 0], [0.25, -0.3], [0.42, 0.45], [0.75, 0.1], [1, 0]]) * a.s,
-    oy: 0,
-  });
-  const offerSample = (t) => ({
-    pts: pose({ curls: [0.08, 0.05, 0.04, 0.07, 0.12], splay: 1.06 }),
-    rot: -0.5 + Math.sin(t * 0.0012) * 0.04,
-    ox: 0, oy: Math.sin(t * 0.0012) * 5,
-  });
-  const dropPh = (t) => (t % 2600) / 2600;
-  const coinSample = (t) => ({
-    pts: pose({
-      curls: [0.22, 0.3, 0.5, 0.62, 0.74],
-      meet: keyf(dropPh(t), [[0, 0.92], [0.5, 0.92], [0.62, 0.38], [0.82, 0.38], [1, 0.92]]),
-    }),
-    rot: -0.2,
-    ox: 0, oy: Math.sin(t * 0.0012) * 3,
-  });
-  const waveSample = (t) => ({
-    pts: pose({ curls: [0.06, 0.04, 0.03, 0.05, 0.1], splay: 1.08 }),
-    rot: Math.sin(t * 0.0045) * 0.24,
-    ox: 0, oy: 0,
-  });
-
-  /* ---- projection: local pose -> screen points ---- */
-  function mkTx(a, s, pivot) {
-    const rot = s.rot || 0, cos = Math.cos(rot), sin = Math.sin(rot);
-    const px = pivot ? pivot[0] : 0, py = pivot ? pivot[1] : 0;
-    const ox = s.ox || 0, oy = s.oy || 0;
-    return (p) => {
-      const x = p[0] - px, y = p[1] - py;
-      return [a.x + (x * cos - y * sin + px) * a.s + ox, a.y - (x * sin + y * cos + py) * a.s + oy];
-    };
-  }
-
-  /* ---- props (drawn beneath the hand) ---- */
-  function along(path, u) {
-    const seg = []; let L = 0;
-    for (let i = 1; i < path.length; i++) {
-      const d = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
-      seg.push(d); L += d;
-    }
-    let d = u * L;
-    for (let i = 0; i < seg.length; i++) {
-      if (d <= seg[i]) {
-        const k = seg[i] ? d / seg[i] : 0;
-        return [lerp(path[i][0], path[i + 1][0], k), lerp(path[i][1], path[i + 1][1], k)];
-      }
-      d -= seg[i];
-    }
-    return path[path.length - 1];
-  }
-
-  function bracketProps(c, h, t, a) {
-    const xs = h.P.map((p) => p[0]), ys = h.P.map((p) => p[1]);
-    const x0 = Math.min(...xs) - 20, x1 = Math.max(...xs) + 20;
-    const y0 = Math.min(...ys) - 20, y1 = Math.max(...ys) + 20;
-    const L = 15;
-    c.strokeStyle = col('faint', h.mix, a);
-    c.lineWidth = 1.5;
-    [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]].forEach(([x, y, sx, sy]) => {
-      c.beginPath();
-      c.moveTo(x + sx * L, y); c.lineTo(x, y); c.lineTo(x, y + sy * L);
-      c.stroke();
-    });
-  }
-
-  // Hero: a sensing field — grid dots inside the bracket light up
-  // wherever a fingertip passes, like a touch surface reading the hand
-  function heroProps(c, h, t, a) {
-    const xs = h.P.map((p) => p[0]), ys = h.P.map((p) => p[1]);
-    const x0 = Math.min(...xs) - 20, x1 = Math.max(...xs) + 20;
-    const y0 = Math.min(...ys) - 20, y1 = Math.max(...ys) + 20;
-    const tips = TIPS.map((i) => h.P[i]);
-    const step = 26;
-    for (let gx = x0 + step / 2; gx < x1; gx += step) {
-      for (let gy = y0 + step / 2; gy < y1; gy += step) {
-        let d = 1e9;
-        for (const p of tips) d = Math.min(d, Math.hypot(gx - p[0], gy - p[1]));
-        const lit = clamp(1 - d / 48, 0, 1);
-        c.fillStyle = lit > 0.02
-          ? col('tip', h.mix, a * (0.14 + 0.7 * lit))
-          : col('faint', h.mix, a * 0.4);
-        c.beginPath(); c.arc(gx, gy, 1.1 + lit * 1.1, 0, Math.PI * 2); c.fill();
-      }
-    }
-    bracketProps(c, h, t, a);
-  }
-
-  // EEG: a pulse travels wrist -> fingertip along each digit
-  function pulseProps(c, h, t, a) {
-    for (let fi = 0; fi < 5; fi++) {
-      const chain = [0].concat(FINGERS[fi]).map((i) => h.P[i]);
-      const p = along(chain, (t * 0.00038 + fi * 0.2) % 1);
-      c.fillStyle = col('tip', h.mix, a * 0.95);
-      c.beginPath(); c.arc(p[0], p[1], 2.4, 0, Math.PI * 2); c.fill();
-      c.strokeStyle = col('tip', h.mix, a * 0.35);
-      c.lineWidth = 1;
-      c.beginPath(); c.arc(p[0], p[1], 5.5, 0, Math.PI * 2); c.stroke();
-    }
-  }
-
-  // Touch: a film line that deflects under the fingertip, over a glass line
-  function pressProps(c, h, t, a) {
-    const sy = h.y + h.s * 1.02;
-    const half = h.s * 1.05;
-    const tip = h.P[8];
-    const dip = clamp(tip[1] - (sy - 3), 0, 12);
-    const tx = clamp(tip[0], h.x - half * 0.8, h.x + half * 0.8);
-    c.strokeStyle = col('joint', h.mix, a * 0.6);
-    c.lineWidth = 1.5;
-    c.beginPath();
-    c.moveTo(h.x - half, sy);
-    if (dip > 0.5) {
-      c.quadraticCurveTo((h.x - half + tx) / 2, sy, tx, sy + dip);
-      c.quadraticCurveTo((tx + h.x + half) / 2, sy, h.x + half, sy);
-    } else {
-      c.lineTo(h.x + half, sy);
-    }
-    c.stroke();
-    c.strokeStyle = col('faint', h.mix, a * 0.7);
-    c.lineWidth = 1;
-    c.beginPath(); c.moveTo(h.x - half, sy + 13); c.lineTo(h.x + half, sy + 13); c.stroke();
-    c.fillStyle = col('faint', h.mix, a * 0.9);
-    [-0.55, 0.55].forEach((k) => { c.beginPath(); c.arc(h.x + half * k, sy + 6.5, 2, 0, Math.PI * 2); c.fill(); });
-    if (dip > 9) {
-      const r = 6 + ((t * 0.02) % 14);
-      c.strokeStyle = col('tip', h.mix, a * clamp(1 - r / 20, 0, 1) * 0.7);
-      c.lineWidth = 1;
-      c.beginPath(); c.arc(tx, sy + dip, r, 0, Math.PI * 2); c.stroke();
-    }
-  }
-
-  // Mocap: tracking brackets + a landmark sweep
-  function mocapProps(c, h, t, a) {
-    bracketProps(c, h, t, a);
-    const p = h.P[Math.floor(t * 0.006) % 21];
-    c.strokeStyle = col('tip', h.mix, a * 0.9);
-    c.lineWidth = 1;
-    c.beginPath(); c.arc(p[0], p[1], 6.5, 0, Math.PI * 2); c.stroke();
-  }
-
-  // About: the index locks onto a UI target — dotted ray, ring, click ripple
-  function targetProps(c, h, t, a) {
-    const tip = h.P[8];
-    const poke = pokePh(t);
-    const ph = (t % 1500) / 1500;
-    const tgt = [h.x - h.s * 0.9, tip[1]];
-    const r = h.s * 0.11;
-    const dx = tgt[0] - tip[0], dy = tgt[1] - tip[1];
-    const L = Math.hypot(dx, dy);
-    if (L > r + 14) {
-      c.strokeStyle = col('faint', h.mix, a * 0.9);
-      c.lineWidth = 1;
-      c.setLineDash([3, 5]);
-      c.beginPath();
-      c.moveTo(tip[0] + (dx / L) * 9, tip[1] + (dy / L) * 9);
-      c.lineTo(tgt[0] + r + 4, tgt[1]);
-      c.stroke();
-      c.setLineDash([]);
-    }
-    c.strokeStyle = col(poke > 0.7 ? 'tip' : 'joint', h.mix, a * (0.45 + poke * 0.5));
-    c.lineWidth = 1.4;
-    c.beginPath(); c.arc(tgt[0], tgt[1], r, 0, Math.PI * 2); c.stroke();
-    c.fillStyle = col('tip', h.mix, a * (0.35 + poke * 0.65));
-    c.beginPath(); c.arc(tgt[0], tgt[1], 2.6 + poke * 1.4, 0, Math.PI * 2); c.fill();
-    // click ripple just after the poke lands
-    if (ph > 0.22 && ph < 0.5) {
-      const k = (ph - 0.22) / 0.28;
-      c.strokeStyle = col('tip', h.mix, a * (1 - k) * 0.7);
-      c.lineWidth = 1;
-      c.beginPath(); c.arc(tgt[0], tgt[1], r + k * 14, 0, Math.PI * 2); c.stroke();
-    }
-  }
-
-  // Quest: raw jittery trace enters the pinch, leaves filtered-smooth
-  function traceProps(c, h, t, a) {
-    const pinch = [(h.P[4][0] + h.P[8][0]) / 2, (h.P[4][1] + h.P[8][1]) / 2];
-    const y0 = pinch[1];
-    const xR = Math.max(VW / 2 - 330, pinch[0] + 140);
-    c.fillStyle = col('tip', h.mix, a * 0.06);
-    c.fillRect(pinch[0] + 10, y0 - 6, xR - pinch[0] - 10, 12);
-    c.strokeStyle = col('tip', h.mix, a * 0.7);
-    c.lineWidth = 1.2;
-    c.beginPath();
-    let first = true;
-    for (let x = 14; x < pinch[0] - 6; x += 5) {
-      const amp = 7 * clamp((pinch[0] - x) / 150, 0.12, 1);
-      const yn = y0 + noise1(x * 0.11 + t * 0.004) * amp;
-      first ? c.moveTo(x, yn) : c.lineTo(x, yn);
-      first = false;
-    }
-    c.stroke();
-    c.strokeStyle = col('tip', h.mix, a * 0.9);
-    c.lineWidth = 1.4;
-    c.beginPath();
-    c.moveTo(pinch[0] + 6, y0);
-    c.lineTo(xR, y0);
-    c.stroke();
-    c.fillStyle = col('tip', h.mix, a);
-    c.beginPath(); c.arc(pinch[0], y0, 2.6, 0, Math.PI * 2); c.fill();
-    c.strokeStyle = col('tip', h.mix, a * 0.4);
-    c.lineWidth = 1;
-    c.beginPath(); c.arc(pinch[0], y0, 8 + Math.sin(t * 0.004) * 2, 0, Math.PI * 2); c.stroke();
-  }
-
-  // Leadership: columns rise one by one beneath the steady palm —
-  // each tops out with a marker before the set resets and builds again
-  function buildProps(c, h, t, a) {
-    const sy = h.y + h.s * 0.55;
-    const half = h.s * 1.1;
-    c.strokeStyle = col('faint', h.mix, a);
-    c.lineWidth = 1.5;
-    c.beginPath(); c.moveTo(h.x - half, sy); c.lineTo(h.x + half, sy); c.stroke();
-    const ph = (t % 5600) / 5600;
-    const w = h.s * 0.3;
-    [-0.78, -0.26, 0.26, 0.78].forEach((k, i) => {
-      const g = keyf(ph, [[0.04 + i * 0.1, 0], [0.16 + i * 0.1, 1], [0.88, 1], [0.98, 0]]);
-      if (g <= 0.01) return;
-      const hgt = h.s * (0.24 + 0.1 * i) * g;
-      const x = h.x + half * k;
-      c.strokeStyle = col('joint', h.mix, a * 0.6);
-      c.lineWidth = 1.2;
-      c.strokeRect(x - w / 2, sy - hgt, w, hgt);
-      if (g > 0.99) {
-        c.fillStyle = col('tip', h.mix, a);
-        c.beginPath(); c.arc(x, sy - hgt - 5, 2, 0, Math.PI * 2); c.fill();
-      }
-    });
-  }
-
-  // Research: textured strip; bumps squash under the sliding fingertips
-  function textureProps(c, h, t, a) {
-    const sy = h.y + h.s * 0.72;
-    const half = h.s * 1.25;
-    const tipX = (h.P[8][0] + h.P[12][0]) / 2;
-    c.strokeStyle = col('faint', h.mix, a);
-    c.lineWidth = 1.2;
-    c.beginPath(); c.moveTo(h.x - half, sy + 6); c.lineTo(h.x + half, sy + 6); c.stroke();
-    c.strokeStyle = col('joint', h.mix, a * 0.5);
-    c.lineWidth = 1.1;
-    for (let x = h.x - half + 8; x < h.x + half - 8; x += 16) {
-      const squash = Math.abs(x - tipX) < 18 ? 0.45 : 1;
-      c.beginPath();
-      c.ellipse(x, sy + 6, 5.5, 5.5 * squash, 0, Math.PI, Math.PI * 2);
-      c.stroke();
-    }
-    const vel = Math.cos(t * 0.0016);
-    const rr = 7 + ((t * 0.03) % 16);
-    c.strokeStyle = col('tip', h.mix, a * clamp(1 - rr / 25, 0, 1) * 0.8);
-    c.lineWidth = 1;
-    c.beginPath();
-    c.arc(tipX + Math.sign(vel) * 14, sy + 2, rr, Math.PI * 1.05, Math.PI * 1.95);
-    c.stroke();
-  }
-
-  // Spotlight: a haptic unit on a belt line pulses beneath the palm —
-  // rings of touch rising toward the hand
-  function hapticProps(c, h, t, a) {
-    const ux = h.x, uy = h.y + h.s * 0.72;
-    const w = h.s * 0.32;
-    c.strokeStyle = col('faint', h.mix, a);
-    c.lineWidth = 1;
-    c.beginPath();
-    c.moveTo(h.x - h.s * 1.1, uy); c.lineTo(ux - w / 2, uy);
-    c.moveTo(ux + w / 2, uy); c.lineTo(h.x + h.s * 1.1, uy);
-    c.stroke();
-    c.strokeStyle = col('joint', h.mix, a * 0.6);
-    c.lineWidth = 1.3;
-    if (c.roundRect) { c.beginPath(); c.roundRect(ux - w / 2, uy - w * 0.32, w, w * 0.64, 5); c.stroke(); }
-    else c.strokeRect(ux - w / 2, uy - w * 0.32, w, w * 0.64);
-    c.fillStyle = col('tip', h.mix, a * (0.55 + 0.45 * Math.sin(t * 0.006)));
-    c.beginPath(); c.arc(ux, uy, 2, 0, Math.PI * 2); c.fill();
-    for (let i = 0; i < 3; i++) {
-      const ph = (t * 0.0005 + i / 3) % 1;
-      c.strokeStyle = col('tip', h.mix, a * (1 - ph) * 0.7);
-      c.lineWidth = 1.3;
-      c.beginPath();
-      c.arc(ux, uy - w * 0.32, w * (0.4 + ph * 1.25), -Math.PI * 0.78, -Math.PI * 0.22);
-      c.stroke();
-    }
-  }
-
-  // Schools: a green-screen panel — the sliding hand wipes a castle
-  // into the frame; the un-keyed side stays a field of chroma dots
-  function chromaProps(c, h, t, a) {
-    const w = h.s * 2.3, ht = h.s * 0.9;
-    const x0 = h.x - w / 2, y0 = h.y + h.s * 0.55, y1 = y0 + ht;
-    const tipX = clamp((h.P[8][0] + h.P[12][0]) / 2, x0 + 10, x0 + w - 10);
-    c.lineWidth = 1.3;
-    c.strokeStyle = col('joint', h.mix, a * 0.55);
-    if (c.roundRect) { c.beginPath(); c.roundRect(x0, y0, w, ht, 8); c.stroke(); }
-    else c.strokeRect(x0, y0, w, ht);
-    c.fillStyle = col('faint', h.mix, a * 0.75);
-    for (let gx = tipX + 12; gx < x0 + w - 8; gx += 13) {
-      for (let gy = y0 + 10; gy < y1 - 8; gy += 13) {
-        c.fillRect(gx - 0.8, gy - 0.8, 1.6, 1.6);
-      }
-    }
-    // castle silhouette, revealed left of the wipe
-    const gy0 = y1 - ht * 0.14;
-    const sc = ht * 0.7;
-    const S = [
-      [0.05, 0], [0.05, 0.42],
-      [0.10, 0.42], [0.10, 0.52], [0.16, 0.52], [0.16, 0.42],
-      [0.22, 0.42], [0.22, 0.52], [0.28, 0.52], [0.28, 0.42],
-      [0.35, 0.42], [0.35, 0.88],
-      [0.41, 0.88], [0.41, 1], [0.47, 1], [0.47, 0.88],
-      [0.53, 0.88], [0.53, 1], [0.59, 1], [0.59, 0.88],
-      [0.65, 0.88], [0.65, 0.42],
-      [0.72, 0.42], [0.72, 0.52], [0.78, 0.52], [0.78, 0.42],
-      [0.84, 0.42], [0.84, 0.52], [0.90, 0.52], [0.90, 0.42],
-      [0.95, 0.42], [0.95, 0],
-    ];
-    c.save();
-    c.beginPath(); c.rect(x0, y0, Math.max(tipX - x0, 0), ht); c.clip();
-    c.strokeStyle = col('joint', h.mix, a * 0.8);
-    c.beginPath();
-    c.moveTo(x0 + w * 0.02, gy0); c.lineTo(x0 + w * 0.98, gy0); // ground
-    S.forEach(([u, v], i) => {
-      const X = x0 + u * w, Y = gy0 - v * sc;
-      i ? c.lineTo(X, Y) : c.moveTo(X, Y);
-    });
-    c.stroke();
-    // gate arch at the tower's base
-    c.beginPath(); c.arc(x0 + 0.5 * w, gy0, ht * 0.14, Math.PI, Math.PI * 2); c.stroke();
-    // pennant on the keep, fluttering
-    const fx = x0 + 0.5 * w, fy = gy0 - sc;
-    c.beginPath(); c.moveTo(fx, fy); c.lineTo(fx, fy - ht * 0.16); c.stroke();
-    c.fillStyle = col('tip', h.mix, a * 0.85);
-    c.beginPath();
-    c.moveTo(fx, fy - ht * 0.16);
-    c.lineTo(fx + w * 0.045 + Math.sin(t * 0.004) * 2, fy - ht * 0.125);
-    c.lineTo(fx, fy - ht * 0.09);
-    c.closePath(); c.fill();
-    c.restore();
-    // the wipe line itself
-    c.strokeStyle = col('tip', h.mix, a * 0.9);
-    c.lineWidth = 1.4;
-    c.beginPath(); c.moveTo(tipX, y0 + 3); c.lineTo(tipX, y1 - 3); c.stroke();
-  }
-
-  // Work: a wireframe cube held in the grasp, lifted off a baseline
-  function cubeProps(c, h, t, a) {
-    const L = liftD(t);
-    const cc = h.tx([-0.16, -0.1]); // the mouth of the grip, between thumb and fingertips
-    const s = h.s * 0.34, r = s / 2, o = s * 0.35;
-    const F = [[cc[0] - r, cc[1] - r], [cc[0] + r, cc[1] - r], [cc[0] + r, cc[1] + r], [cc[0] - r, cc[1] + r]];
-    const B = F.map((p) => [p[0] + o, p[1] - o]);
-    c.lineWidth = 1;
-    c.strokeStyle = col('faint', h.mix, a * 0.9);
-    c.beginPath();
-    B.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])));
-    c.closePath();
-    F.forEach((p, i) => { c.moveTo(p[0], p[1]); c.lineTo(B[i][0], B[i][1]); });
-    c.stroke();
-    c.lineWidth = 1.4;
-    c.strokeStyle = col('joint', h.mix, a * 0.95);
-    c.beginPath();
-    F.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])));
-    c.closePath();
-    c.stroke();
-    c.fillStyle = col('tip', h.mix, a);
-    F.forEach((p) => { c.beginPath(); c.arc(p[0], p[1], 2, 0, Math.PI * 2); c.fill(); });
-    // ground shadow, fading as the cube lifts
-    const sy = h.y + h.s * 0.72;
-    const w = s * (1.4 - 0.5 * L);
-    c.strokeStyle = col('faint', h.mix, a * (0.9 - 0.55 * L));
-    c.lineWidth = 1.5;
-    c.beginPath(); c.moveTo(cc[0] - w, sy); c.lineTo(cc[0] + w, sy); c.stroke();
-  }
-
-  // Publications: a page card nudged along by the two-finger swipe
-  function cardProps(c, h, t, a) {
-    const ph = swipePh(t);
-    const shift = keyf(ph, [[0, 0], [0.25, -6], [0.42, 30], [0.8, 0], [1, 0]]);
-    const w = h.s * 1.15, ht = h.s * 0.72;
-    const cx = h.x + shift, cy = h.y + h.s * 1.05;
-    c.strokeStyle = col('joint', h.mix, a * 0.55);
-    c.lineWidth = 1.3;
-    if (c.roundRect) {
-      c.beginPath(); c.roundRect(cx - w / 2, cy - ht / 2, w, ht, 8); c.stroke();
-    } else {
-      c.strokeRect(cx - w / 2, cy - ht / 2, w, ht);
-    }
-    // faint text lines on the page
-    c.strokeStyle = col('faint', h.mix, a * 0.8);
-    c.lineWidth = 1;
-    [0.28, 0.5, 0.72].forEach((k, i) => {
-      c.beginPath();
-      c.moveTo(cx - w * 0.36, cy - ht / 2 + ht * k);
-      c.lineTo(cx + w * (i === 2 ? 0.1 : 0.36), cy - ht / 2 + ht * k);
-      c.stroke();
-    });
-    // motion hairlines during the flick
-    if (ph > 0.27 && ph < 0.48) {
-      const ma = a * (1 - Math.abs(ph - 0.37) / 0.11);
-      c.strokeStyle = col('tip', h.mix, clamp(ma, 0, 1) * 0.6);
-      [0.3, 0.5, 0.7].forEach((k) => {
-        c.beginPath();
-        c.moveTo(cx - w / 2 - 26, cy - ht / 2 + ht * k);
-        c.lineTo(cx - w / 2 - 8, cy - ht / 2 + ht * k);
-        c.stroke();
-      });
-    }
-  }
-
-  // Funding: the pinch releases a coin that drops onto a small stack
-  function coinProps(c, h, t, a) {
-    const ph = dropPh(t);
-    const pinch = [(h.P[4][0] + h.P[8][0]) / 2, (h.P[4][1] + h.P[8][1]) / 2];
-    const sy = h.y + h.s * 0.95;
-    const rx = h.s * 0.16, ry = rx * 0.34;
-    const sx = h.x + h.s * 0.05;
-    // baseline + the resting stack
-    c.strokeStyle = col('faint', h.mix, a);
-    c.lineWidth = 1;
-    c.beginPath(); c.moveTo(h.x - h.s * 0.85, sy + ry + 3); c.lineTo(h.x + h.s * 0.85, sy + ry + 3); c.stroke();
-    c.lineWidth = 1.2;
-    for (let i = 0; i < 3; i++) {
-      c.strokeStyle = col('joint', h.mix, a * 0.55);
-      c.beginPath(); c.ellipse(sx, sy - i * ry * 2.4, rx, ry, 0, 0, Math.PI * 2); c.stroke();
-    }
-    // the coin: held in the pinch, falling on release, then landed
-    const topY = sy - 3 * ry * 2.4;
-    let cx, cy, ca = a * 0.9;
-    if (ph < 0.56) { cx = pinch[0]; cy = pinch[1]; }
-    else if (ph < 0.8) {
-      const f = (ph - 0.56) / 0.24;
-      cx = lerp(pinch[0], sx, f);
-      cy = lerp(pinch[1], topY, f * f); // gravity
-    } else {
-      cx = sx; cy = topY;
-      ca = a * 0.9 * clamp(1 - (ph - 0.9) / 0.1, 0, 1);
-    }
-    c.strokeStyle = col('tip', h.mix, ca);
-    c.beginPath(); c.ellipse(cx, cy, rx * 0.92, ry * 0.92, 0, 0, Math.PI * 2); c.stroke();
-    // landing ripple
-    if (ph > 0.8 && ph < 0.95) {
-      const k = (ph - 0.8) / 0.15;
-      c.strokeStyle = col('tip', h.mix, a * (1 - k) * 0.6);
-      c.lineWidth = 1;
-      c.beginPath(); c.ellipse(sx, topY + ry, rx + k * 12, ry + k * 4, 0, 0, Math.PI * 2); c.stroke();
-    }
-  }
-
-  // Courses: a wireframe hologram spins above the offered palm,
-  // with an orbiting satellite and sparks drifting up off it
-  function holoProps(c, h, t, a) {
-    const cx = h.x, cy = h.y - h.s * 1.08 + Math.sin(t * 0.0012) * 5;
-    const s = h.s * 0.17;
-    const rot = t * 0.0011, cosr = Math.cos(rot), sinr = Math.sin(rot);
-    const corners = [];
-    for (let i = 0; i < 8; i++) {
-      let x = (i & 1 ? 1 : -1) * s, y = (i & 2 ? 1 : -1) * s, z = (i & 4 ? 1 : -1) * s;
-      [x, z] = [x * cosr + z * sinr, -x * sinr + z * cosr];
-      corners.push([cx + x, cy + y * 0.82 + z * 0.3]);
-    }
-    const edges = [[0, 1], [1, 3], [3, 2], [2, 0], [4, 5], [5, 7], [7, 6], [6, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
-    c.lineWidth = 1.1;
-    c.strokeStyle = col('joint', h.mix, a * 0.6);
-    c.beginPath();
-    edges.forEach(([i, j]) => { c.moveTo(corners[i][0], corners[i][1]); c.lineTo(corners[j][0], corners[j][1]); });
-    c.stroke();
-    // orbit ring + satellite
-    c.strokeStyle = col('faint', h.mix, a);
-    c.lineWidth = 1;
-    c.beginPath(); c.ellipse(cx, cy, s * 2.1, s * 0.62, 0, 0, Math.PI * 2); c.stroke();
-    const oa = t * 0.0016;
-    c.fillStyle = col('tip', h.mix, a);
-    c.beginPath(); c.arc(cx + Math.cos(oa) * s * 2.1, cy + Math.sin(oa) * s * 0.62, 2.4, 0, Math.PI * 2); c.fill();
-    // sparks rising from the palm toward the hologram
-    for (let i = 0; i < 3; i++) {
-      const ph = (t * 0.00035 + i / 3) % 1;
-      c.fillStyle = col('tip', h.mix, a * (1 - ph) * 0.7);
-      c.beginPath();
-      c.arc(cx + (i - 1) * s * 0.9, cy + s * 2 - ph * s * 2.8, 1.6, 0, Math.PI * 2);
-      c.fill();
-    }
-  }
-
-  // Venture: a seedling grows out of the open palm — sprout, leaves, bud
-  function sproutProps(c, h, t, a) {
-    const ph = (t % 6400) / 6400;
-    const g = keyf(ph, [[0.04, 0], [0.46, 1], [0.85, 1], [0.97, 0]]);
-    if (g <= 0.01) return;
-    const base = h.tx ? h.tx([-0.05, -0.18]) : [h.x, h.y];
-    const hh = h.s * 0.85 * g;
-    const lean = -h.s * 0.34 * g; // arc away from the leaning fingers
-    const sway = Math.sin(t * 0.0014) * 3 * g;
-    const pt = (k) => [base[0] + (lean + sway) * k * k, base[1] - hh * k];
-    c.strokeStyle = col('joint', h.mix, a * 0.75);
-    c.lineWidth = 1.4;
-    c.beginPath();
-    c.moveTo(base[0], base[1]);
-    c.quadraticCurveTo(base[0] + (lean + sway) * 0.12, base[1] - hh * 0.55, pt(1)[0], pt(1)[1]);
-    c.stroke();
-    const leaf = (k, dir) => {
-      const lg = clamp((g - k) / 0.25, 0, 1);
-      if (lg <= 0.01) return;
-      const [x, y] = pt(k);
-      c.strokeStyle = col('tip', h.mix, a * 0.8 * lg);
-      c.lineWidth = 1.2;
-      c.beginPath();
-      c.moveTo(x, y);
-      c.quadraticCurveTo(x + dir * 10 * lg, y - 4 * lg, x + dir * 16 * lg, y - 12 * lg);
-      c.quadraticCurveTo(x + dir * 5 * lg, y - 8 * lg, x, y);
-      c.stroke();
-    };
-    leaf(0.45, -1);
-    leaf(0.62, 1);
-    const bud = clamp((g - 0.85) / 0.15, 0, 1);
-    if (bud > 0.01) {
-      c.fillStyle = col('tip', h.mix, a * bud);
-      c.beginPath(); c.arc(pt(1)[0], pt(1)[1], 2.6, 0, Math.PI * 2); c.fill();
-    }
-  }
-
-  // Contact: friendly signal arcs ripple out from the waving hand
-  function helloProps(c, h, t, a) {
-    const cx = h.x, cy = h.y - h.s * 0.1;
-    const tilt = Math.sin(t * 0.0045) * 0.24; // matches the wave's rotation
-    for (let i = 0; i < 3; i++) {
-      const ph = (t * 0.00042 + i / 3) % 1;
-      c.strokeStyle = col('tip', h.mix, a * (1 - ph) * 0.55);
-      c.lineWidth = 1.3;
-      c.beginPath();
-      c.arc(cx, cy, h.s * (0.75 + ph * 0.75), -Math.PI / 2 - 0.55 + tilt, -Math.PI / 2 + 0.55 + tilt);
-      c.stroke();
-    }
-  }
-
-  /* ---- beats: the hand's journey down the page ----
-     Each beat activates at a document-space trigger Y. Triggers are
-     cached and refreshed every ~2s (and on resize/load), so the frame
-     loop does one rect read per frame instead of one per beat. */
-  const secTrig = (sel, f) => (sy) => {
-    const e = q(sel);
-    return e ? e.getBoundingClientRect().top + sy - VH * (f == null ? 0.55 : f) : Infinity;
-  };
-  const storyTrig = (frac) => (sy) => {
-    const e = q('.story-track');
-    if (!e) return Infinity;
-    const r = e.getBoundingClientRect();
-    return frac === 0 ? r.top + sy - VH * 0.35 : r.top + sy + (r.height - VH) * frac;
-  };
-
-  const beats = [
-    { id: 'hero', bg: 0, alpha: 1, anchor: heroAnchor, trigger: () => -Infinity, sample: restSample(true), props: heroProps },
-    { id: 'eeg', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(0), sample: eegSample, props: pulseProps },
-    { id: 'press', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(1 / 3), sample: pressSample, props: pressProps },
-    { id: 'mocap', bg: 0, alpha: 1, anchor: storyAnchor, trigger: storyTrig(2 / 3), sample: mocapSample, props: mocapProps },
-    { id: 'about', bg: 1, alpha: 1, anchor: sideAnchor('#about .about-copy', 1, 0.3), trigger: secTrig('#about'), sample: pointSample, props: targetProps },
-    { id: 'quest', bg: 0, alpha: 1, anchor: sideAnchor('#quest .container', -1, 0.42), trigger: secTrig('#quest'), sample: pinchSample, props: traceProps },
-    { id: 'lead', bg: 1, alpha: 1, anchor: sideAnchor('#leadership .section-head', 1, 0.5), trigger: secTrig('#leadership'), sample: flatSample, props: buildProps },
-    { id: 'research', bg: 1, alpha: 1, anchor: sideAnchor('#research .section-head', -1, 0.45), trigger: secTrig('#research'), sample: slideSample, props: textureProps },
-    { id: 'spotlight', bg: 0, alpha: 1, anchor: sideAnchor('#spotlight .section-head', 1, 0.5), trigger: secTrig('#spotlight'), sample: flatSample, props: hapticProps },
-    { id: 'work', bg: 1, alpha: 1, anchor: sideAnchor('#work .section-head', 1, 0.45), trigger: secTrig('#work'), sample: graspSample, props: cubeProps },
-    { id: 'pubs', bg: 1, alpha: 1, anchor: sideAnchor('#publications .section-head', -1, 0.45), trigger: secTrig('#publications'), sample: swipeSample, props: cardProps },
-    { id: 'funding', bg: 1, alpha: 0.9, anchor: sideAnchor('#funding .section-head', -1, 0.5), trigger: secTrig('#funding'), sample: coinSample, props: coinProps },
-    { id: 'courses', bg: 1, alpha: 1, anchor: sideAnchor('#courses .section-head', 1, 0.5), trigger: secTrig('#courses'), sample: offerSample, props: holoProps },
-    { id: 'schools', bg: 1, alpha: 1, anchor: sideAnchor('#schools .section-head', -1, 0.5), trigger: secTrig('#schools'), sample: slideSample, props: chromaProps },
-    { id: 'venture', bg: 0, alpha: 0.85, anchor: sideAnchor('#venture .container', 1, 0.5), trigger: secTrig('#venture'), sample: offerSample, props: sproutProps },
-    { id: 'contact', bg: 1, alpha: 1, anchor: contactAnchor, trigger: secTrig('#contact'), sample: waveSample, pivot: [0, -0.92], props: helloProps },
-  ];
-
-  let trig = null, trigStamp = -Infinity;
-  function computeTriggers(now) {
-    trigStamp = now;
-    const sy = window.scrollY;
-    trig = beats.map((b) => b.trigger(sy));
-  }
-  window.addEventListener('load', () => { stale = true; });
-  if (rmq.addEventListener) rmq.addEventListener('change', () => { stale = true; ctx.clearRect(0, 0, VW, VH); fbKey = ''; });
-
-  function activeIndex() {
-    const sy = window.scrollY;
-    let idx = 0;
-    for (let i = 1; i < beats.length; i++) if (sy >= trig[i]) idx = i;
-    return idx;
-  }
-
-  /* ---- hand rendering: a faceted low-poly hand ----
-     The 21 landmarks still drive everything; here they are skinned
-     with a palm fan and tapered finger strips of flat-shaded,
-     translucent triangles — a glassy sculpture on deep sections,
-     cut slate on paper ones. Props keep reading h.P unchanged. */
-  const FACET = {
-    dark:  { lo: [118, 150, 208], hi: [208, 226, 252], a: 0.30, edge: [216, 232, 255], ea: 0.30 },
-    light: { lo: [38, 52, 72],    hi: [104, 124, 150], a: 0.26, edge: [22, 34, 52],    ea: 0.28 },
-  };
-  const facetHash = (i) => (((i + 1) * 2654435761) % 1000) / 1000;
-  function facetFill(mix, alpha, k) {
-    const d = FACET.dark, l = FACET.light;
-    const ch = (j) => Math.round(lerp(lerp(d.lo[j], d.hi[j], k), lerp(l.lo[j], l.hi[j], k), mix));
-    return `rgba(${ch(0)},${ch(1)},${ch(2)},${(lerp(d.a, l.a, mix) * alpha).toFixed(3)})`;
-  }
-  function facetEdge(mix, alpha) {
-    const d = FACET.dark, l = FACET.light;
-    const ch = (j) => Math.round(lerp(d.edge[j], l.edge[j], mix));
-    return `rgba(${ch(0)},${ch(1)},${ch(2)},${(lerp(d.ea, l.ea, mix) * alpha).toFixed(3)})`;
-  }
-  // flat shading: pseudo-light from the top-left + a per-facet grain
-  function facetTri(c, p0, p1, p2, mix, alpha, i) {
-    const ex = p1[0] - p0[0], ey = p1[1] - p0[1];
-    const L = Math.hypot(ex, ey) || 1;
-    const dot = (-ey * -0.55 + ex * -0.83) / L;
-    const k = clamp(0.3 + 0.42 * (0.5 + 0.5 * dot) + 0.28 * facetHash(i), 0, 1);
-    c.fillStyle = facetFill(mix, alpha, k);
-    c.beginPath();
-    c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.lineTo(p2[0], p2[1]);
-    c.closePath();
-    c.fill(); c.stroke();
-  }
-  // a tapered strip of facets along a joint chain, with a pointed cap
-  function facetStrip(c, pts, widths, mix, alpha, seed) {
-    const n = pts.length, Lp = [], Rp = [];
-    for (let i = 0; i < n; i++) {
-      const a = pts[Math.max(i - 1, 0)], b = pts[Math.min(i + 1, n - 1)];
-      let dx = b[0] - a[0], dy = b[1] - a[1];
-      const L = Math.hypot(dx, dy) || 1;
-      dx /= L; dy /= L;
-      Lp.push([pts[i][0] - dy * widths[i], pts[i][1] + dx * widths[i]]);
-      Rp.push([pts[i][0] + dy * widths[i], pts[i][1] - dx * widths[i]]);
-    }
-    let f = seed;
-    for (let i = 0; i < n - 1; i++) {
-      facetTri(c, Lp[i], Lp[i + 1], Rp[i], mix, alpha, f++);
-      facetTri(c, Lp[i + 1], Rp[i + 1], Rp[i], mix, alpha, f++);
-    }
-    const tip = pts[n - 1], prev = pts[n - 2];
-    let dx = tip[0] - prev[0], dy = tip[1] - prev[1];
-    const L = Math.hypot(dx, dy) || 1;
-    facetTri(c, Lp[n - 1],
-      [tip[0] + (dx / L) * widths[n - 1] * 1.2, tip[1] + (dy / L) * widths[n - 1] * 1.2],
-      Rp[n - 1], mix, alpha, f++);
-  }
-
-  function drawHand(c, P, mix, alpha, t) {
-    if (alpha <= 0.01) return;
-    const S = Math.hypot(P[9][0] - P[0][0], P[9][1] - P[0][1]) || 1; // wrist -> middle MCP
-    const cx = (P[0][0] + P[5][0] + P[9][0] + P[13][0] + P[17][0]) / 5;
-    const cy = (P[0][1] + P[5][1] + P[9][1] + P[13][1] + P[17][1]) / 5;
-
-    c.strokeStyle = facetEdge(mix, alpha * 0.55);
-    c.lineWidth = 0.75;
-
-    // palm: a fan over the wrist + knuckle ring, slightly inflated
-    const ring = [0, 1, 5, 9, 13, 17].map((idx) => {
-      const gx = P[idx][0] - cx, gy = P[idx][1] - cy;
-      const g = Math.hypot(gx, gy) || 1;
-      const grow = idx === 0 ? S * 0.14 : S * 0.07;
-      return [P[idx][0] + (gx / g) * grow, P[idx][1] + (gy / g) * grow];
-    });
-    for (let i = 0; i < ring.length; i++) {
-      facetTri(c, [cx, cy], ring[i], ring[(i + 1) % ring.length], mix, alpha, i);
-    }
-
-    // fingers: strips rooted just inside the palm so the skin is seamless
-    const TAPER = [0.10, 0.095, 0.08, 0.065, 0.05];
-    const FSCALE = [1.3, 1.05, 1.05, 0.98, 0.85]; // thumb widest, pinky slimmest
-    FINGERS.forEach((chain, fi) => {
-      const mcp = P[chain[0]];
-      const root = fi === 0
-        ? [lerp(P[0][0], mcp[0], 0.35), lerp(P[0][1], mcp[1], 0.35)]
-        : [lerp(cx, mcp[0], 0.55), lerp(cy, mcp[1], 0.55)];
-      const pts = [root].concat(chain.map((i) => P[i]));
-      const widths = TAPER.map((w) => w * S * FSCALE[fi]);
-      facetStrip(c, pts, widths, mix, alpha, 20 + fi * 12);
-    });
-
-    // fingertip accents — the hand still reads as tracked
-    TIPS.forEach((i) => {
-      const p = P[i];
-      c.fillStyle = col('tip', mix, alpha * 0.9);
-      c.beginPath(); c.arc(p[0], p[1], 2.2, 0, Math.PI * 2); c.fill();
-      c.strokeStyle = col('tip', mix, alpha * 0.28);
-      c.lineWidth = 1;
-      c.beginPath(); c.arc(p[0], p[1], 6 + Math.sin(t * 0.003 + i) * 1.2, 0, Math.PI * 2); c.stroke();
-    });
-  }
-
-  /* ---- fallback: hero-only hand (narrow screens / reduced motion).
-     Idles when there is nothing new to draw: past the hero, or with
-     reduced motion and no scroll/size change since the last frame. ---- */
-  let fbKey = '', fbDrawn = false;
-  function fallbackFrame(now) {
-    const reduced = rmq.matches;
-    const key = Math.round(window.scrollY) + '|' + VW + '|' + VH + '|' + reduced;
-    // idle: nothing on canvas and nothing changed, or a static reduced-motion
-    // hand that is already drawn — skip even the layout reads
-    if (key === fbKey && !stale && (!fbDrawn || reduced)) return;
-    const a = heroAnchor();
-    const heroEl = q('.hero');
-    const p = heroEl ? clamp(window.scrollY / (heroEl.offsetHeight * 0.7), 0, 1) : 0;
-    const alpha = a ? clamp(1 - p * 1.3, 0, 1) : 0;
-    if (alpha <= 0) {
-      if (fbDrawn) { ctx.clearRect(0, 0, VW, VH); fbDrawn = false; }
-      fbKey = key;
-      stale = false;
-      return;
-    }
-    stale = false;
-    fbKey = key;
-    ctx.clearRect(0, 0, VW, VH);
-    const t = reduced ? 0 : now;
-    const s = restSample(!reduced)(t, a);
-    if (!reduced) s.oy = (s.oy || 0) + p * 40;
-    const aa = { x: a.x, y: a.y, s: a.s * (1 + p * 0.08) };
-    const P = s.pts.map(mkTx(aa, s, null));
-    heroProps(ctx, { x: aa.x, y: aa.y, s: aa.s, mix: 0, P }, t, alpha * 0.9);
-    drawHand(ctx, P, 0, alpha, t);
-    fbDrawn = true;
-  }
-
-  /* ---- main loop with snappy morph transitions ---- */
-  const DUR = 480;
-  let cur = -1, from = null, switchT = 0;
-  let lastP = null, lastMix = 0, lastAlpha = 1, lastTx = null;
+  const trails = TIPS.map(() => []);
+  const raw = TIPS.map(() => [0, 0]);
+  let last = performance.now(), t = 0, running = true, lastReadout = 0;
 
   const frame = (now) => {
-    requestAnimationFrame(frame);
+    const dt = Math.min(Math.max((now - last) / 1000, 0), 0.05);
+    last = now;
+    if (!REDUCED) t += dt;
 
-    if (!roaming()) {
-      if (lastP) { ctx.clearRect(0, 0, VW, VH); fbKey = ''; } // leaving roaming mode
-      cur = -1; from = null; lastP = null; lastTx = null;
-      fallbackFrame(now);
-      return;
+    // which pose, and how far into the transition
+    const cycle = HOLD + MOVE;
+    const k = Math.floor(t / cycle) % POSES.length;
+    const local = t % cycle;
+    const m = local < HOLD ? 0 : ease((local - HOLD) / MOVE);
+    const A = POSES[k], B = POSES[(k + 1) % POSES.length];
+    const curl = A.c.map((c, i) => lerp(c, B.c[i], m));
+    const pinch = lerp(A.pinch, B.pinch, m);
+
+    if (poseLabel) poseLabel.textContent = (m < 0.5 ? A : B).name;
+
+    const pts = BASE.map((p) => [p[0], p[1]]);
+    FINGERS.forEach((f, i) => curlFinger(pts, f, curl[i], i === 0));
+    if (pinch > 0) {
+      const ti = pts[4], ii = pts[8];
+      const mx = (ti[0] + ii[0]) / 2 + 0.02, my = (ti[1] + ii[1]) / 2 + 0.02;
+      pts[4] = [lerp(ti[0], mx, pinch), lerp(ti[1], my, pinch)];
+      pts[8] = [lerp(ii[0], mx + 0.03, pinch), lerp(ii[1], my + 0.03, pinch)];
+      pts[3] = [lerp(pts[3][0], (pts[3][0] + mx) / 2, pinch * 0.5), lerp(pts[3][1], (pts[3][1] + my) / 2, pinch * 0.5)];
+      pts[7] = [lerp(pts[7][0], (pts[7][0] + mx) / 2, pinch * 0.4), lerp(pts[7][1], (pts[7][1] + my) / 2, pinch * 0.4)];
     }
 
-    ctx.clearRect(0, 0, VW, VH);
-    PX += (TX - PX) * 0.04;
-    PY += (TY - PY) * 0.04;
+    // place in panel: gentle sway + pointer parallax
+    px = lerp(px, tx, 0.06); py = lerp(py, ty, 0.06);
+    const s = Math.min(W, H) * 0.34;
+    const cx = W * 0.5 + Math.sin(t * 0.5) * W * 0.02 + px * W * 0.03;
+    const cy = H * 0.52 + Math.cos(t * 0.4) * H * 0.015 + py * H * 0.03;
+    const rot = Math.sin(t * 0.35) * 0.08 + px * 0.08;
+    const cr = Math.cos(rot), sr = Math.sin(rot);
+    const P = pts.map(([x, y]) => {
+      const X = x * cr - y * sr, Y = x * sr + y * cr;
+      return [cx + X * s, cy - Y * s];
+    });
 
-    if (!trig || stale || now - trigStamp > 2000) {
-      // catches monitor moves too, which change dpr without a resize event
-      if (Math.min(window.devicePixelRatio || 1, 2) !== dpr) resize();
-      computeTriggers(now);
-      stale = false;
+    ctx.clearRect(0, 0, W, H);
+
+    // scan line
+    const scanY = (t * 0.22 % 1) * H;
+    const g = ctx.createLinearGradient(0, scanY - 60, 0, scanY);
+    g.addColorStop(0, 'rgba(200,245,61,0)');
+    g.addColorStop(1, 'rgba(200,245,61,0.035)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, scanY - 60, W, 60);
+    ctx.fillStyle = 'rgba(200,245,61,0.18)';
+    ctx.fillRect(0, scanY, W, 1);
+
+    // bounding box
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    P.forEach(([x, y]) => { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); });
+    const pad = 18;
+    ctx.strokeStyle = 'rgba(238,240,242,0.18)';
+    ctx.setLineDash([4, 6]);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2);
+    ctx.setLineDash([]);
+
+    // palm fill
+    ctx.beginPath();
+    [0, 1, 5, 9, 13, 17].forEach((i, j) => (j ? ctx.lineTo(P[i][0], P[i][1]) : ctx.moveTo(P[i][0], P[i][1])));
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(200,245,61,0.05)';
+    ctx.fill();
+
+    // trails
+    TIPS.forEach((ti, i) => {
+      const tr = trails[i];
+      tr.push([P[ti][0], P[ti][1]]);
+      if (tr.length > 26) tr.shift();
+      ctx.beginPath();
+      tr.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.strokeStyle = 'rgba(200,245,61,0.22)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    });
+
+    // bones
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(238,240,242,0.7)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    BONES.forEach(([a, b]) => { ctx.moveTo(P[a][0], P[a][1]); ctx.lineTo(P[b][0], P[b][1]); });
+    ctx.stroke();
+
+    // joints
+    P.forEach(([x, y], i) => {
+      if (TIPS.includes(i)) return;
+      ctx.beginPath();
+      ctx.arc(x, y, i === 0 ? 4 : 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#0a0c0f';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(238,240,242,0.85)';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    });
+
+    // tips: raw noisy estimate (grey) vs filtered (signal)
+    TIPS.forEach((ti, i) => {
+      const [x, y] = P[ti];
+      if (!REDUCED) { raw[i][0] = lerp(raw[i][0], (Math.random() - 0.5) * 9, 0.5); raw[i][1] = lerp(raw[i][1], (Math.random() - 0.5) * 9, 0.5); }
+      ctx.beginPath();
+      ctx.arc(x + raw[i][0], y + raw[i][1], 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(238,240,242,0.35)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y, 9, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(200,245,61,0.35)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#c8f53d';
+      ctx.fill();
+    });
+
+    // label at index tip
+    const [ix, iy] = P[8];
+    ctx.strokeStyle = 'rgba(200,245,61,0.6)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(ix - 8, iy - 8); ctx.lineTo(ix - 30, iy - 30); ctx.lineTo(ix - 50, iy - 30); ctx.stroke();
+    ctx.font = '500 10px "JetBrains Mono", ui-monospace, monospace';
+    ctx.fillStyle = 'rgba(238,240,242,0.85)';
+    ctx.textAlign = 'right';
+    ctx.fillText('INDEX_TIP · 08', ix - 56, iy - 27);
+    ctx.textAlign = 'left';
+
+    if (readout && now - lastReadout > 120) {
+      lastReadout = now;
+      const nx = (pts[8][0] * 100).toFixed(1), ny = (pts[8][1] * 100).toFixed(1);
+      const nz = (curl[1] * -42).toFixed(1);
+      readout.textContent = `x ${nx}  y ${ny}  z ${nz} mm`;
     }
-    const ai = activeIndex();
-    if (cur === -1) { cur = ai; }
-    else if (ai !== cur) {
-      from = lastP ? { P: lastP.map((p) => p.slice()), mix: lastMix, alpha: lastAlpha, tx: lastTx, beat: beats[cur] } : null;
-      cur = ai;
-      switchT = now;
-    }
 
-    const b = beats[cur];
-    const a = b.anchor();
-    if (!a) return;
-    const s = b.sample(now, a);
-    const tx = mkTx(a, s, b.pivot);
-    let P = s.pts.map(tx);
-    let mix = b.bg, alpha = b.alpha * (a.fade == null ? 1 : a.fade);
-
-    const T = from ? clamp((now - switchT) / DUR, 0, 1) : 1;
-    const e = easeOut(T);
-    if (from && T < 1) {
-      P = P.map((p, i) => [lerp(from.P[i][0], p[0], e), lerp(from.P[i][1], p[1], e)]);
-      mix = lerp(from.mix, mix, e);
-      alpha = lerp(from.alpha, alpha, e);
-      // outgoing props fade fast, anchored where they were
-      if (from.beat.props && from.tx && T < 0.4) {
-        const oa = from.beat.anchor();
-        if (oa) from.beat.props(ctx, { x: oa.x, y: oa.y, s: oa.s, mix: from.mix, P: from.P, tx: from.tx }, now, from.alpha * (1 - T / 0.4));
-      }
-    } else if (from) {
-      from = null;
-    }
-
-    const h = { x: a.x, y: a.y, s: a.s, mix, P, tx };
-    const pa = from ? clamp((T - 0.3) / 0.5, 0, 1) : 1;
-    if (b.props) b.props(ctx, h, now, alpha * pa);
-    drawHand(ctx, P, mix, alpha, now);
-
-    lastP = P; lastMix = mix; lastAlpha = alpha; lastTx = tx;
+    if (running && !REDUCED) requestAnimationFrame(frame);
   };
+
   requestAnimationFrame(frame);
+  if (REDUCED) return;
+
+  if (HAS_IO) {
+    new IntersectionObserver(([e]) => {
+      const vis = e.isIntersecting;
+      if (vis && !running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+      running = vis;
+    }).observe(canvas);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) running = false;
+    else if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  });
 })();
 
 /* -----------------------------------------------------------
-   4. PINNED STORY — map scroll progress to active scene
+   4. FIELD RAIL — prev/next buttons for the native scroller
    ----------------------------------------------------------- */
-(function story() {
-  const track = document.querySelector('.story-track');
-  if (!track) return;
-  const scenes = Array.from(track.querySelectorAll('.scene'));
-  const dots = Array.from(track.querySelectorAll('.story-dots span'));
-  if (!scenes.length) return;
-  if (REDUCED) { scenes.forEach((s) => s.classList.add('active')); return; }
-
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    const rect = track.getBoundingClientRect();
-    const total = rect.height - window.innerHeight;
-    const p = Math.min(Math.max(-rect.top / total, 0), 0.999);
-    const idx = Math.floor(p * scenes.length);
-    scenes.forEach((s, i) => s.classList.toggle('active', i === idx));
-    dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+(function rail() {
+  const vp = document.querySelector('.rail-viewport');
+  if (!vp) return;
+  const step = () => {
+    const item = vp.querySelector('.rail-item');
+    return item ? item.getBoundingClientRect().width + 16 : vp.clientWidth * 0.8;
   };
-  update();
-  window.addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(update); }
-  }, { passive: true });
+  document.querySelectorAll('[data-rail]').forEach((b) =>
+    b.addEventListener('click', () =>
+      vp.scrollBy({ left: step() * (b.dataset.rail === 'next' ? 1 : -1), behavior: REDUCED ? 'auto' : 'smooth' })));
 })();
 
 /* -----------------------------------------------------------
-   5. COUNTERS — count up when scrolled into view
+   5. COUNTERS
    ----------------------------------------------------------- */
 (function counters() {
   const els = document.querySelectorAll('[data-count]');
@@ -1156,69 +356,70 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const prefix = el.dataset.prefix || '';
     const suffix = el.dataset.suffix || '';
     if (REDUCED) { el.textContent = prefix + target.toFixed(decimals) + suffix; return; }
-    const dur = 1400;
     const t0 = performance.now();
     const tick = (t) => {
-      const p = Math.min((t - t0) / dur, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+      const p = Math.min((t - t0) / 1400, 1);
+      el.textContent = prefix + (target * (1 - Math.pow(1 - p, 3))).toFixed(decimals) + suffix;
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   };
-  if (!('IntersectionObserver' in window)) { els.forEach(run); return; }
+  if (!HAS_IO) { els.forEach(run); return; }
   const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
-    });
+    entries.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
   }, { threshold: 0.6 });
   els.forEach((el) => io.observe(el));
 })();
 
 /* -----------------------------------------------------------
-   6. COURSE SIGN-UP (courses.html)
-   - picker cards + ?course= param preselect the <select>
-   - success banner after Formspree redirects back with ?ok=1
+   6. AMBIENT VIDEO — loops only play while on screen
+   ----------------------------------------------------------- */
+(function ambientVideo() {
+  const vids = document.querySelectorAll('video[data-ambient]');
+  if (!vids.length) return;
+  if (REDUCED || !HAS_IO) { vids.forEach((v) => v.pause()); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      const v = e.target;
+      if (e.isIntersecting) { if (v.preload === 'none') v.preload = 'auto'; v.play().catch(() => {}); }
+      else v.pause();
+    });
+  }, { threshold: 0.2 });
+  vids.forEach((v) => io.observe(v));
+})();
+
+/* -----------------------------------------------------------
+   7. COURSE SIGN-UP (courses.html)
    ----------------------------------------------------------- */
 (function signup() {
   const params = new URLSearchParams(window.location.search);
   const select = document.getElementById('course');
-
   const map = {
     engine: 'Game Engines for Scientists — May 2027 (4 days)',
     unity: 'Game Engines for Scientists — May 2027 (4 days)',
     mocap: 'Motion Capture for Scientists — June 2027 (3 days)',
     printing: '3D Modelling & Printing — on request (1 day)',
   };
-
+  const sync = (value) => document.querySelectorAll('.pick').forEach((p) =>
+    p.classList.toggle('selected', map[p.dataset.course] === value));
   const choose = (key) => {
     if (!select || !map[key]) return;
-    Array.from(select.options).forEach((o) => {
-      o.selected = o.value.replace('&amp;', '&') === map[key];
-    });
-    document.querySelectorAll('.pick').forEach((p) =>
-      p.classList.toggle('selected', p.dataset.course === key ||
-        (map[p.dataset.course] === map[key])));
+    Array.from(select.options).forEach((o) => { o.selected = o.value === map[key]; });
+    sync(map[key]);
   };
 
   if (select) {
     const wanted = (params.get('course') || '').toLowerCase();
     if (map[wanted]) choose(wanted);
-
-    // picker cards inside the sign-up section
     document.querySelectorAll('.pick[data-course]').forEach((p) => {
       p.addEventListener('click', () => choose(p.dataset.course));
+      p.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(p.dataset.course); }
+      });
     });
-    // "Reserve a place" links on cohort sections
-    document.querySelectorAll('a[data-course]').forEach((a) => {
-      a.addEventListener('click', () => choose(a.getAttribute('data-course')));
-    });
-    // keep picker cards in sync if the user changes the select directly
-    select.addEventListener('change', () => {
-      const key = Object.keys(map).find((k) => map[k] === select.value);
-      document.querySelectorAll('.pick').forEach((p) =>
-        p.classList.toggle('selected', !!key && map[p.dataset.course] === map[key]));
-    });
+    document.querySelectorAll('a[data-course]').forEach((a) =>
+      a.addEventListener('click', () => choose(a.getAttribute('data-course'))));
+    select.addEventListener('change', () => sync(select.value));
   }
 
   const banner = document.getElementById('formSuccess');
@@ -1229,107 +430,7 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 })();
 
 /* -----------------------------------------------------------
-   7. SCROLL FX — one rAF loop drives the nav progress hairline,
-      the gentle image parallax and the sideways field rail.
-   ----------------------------------------------------------- */
-(function scrollFX() {
-  const bar = document.querySelector('.nav-progress');
-  const plx = Array.from(document.querySelectorAll('img[data-plx]'));
-  const track = document.getElementById('railTrack');
-  const rail = track ? track.closest('.rail') : null;
-  if (!bar && !plx.length && !track) return;
-
-  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
-  let ticking = false;
-
-  const update = () => {
-    ticking = false;
-    const vh = window.innerHeight;
-
-    if (bar) {
-      const dh = document.documentElement.scrollHeight - vh;
-      bar.style.transform = `scaleX(${dh > 0 ? clamp(window.scrollY / dh, 0, 1) : 0})`;
-    }
-
-    if (!REDUCED) {
-      // parallax: each image drifts against its mask, centred on the viewport middle
-      for (const el of plx) {
-        const box = (el.parentElement || el).getBoundingClientRect();
-        if (box.bottom < -80 || box.top > vh + 80) continue; // offscreen
-        const mid = box.top + box.height / 2 - vh / 2;
-        const f = parseFloat(el.dataset.plx) || 0.06;
-        el.style.setProperty('--plx', `${clamp(-mid * f, -30, 30).toFixed(1)}px`);
-      }
-
-      // rail: slide the strip sideways as the section crosses the viewport
-      if (track && window.innerWidth >= 960) {
-        const r = rail.getBoundingClientRect();
-        if (r.bottom > 0 && r.top < vh) {
-          const p = clamp((vh - r.top) / (vh + r.height), 0, 1);
-          const overflow = track.scrollWidth - window.innerWidth;
-          if (overflow > 0) track.style.transform = `translate3d(${(-p * overflow).toFixed(1)}px, 0, 0)`;
-        }
-      }
-    }
-  };
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(update); }
-  }, { passive: true });
-  window.addEventListener('resize', update);
-  window.addEventListener('load', update);
-  update();
-})();
-
-/* -----------------------------------------------------------
-   8. AMBIENT VIDEO — card loops only play while on screen
-   ----------------------------------------------------------- */
-(function ambientVideo() {
-  const vids = document.querySelectorAll('video[data-ambient]');
-  if (!vids.length) return;
-  if (REDUCED) { vids.forEach((v) => { v.removeAttribute('autoplay'); v.pause(); }); return; }
-  if (!('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      const v = e.target;
-      if (e.isIntersecting) { v.play().catch(() => {}); } else { v.pause(); }
-    });
-  }, { threshold: 0.2 });
-  vids.forEach((v) => io.observe(v));
-})();
-
-/* -----------------------------------------------------------
-   9. BRAIN HOTSPOT — motor-cortex highlight + click-to-place
-   Shift-click (or Alt-click) the model surface to log a
-   data-position/data-normal and move the red marker there,
-   so the highlight can be dialled onto the exact gyrus.
-   Copy the logged values into the hotspot in index.html.
-   ----------------------------------------------------------- */
-(function brainHotspot() {
-  const mv = document.getElementById('brain-model');
-  if (!mv) return;
-  const spot = mv.querySelector('[slot="hotspot-motor"]');
-  mv.addEventListener('click', (event) => {
-    if (!event.shiftKey && !event.altKey) return;
-    const rect = mv.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const hit = mv.positionAndNormalFromPoint(x, y);
-    if (!hit) { console.log('[brain] no surface under cursor'); return; }
-    const pos = hit.position.toString();
-    const nrm = hit.normal.toString();
-    console.log('[brain] data-position="' + pos + '" data-normal="' + nrm + '"');
-    if (spot) {
-      spot.dataset.position = pos;
-      spot.dataset.normal = nrm;
-    }
-  });
-})();
-
-/* -----------------------------------------------------------
-   10. LEADERSHIP LIGHTBOX — click a card image to enlarge it
-   over a darkened, blurred backdrop; the card's text rides
-   along as a caption strip at the foot of the image.
+   8. LEADERSHIP LIGHTBOX
    ----------------------------------------------------------- */
 (function leadLightbox() {
   const cards = document.querySelectorAll('.lead-card');
@@ -1339,37 +440,31 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   overlay.className = 'lightbox';
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
-  overlay.innerHTML =
-    '<figure class="lightbox-frame"><img alt="" /><figcaption class="lightbox-cap"></figcaption></figure>';
+  overlay.innerHTML = '<figure class="lightbox-frame"><img alt="" /><figcaption class="lightbox-cap"></figcaption></figure>';
   document.body.appendChild(overlay);
-
   const frame = overlay.querySelector('.lightbox-frame');
   const img = overlay.querySelector('img');
   const cap = overlay.querySelector('.lightbox-cap');
 
-  const close = () => {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-  };
+  const close = () => { overlay.classList.remove('open'); document.body.style.overflow = ''; };
   const open = (card) => {
     const thumb = card.querySelector('.lead-media img');
     const body = card.querySelector('.lead-body');
     if (!thumb) return;
-    img.src = thumb.src;
-    img.alt = thumb.alt;
+    img.src = thumb.src; img.alt = thumb.alt;
     cap.innerHTML = body ? body.innerHTML : '';
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   };
-
   cards.forEach((card) => {
     const media = card.querySelector('.lead-media');
-    if (media) media.addEventListener('click', () => open(card));
+    if (!media) return;
+    media.setAttribute('role', 'button');
+    media.setAttribute('tabindex', '0');
+    media.setAttribute('aria-label', 'Enlarge image');
+    media.addEventListener('click', () => open(card));
+    media.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(card); } });
   });
-  overlay.addEventListener('click', (e) => {
-    if (!frame.contains(e.target) || e.target.closest('a')) close();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) close();
-  });
+  overlay.addEventListener('click', (e) => { if (!frame.contains(e.target) || e.target.closest('a')) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
 })();
